@@ -112,6 +112,10 @@ main {
     /* Enable scrolling */
     overflow-y: scroll;
 }
+main.scroll-lock {
+    /* Disable scrolling when read-overlay is active */
+    overflow: hidden;
+}
 
 header {
     font-weight: 800;
@@ -149,6 +153,7 @@ hr {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     pointer-events: auto;
+    overflow: scroll;
 }
 
 .read-button.push {

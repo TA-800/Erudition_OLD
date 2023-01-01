@@ -2,15 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faPlusCircle,
-    faQuestion,
-    faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faQuestion, faSearch } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
-import Quill from "quill";
+import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import Texteditor from "./Texteditor";
 
 export default function StudyHub() {
@@ -18,18 +14,18 @@ export default function StudyHub() {
 
     const [modules, setModules] = useState([]);
     const [moduleNotes, setModuleNotes] = useState("");
+    const [selectedModule, setSelectedModule] = useState({});
     const [assignments, setAssignments] = useState([]);
     const [contact, setContact] = useState([]);
 
-    const [readingText, setReadingText] = useState("");
     const [readingPanel, setReadingPanel] = useState(false);
     const [editable, setEditable] = useState(false);
     const quillRef = useRef();
 
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
-    // const isFirstBreakpoint = useMediaPredicate("(max-width: 814px)");
 
+    // Fetch courses from backend
     useEffect(() => {
         fetch("http://127.0.0.1:8000/backend/courses/", {
             method: "GET",
@@ -42,11 +38,7 @@ export default function StudyHub() {
                 // If response is not 200 OK, throw an error
                 if (res.status !== 200) {
                     return res.json().then((json) => {
-                        throw new Error(
-                            `${res.status} ${res.statusText}: ${
-                                json.detail || json.username || json.password
-                            }`
-                        );
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail || json.username || json.password}`);
                     });
                 }
                 return res.json();
@@ -60,6 +52,12 @@ export default function StudyHub() {
                 logout();
             });
     }, []);
+
+    // // Debug console.log code
+    // // Checks when state changes
+    // useEffect(() => {
+    //     console.log("Selected module", selectedModule.module_name);
+    // }, [selectedModule]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -76,9 +74,7 @@ export default function StudyHub() {
                 // If response is not 200 OK, throw an error
                 if (res.status !== 200) {
                     return res.json().then((json) => {
-                        throw new Error(
-                            `${res.status} ${res.statusText} ${json.detail}`
-                        );
+                        throw new Error(`${res.status} ${res.statusText} ${json.detail}`);
                     });
                 }
                 return res.json();
@@ -96,6 +92,7 @@ export default function StudyHub() {
         const root = document.querySelector(".rp__content");
         root.classList.add(contentType);
         const comparison = contentType === "modules" ? "module" : contentType;
+
         // Hide other content
         outer: for (let child of root.childNodes) {
             for (let clName of child.classList) {
@@ -108,12 +105,15 @@ export default function StudyHub() {
             // If this code is reached, the child does not have the comparison class
             child.classList.add("hidden");
         }
+
         switch (contentType) {
             case "modules":
                 setModules(() =>
                     data.map((module, index) => {
                         if (index === 0) {
-                            setModuleNotes(module.module_notes);
+                            // Default module notes when page loads
+                            setModuleNotes(module.module_notesDelta);
+                            setSelectedModule(module);
                         }
                         return (
                             <p
@@ -121,12 +121,13 @@ export default function StudyHub() {
                                 key={module.id}
                                 onClick={(e) => {
                                     // Remove active class from other modules
-                                    e.currentTarget.parentNode.childNodes.forEach(
-                                        (child) =>
-                                            child.classList.remove("active")
-                                    );
+                                    e.currentTarget.parentNode.childNodes.forEach((child) => child.classList.remove("active"));
+                                    // Make the clicked module active
                                     e.currentTarget.classList.add("active");
-                                    setModuleNotes(module.module_notes);
+                                    // Set the module notes
+                                    setModuleNotes(module.module_notesDelta);
+                                    // Set the selected module
+                                    setSelectedModule(module);
                                 }}>
                                 {index + 1}. {module.module_name}
                             </p>
@@ -141,67 +142,58 @@ export default function StudyHub() {
         }
     }
 
-    // Quill editor
+    function FormattedNotes(props) {
+        if (!props.delta) return "Select a course to read module notes";
+        const delta = JSON.parse(props.delta);
+        const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
+
+        const html = converter.convert();
+
+        return <div dangerouslySetInnerHTML={{ __html: html }} />;
+    }
 
     return (
         <>
             {/* Overlay panel for reading and editing text */}
-            <div
-                className={
-                    readingPanel ? "read-overlay active" : "read-overlay"
-                }>
-                {editable ? (
-                    <Texteditor initial={moduleNotes} qref={quillRef} />
-                ) : (
-                    moduleNotes
-                )}
-                {/* Add edit button */}
+            <div className={readingPanel ? "read-overlay active" : "read-overlay"}>
+                {/* Reading or editing */}
+                {!editable ? <FormattedNotes delta={moduleNotes} /> : <Texteditor initial={moduleNotes} qref={quillRef} />}
+                {/* Edit button */}
                 <button
                     className="edit-button fixed top-2 right-2 btn-dark w-16 h-9 z-20"
                     onClick={(e) => {
                         e.currentTarget.classList.toggle("active");
                         setEditable(!editable);
                         if (editable) {
-                            // This code block dictates what happens when it goes from editable to not editable
+                            // What to do when going from editable to not editable
                             // Get the text from the editor
-                            const textFormatted =
-                                quillRef.current.getContents();
-                            const textContent = quillRef.current.getText();
+                            const delta = quillRef.current.getContents();
+                            const text = quillRef.current.getText();
 
-                            // Get the html for formatted text to displayed in other containers
-                            // const html_that_displays_formatted_text = Quill.import("delta", textFormatted);
-                            // document.getElementById('formatted-text-container').innerHTML = html;
-
-                            // Send the text to the backend
-                            // CHANGE, HARDCODED 1 TO THE MODULE ID FOR NOW
-                            fetch(
-                                `http://127.0.0.1:8000/backend/modules/${1}`,
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        Authorization:
-                                            "Bearer " +
-                                            localStorage.getItem("access"),
-                                    },
-                                    body: JSON.stringify({
-                                        formatted_text: JSON.stringify(textFormatted),
-                                        text_content: textContent,
-                                    }),
-                                }
-                            )
+                            // Send to backend
+                            fetch(`http://127.0.0.1:8000/backend/modules/${selectedModule.id}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: "Bearer " + localStorage.getItem("access"),
+                                },
+                                body: JSON.stringify({
+                                    delta: JSON.stringify(delta),
+                                    text: text,
+                                }),
+                            })
                                 .then((res) => res.json())
-                                .then((data) => console.log(data))
-                                .catch((err) => console.log(err));
-                            // fetch(connect_to_modules_endpoint, {
-                            // method: POST,
-                            // headers: { content-type + authorization },
-                            // body: json.stringify(textFormatted),
-                            // }.then(res => res.json()).then(data => console.log(data)).catch(err => console.log(err))
+                                .then((data) => {
+                                    // Set the module notes to the new text
+                                    setModuleNotes(data.module_notesDelta);
+                                    // Set the selected module to the new text
+                                    setSelectedModule(data);
+                                })
+                                .catch((err) => alert(err));
                         } else {
                         }
                     }}>
-                    Edit
+                    {!editable ? "Edit" : "Save"}
                 </button>
             </div>
             <header>Good evening, {user}.</header>
@@ -209,9 +201,8 @@ export default function StudyHub() {
                 className="m-0 text-cyan-800 max-w-2xl
                         mdc:text-sm mdc:max-w-sm
             ">
-                “Becoming Hokage does not mean people will acknowledge you, it
-                is only when you are acknowledged by people that you can become
-                Hokage” - Uchiha Itachi.
+                “Becoming Hokage does not mean people will acknowledge you, it is only when you are acknowledged by people that
+                you can become Hokage” - Uchiha Itachi.
             </p>
             <hr />
             <br />
@@ -224,11 +215,9 @@ export default function StudyHub() {
                             <li
                                 key={course.id}
                                 onClick={(e) => {
-                                    e.currentTarget.parentNode.childNodes.forEach(
-                                        (child) => {
-                                            child.classList.remove("active");
-                                        }
-                                    );
+                                    e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                        child.classList.remove("active");
+                                    });
                                     e.currentTarget.classList.add("active");
                                     fetchData(course.id);
                                 }}>
@@ -237,6 +226,7 @@ export default function StudyHub() {
                         ))}
                     </ul>
                 </div>
+
                 {/* Right panel */}
                 <div className="rp">
                     {/* Utility bar */}
@@ -248,22 +238,17 @@ export default function StudyHub() {
                                 placeholder="Search"
                                 className="bg-cyan-800 rounded-lg p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none"
                                 style={{
-                                    boxShadow:
-                                        "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
+                                    boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
                                 }}
                             />
-                            <FontAwesomeIcon
-                                icon={faSearch}
-                                className="absolute top-1/3 left-2 text-cyan-100 opacity-50"
-                            />
+                            <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
                         </div>
                         {/* Add button */}
                         <button
                             className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2
                             flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
                             style={{
-                                boxShadow:
-                                    "inset 0px -2px 0px rgba(0,0,0,0.25)",
+                                boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
@@ -273,8 +258,7 @@ export default function StudyHub() {
                             className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center
                         "
                             style={{
-                                boxShadow:
-                                    "inset 0px -2px 0px rgba(0,0,0,0.25)",
+                                boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
                             <option value="modules">Modules</option>
                             <option value="assignments">Assgnmts</option>
@@ -288,15 +272,16 @@ export default function StudyHub() {
                             {modules}
                         </div>
                         <div className="module-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
-                            {moduleNotes}
+                            <FormattedNotes delta={moduleNotes} />
                             <button
                                 className="read-button absolute bottom-2 right-2 btn-dark w-16 h-9 z-20"
                                 style={{
-                                    display:
-                                        moduleNotes === "" ? "none" : "block",
+                                    display: moduleNotes === "" ? "none" : "block",
                                 }}
                                 onClick={(e) => {
                                     e.currentTarget.classList.toggle("push");
+                                    // Disable scrolling for the body
+                                    document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);
                                 }}>
                                 Read

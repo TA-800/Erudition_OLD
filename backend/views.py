@@ -67,13 +67,13 @@ def moduleList(request, course_code):
         return Response(serializer.data)
     elif request.method == 'POST':
         try:
-            formatted_text = request.data["formatted_text"]
-            text_content = request.data["text_content"]
+            delta = request.data["delta"]
+            text = request.data["text"]
             # The module to update
             module = Module.objects.get(id=course_code)
             # Update the module
-            module.module_notesFormatted=formatted_text
-            module.module_notesText=text_content
+            module.module_notesDelta=delta
+            module.module_notes=text
             module.save()
             # Return updated module
             serializer = ModuleSerializer(module, many=False)

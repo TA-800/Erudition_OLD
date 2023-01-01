@@ -1,0 +1,393 @@
+/* Make Open Sans the main font */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:all&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-dark {
+    @apply bg-[#032830] text-cyan-100 rounded-md;
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    margin: 0;
+    color: #032830;
+    /* Background pattern */
+    background-color: #0dcaf0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23ffffff' fill-opacity='0.3' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    /* Disable scrolling */
+    overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Navigation bar */
+.navbar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 6.25rem; /* 100px */
+    width: 100%;
+    gap: 2.1875rem; /* 35px */
+    z-index: 9;
+
+    background-color: #6edff6;
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.navbar > li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background-color: #cff4fc;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 1.125rem; /* 18px */
+    color: #087990;
+    height: 3rem; /* 48px */
+    width: 10rem; /* 160px */
+    transition: 0.15s ease;
+}
+
+.navbar > li:first-child {
+    margin-left: 8vw;
+    background-color: transparent;
+    box-shadow: none;
+    color: #032830;
+    font-weight: 700;
+    font-size: 2.25rem; /* 36px */
+    /* Fit height and width */
+    height: fit-content;
+    width: fit-content;
+}
+
+.navbar > li:nth-child(2) {
+    /* Push all the buttons to the very right */
+    margin-left: auto;
+}
+
+.navbar > li:last-child {
+    margin-right: 8vw;
+}
+
+.navbar > .active {
+    font-weight: 700;
+    color: #032830;
+    background-color: #a4e6f4;
+    border: 2.5px solid rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+}
+
+/* Responsive counterparts */
+.navbar-icon {
+    display: none;
+}
+
+.mini-navbar {
+    display: none;
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* Main content underneath navigation bar */
+/* Does not include colored background or the pattern */
+main {
+    padding: 6.25rem 8vw; /* 100px */
+    /* Set height */
+    height: 100vh;
+    /* Enable scrolling */
+    overflow-y: scroll;
+}
+
+header {
+    font-weight: 800;
+    font-size: 4.5rem; /* 72px */
+    color: #032830;
+    text-transform: uppercase;
+    letter-spacing: 0.03125rem;
+}
+
+hr {
+    border: 1.5px solid rgba(0, 0, 0, 0.125);
+}
+
+.read-overlay {
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(207, 244, 252, 1);
+    opacity: 0; /* Only hides text */
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 13;
+    padding: 6.25rem 8vw; /* 100px */
+
+    transition: 0.15s ease;
+}
+
+.read-overlay.active {
+    background-color: rgba(0, 0, 0, 0.75);
+    opacity: 1;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+}
+
+.read-button.push {
+    position: fixed;
+    box-shadow: -0px -0px 0px 0px rgba(0, 0, 0, 0.2);
+    border: 2.5px solid rgb(255, 255, 255, 0.25);
+}
+
+/* Presets */
+.lp__title {
+    font-weight: 700;
+    font-size: 1.875rem; /* 30px */
+    text-transform: uppercase;
+    margin: 0.5rem 0;
+}
+
+.lp {
+    background: #0a97b4;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    height: fit-content;
+    padding-bottom: 1.5rem; /* 24px */
+
+    /* Center the list container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Actual list container */
+.lp > .lp__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* 24px */
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+}
+
+.lp > .lp__list > li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3.5rem;
+    width: 100%;
+
+    background-color: #3dd5f3;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+
+    transition: 0.25s ease;
+}
+.lp > .lp__list > li.active {
+    background: #49cee9;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+
+    font-weight: 800;
+    font-size: larger;
+    letter-spacing: 0.5px;
+}
+
+/* Courses panel */
+.courses {
+    display: grid;
+    grid-template-columns: 1fr 3fr; /* 2 columns */
+    gap: 10px;
+}
+
+/* Complete right panel wrapper */
+.rp {
+    background: #087990;
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    height: fit-content; /* 960px */
+    padding-bottom: 1rem; /* 16px */
+
+    /* Splitting of utility bar and content panel */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Right panel content wrapper */
+.rp__content {
+    height: 100%;
+    width: 100%;
+}
+
+.rp__content.hidden {
+    display: none;
+    padding: 0;
+}
+
+/* Modules */
+.rp__content.modules {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 12px;
+    padding: 0 12px;
+}
+.rp__content.modules .module {
+    font-weight: normal;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+.rp__content.modules .module:hover {
+    letter-spacing: 0.25px;
+}
+.rp__content.modules .module.active {
+    font-weight: bold;
+    letter-spacing: 0.25px;
+}
+
+/* Responsive */
+/* Still a large screen */
+@media (max-width: 814px) {
+    /* width <= 814px */
+    main {
+        padding: 5.875rem 8vw;
+    }
+
+    header {
+        font-size: 2.25rem; /* 36px */
+        letter-spacing: normal;
+    }
+
+    .courses {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar {
+        display: none;
+    }
+
+    .mini-navbar-top {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4.25rem; /* 68px */
+        background-color: #6edff6;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        z-index: 12;
+
+        transition: 0.25s ease;
+    }
+
+    .mini-navbar-top.active {
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+    }
+
+    /* Add the ERUDITION title logo */
+    .mini-navbar-top::after {
+        content: "ERUDITION";
+        font-weight: 700;
+        color: #032830;
+        position: fixed;
+        top: 0.9375rem; /* 15px */
+        left: 2rem;
+        font-size: 1.5rem;
+        /* navbar top = 68px, font-size = 24px  */
+    }
+
+    .mini-navbar {
+        position: fixed;
+        top: -5rem;
+        /* Push it off the screen */
+        left: 0;
+        height: 4.5rem;
+        /* 72px */
+        width: 100%;
+        background-color: #6edff6;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 11;
+
+        transition: 0.25s ease;
+    }
+
+    /* Make the navbar come down */
+    .mini-navbar.active {
+        top: 4.25rem;
+        /* 64px */
+    }
+
+    .mini-navbar > li {
+        font-size: 1rem;
+        /* 16px */
+        height: 3rem;
+        /* 48px */
+        min-width: calc(5rem + 10vw);
+        background-color: #cff4fc;
+        color: #087990;
+        border-radius: 10px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+
+        transition: 0.15s ease;
+    }
+
+    .mini-navbar > li.active {
+        font-weight: 700;
+        color: #032830;
+        background-color: #a4e6f4;
+        border: 2.5px solid rgba(0, 0, 0, 0.1);
+        box-shadow: none;
+    }
+
+    /* Darken the screen when the mini-navbar is active */
+    .overlay {
+        background-color: rgba(0, 0, 0, 0);
+        position: fixed;
+        top: 68px; /* 68px + 72px */
+        left: 0;
+        height: calc(100vh - 68px);
+        width: 100vw;
+        z-index: 10;
+
+        /* VERY IMPORTANT, make this div non-interactable */
+        pointer-events: none;
+
+        transition: 0.25s ease;
+    }
+
+    .overlay__active {
+        background-color: rgba(0, 0, 0, 0.75);
+        /* When overlay active, user can't click on anything */
+        pointer-events: auto;
+    }
+    .rp__content.modules {
+        grid-template-columns: 1fr;
+    }
+}

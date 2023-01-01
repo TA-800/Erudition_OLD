@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
+// Components
+import Texteditor from "./Texteditor";
 
 export default function StudyHub() {
     const [courses, setCourses] = useState([]);
@@ -16,6 +18,7 @@ export default function StudyHub() {
 
     const [readingText, setReadingText] = useState("");
     const [readingPanel, setReadingPanel] = useState(false);
+    const [editable, setEditable] = useState(false);
 
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
@@ -132,6 +135,8 @@ export default function StudyHub() {
         }
     }
 
+    // Quill editor
+
     return (
         <>
             {/* Overlay panel for reading and editing text */}
@@ -139,7 +144,16 @@ export default function StudyHub() {
                 className={
                     readingPanel ? "read-overlay active" : "read-overlay"
                 }>
-                {moduleNotes}
+                {editable ? <Texteditor initial={moduleNotes} /> : moduleNotes}
+                {/* Add edit button */}
+                <button
+                    className="edit-button fixed top-2 right-2 btn-dark w-16 h-9 z-20"
+                    onClick={(e) => {
+                        e.currentTarget.classList.toggle("active");
+                        setEditable(!editable);
+                    }}>
+                    Edit
+                </button>
             </div>
             <header>Good evening, {user}.</header>
             <p
@@ -229,8 +243,6 @@ export default function StudyHub() {
                             <button
                                 className="read-button absolute bottom-2 right-2 btn-dark w-16 h-9 z-20"
                                 style={{
-                                    boxShadow:
-                                        "-2px -2px 5px 2px rgba(0,0,0,0.2)",
                                     display:
                                         moduleNotes === "" ? "none" : "block",
                                 }}

@@ -153,7 +153,12 @@ hr {
 
 .read-button.push {
     position: fixed;
-    box-shadow: -0px -0px 0px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
+    border: 2.5px solid rgb(255, 255, 255, 0.25);
+}
+
+.edit-button.active {
+    box-shadow: none;
     border: 2.5px solid rgb(255, 255, 255, 0.25);
 }
 

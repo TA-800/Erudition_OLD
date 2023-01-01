@@ -27,6 +27,7 @@ class Module(models.Model):
     module_user = models.ForeignKey(User, on_delete=models.CASCADE) # "ta800"
     module_name = models.CharField(max_length=64) # Introduction to Data Structures
     module_notes = models.TextField(blank=True)
+    module_notesFormatted = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.module_course.course_code}: {self.module_name}"

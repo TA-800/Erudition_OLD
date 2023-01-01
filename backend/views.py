@@ -55,15 +55,32 @@ def courseList(request):
     serializer = CourseSerializer(courses, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def moduleList(request, course_code):
-    modules = Module.objects.filter(
-        module_user=User.objects.get(username=request.user),
-        module_course=Course.objects.get(id=course_code)
-    )
-    serializer = ModuleSerializer(modules, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        modules = Module.objects.filter(
+            module_user=User.objects.get(username=request.user),
+            module_course=Course.objects.get(id=course_code)
+        )
+        serializer = ModuleSerializer(modules, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        try:
+            formatted_text = request.data["formatted_text"]
+            text_content = request.data["text_content"]
+            # The module to update
+            module = Module.objects.get(id=course_code)
+            # Update the module
+            module.module_notesFormatted=formatted_text
+            module.module_notesText=text_content
+            module.save()
+            # Return updated module
+            serializer = ModuleSerializer(module, many=False)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"})
+
 
 @api_view(['GET'])
 def assignmentList(request):

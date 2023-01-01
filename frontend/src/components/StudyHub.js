@@ -2,10 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+    faPlusCircle,
+    faQuestion,
+    faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
+import Quill from "quill";
 import Texteditor from "./Texteditor";
 
 export default function StudyHub() {
@@ -19,6 +24,7 @@ export default function StudyHub() {
     const [readingText, setReadingText] = useState("");
     const [readingPanel, setReadingPanel] = useState(false);
     const [editable, setEditable] = useState(false);
+    const quillRef = useRef();
 
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
@@ -144,13 +150,56 @@ export default function StudyHub() {
                 className={
                     readingPanel ? "read-overlay active" : "read-overlay"
                 }>
-                {editable ? <Texteditor initial={moduleNotes} /> : moduleNotes}
+                {editable ? (
+                    <Texteditor initial={moduleNotes} qref={quillRef} />
+                ) : (
+                    moduleNotes
+                )}
                 {/* Add edit button */}
                 <button
                     className="edit-button fixed top-2 right-2 btn-dark w-16 h-9 z-20"
                     onClick={(e) => {
                         e.currentTarget.classList.toggle("active");
                         setEditable(!editable);
+                        if (editable) {
+                            // This code block dictates what happens when it goes from editable to not editable
+                            // Get the text from the editor
+                            const textFormatted =
+                                quillRef.current.getContents();
+                            const textContent = quillRef.current.getText();
+
+                            // Get the html for formatted text to displayed in other containers
+                            // const html_that_displays_formatted_text = Quill.import("delta", textFormatted);
+                            // document.getElementById('formatted-text-container').innerHTML = html;
+
+                            // Send the text to the backend
+                            // CHANGE, HARDCODED 1 TO THE MODULE ID FOR NOW
+                            fetch(
+                                `http://127.0.0.1:8000/backend/modules/${1}`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        Authorization:
+                                            "Bearer " +
+                                            localStorage.getItem("access"),
+                                    },
+                                    body: JSON.stringify({
+                                        formatted_text: JSON.stringify(textFormatted),
+                                        text_content: textContent,
+                                    }),
+                                }
+                            )
+                                .then((res) => res.json())
+                                .then((data) => console.log(data))
+                                .catch((err) => console.log(err));
+                            // fetch(connect_to_modules_endpoint, {
+                            // method: POST,
+                            // headers: { content-type + authorization },
+                            // body: json.stringify(textFormatted),
+                            // }.then(res => res.json()).then(data => console.log(data)).catch(err => console.log(err))
+                        } else {
+                        }
                     }}>
                     Edit
                 </button>

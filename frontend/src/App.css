@@ -171,24 +171,7 @@ hr {
 .read-overlay.active .formatted-text-wrapper {
     overflow: visible;
 }
-.read-button::after {
-    content: "Read";
-}
-.read-button.push {
-    position: fixed;
-    box-shadow: none;
-    border: 2px solid rgb(255, 255, 255, 0.25);
-}
-.read-button.push::after {
-    content: "Close";
-}
-.edit-button.active {
-    box-shadow: none;
-}
-.edit-button.active::after {
-    content: "Save";
-}
-.formatted-text-wrapper ul {
+.formatted-text-wrapper {
     list-style: disc outside; /* default */
     padding-left: 16px;
 }
@@ -232,28 +215,6 @@ hr {
     justify-content: center;
     width: 80%;
 }
-.lp > .lp__list > li {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 3.5rem;
-    width: 100%;
-
-    background-color: #3dd5f3;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
-
-    transition: 0.25s ease;
-}
-.lp > .lp__list > li.active {
-    background: #49cee9;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    box-shadow: none;
-
-    font-weight: 800;
-    font-size: larger;
-    letter-spacing: 0.5px;
-}
 
 /* Courses panel */
 .courses {
@@ -292,18 +253,6 @@ hr {
     gap: 12px;
     padding: 0 12px;
 }
-.rp__content.modules .module {
-    font-weight: normal;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-.rp__content.modules .module:hover {
-    letter-spacing: 0.25px;
-}
-.rp__content.modules .module.active {
-    font-weight: bold;
-    letter-spacing: 0.25px;
-}
 /* .rp__content .module-notes-wrapper {
     position: relative;
 
@@ -320,12 +269,6 @@ hr {
     header {
         font-size: 2.25rem; /* 36px */
         letter-spacing: normal;
-    }
-    .read-button.push::after {
-        content: "";
-    }
-    .edit-button.active::after {
-        content: "";
     }
     .courses {
         grid-template-columns: 1fr;

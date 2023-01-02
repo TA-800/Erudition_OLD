@@ -8,6 +8,8 @@ import AuthContext from "../context/AuthContext";
 // Components
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import Texteditor from "./Texteditor";
+// Other features
+import { twMerge } from "tailwind-merge";
 
 export default function StudyHub() {
     const [courses, setCourses] = useState([]);
@@ -23,6 +25,27 @@ export default function StudyHub() {
 
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
+
+    // CSS style classes
+    const CSSclasses = {
+        courseButton: {
+            base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
+            active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
+        },
+        moduleButton: {
+            base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.25px]",
+            active: "font-bold tracking-[0.25px]",
+        },
+        editButton: {
+            base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
+            active: "shadow-none after:content-['Save'] mdc:after:content-[]",
+        },
+        readButton: {
+            base: "absolute bottom-2 right-5 btn-dark w-20 h-9 z-20 flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
+            active: "fixed shadow-none border-2 border-white border-opacity-25 after:content-['Close'] mdc:after:content-[]",
+        },
+    };
+    // <div className="" />;
 
     // Fetch courses from backend
     useEffect(() => {
@@ -93,12 +116,11 @@ export default function StudyHub() {
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
         root.classList.add(contentType);
-        const comparison = contentType === "modules" ? "module" : contentType;
 
         // Hide other content
         outer: for (let child of root.childNodes) {
             for (let clName of child.classList) {
-                if (clName.includes(comparison)) {
+                if (clName.includes(contentType)) {
                     // This continue forces move onto next child
                     continue outer;
                 }
@@ -146,10 +168,10 @@ export default function StudyHub() {
             {/* Edit button */}
             {readingPanel && (
                 <button
-                    className="edit-button fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25
-                    flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]"
-                    onClick={(e) => {
-                        e.currentTarget.classList.toggle("active");
+                    className={
+                        editable ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : CSSclasses.editButton.base
+                    }
+                    onClick={() => {
                         setEditable(!editable);
                         if (editable) {
                             // What to do when going from editable to not editable
@@ -210,12 +232,16 @@ export default function StudyHub() {
                     <ul className="lp__list">
                         {courses.map((course) => (
                             <li
+                                className={CSSclasses.courseButton.base}
                                 key={course.id}
                                 onClick={(e) => {
                                     e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                        child.classList.remove("active");
+                                        child.className = CSSclasses.courseButton.base;
                                     });
-                                    e.currentTarget.classList.add("active");
+                                    e.currentTarget.className = twMerge(
+                                        CSSclasses.courseButton.base,
+                                        CSSclasses.courseButton.active
+                                    );
                                     fetchData(course.id);
                                 }}>
                                 {course.course_code}
@@ -266,37 +292,40 @@ export default function StudyHub() {
                     {/* Content panel */}
                     <div className="rp__content">
                         {/* Modules */}
-                        <div className="module-wrapper flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
-                            {modules.map((module, index) => {
-                                return (
-                                    <p
-                                        className="module"
-                                        key={module.id}
-                                        onClick={(e) => {
-                                            e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                                child.classList.remove("active");
-                                            });
-                                            e.currentTarget.classList.add("active");
-                                            setSelectedModule(module);
-                                        }}>
-                                        {index + 1}. {module.module_name}
-                                    </p>
-                                );
-                            })}
+                        <div className="modules flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
+                            {modules.map((module, index) => (
+                                <p
+                                    className={CSSclasses.moduleButton.base}
+                                    key={module.id}
+                                    onClick={(e) => {
+                                        e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                            child.className = CSSclasses.moduleButton.base;
+                                        });
+                                        e.currentTarget.className = twMerge(
+                                            CSSclasses.moduleButton.base,
+                                            CSSclasses.moduleButton.active
+                                        );
+                                        setSelectedModule(module);
+                                    }}>
+                                    {index + 1}. {module.module_name}
+                                </p>
+                            ))}
                         </div>
                         {/* Module notes */}
-                        <div className="module-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
+                        <div className="modules-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
                             <FormattedNotes delta={selectedModule.module_notesDelta} />
 
                             {/* Read button */}
                             <button
-                                className={`read-button absolute bottom-2 right-5 btn-dark w-20 h-9 z-20
-                                flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]`}
+                                className={
+                                    readingPanel
+                                        ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)
+                                        : CSSclasses.readButton.base
+                                }
                                 style={{
-                                    display: selectedModule.module_name == undefined ? "none" : "flex",
+                                    display: selectedModule.module_name === undefined ? "none" : "flex",
                                 }}
-                                onClick={(e) => {
-                                    e.currentTarget.classList.toggle("push");
+                                onClick={() => {
                                     // Disable scrolling for the body
                                     document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);

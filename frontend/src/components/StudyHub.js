@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle, faQuestion, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBookOpen, faCheck, faClose, faEdit, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
@@ -127,7 +127,9 @@ export default function StudyHub() {
 
         const html = converter.convert();
 
-        return <div className="formatted-text-wrapper" dangerouslySetInnerHTML={{ __html: html }} />;
+        return (
+            <div className="formatted-text-wrapper max-h-[40rem] overflow-y-auto" dangerouslySetInnerHTML={{ __html: html }} />
+        );
     }
 
     return (
@@ -140,9 +142,12 @@ export default function StudyHub() {
                 ) : (
                     <Texteditor initial={selectedModule.module_notesDelta} qref={quillRef} />
                 )}
-                {/* Edit button */}
+            </div>
+            {/* Edit button */}
+            {readingPanel && (
                 <button
-                    className="edit-button fixed top-2 right-2 btn-dark w-16 h-9 z-20"
+                    className="edit-button fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25
+                    flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]"
                     onClick={(e) => {
                         e.currentTarget.classList.toggle("active");
                         setEditable(!editable);
@@ -182,12 +187,11 @@ export default function StudyHub() {
                                     });
                                 })
                                 .catch((err) => alert(err));
-                        } else {
                         }
                     }}>
-                    {!editable ? "Edit" : "Save"}
+                    {!editable ? <FontAwesomeIcon icon={faEdit} /> : <FontAwesomeIcon icon={faCheck} />}
                 </button>
-            </div>
+            )}
 
             <header>Good evening, {user}.</header>
             <p
@@ -280,12 +284,16 @@ export default function StudyHub() {
                                 );
                             })}
                         </div>
+                        {/* Module notes */}
                         <div className="module-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
                             <FormattedNotes delta={selectedModule.module_notesDelta} />
+
+                            {/* Read button */}
                             <button
-                                className="read-button absolute bottom-2 right-2 btn-dark w-16 h-9 z-20"
+                                className={`read-button absolute bottom-2 right-5 btn-dark w-20 h-9 z-20
+                                flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]`}
                                 style={{
-                                    display: selectedModule.module_name == undefined ? "none" : "block",
+                                    display: selectedModule.module_name == undefined ? "none" : "flex",
                                 }}
                                 onClick={(e) => {
                                     e.currentTarget.classList.toggle("push");
@@ -293,7 +301,7 @@ export default function StudyHub() {
                                     document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);
                                 }}>
-                                {readingPanel ? "Close" : "Read"}
+                                {readingPanel ? <FontAwesomeIcon icon={faClose} /> : <FontAwesomeIcon icon={faBookOpen} />}
                             </button>
                         </div>
 

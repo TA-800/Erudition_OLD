@@ -27,6 +27,16 @@ body {
     box-sizing: border-box;
 }
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(190, 95%, 30%) hsl(191, 95%, 10%, 0.75);
+}
+
+a {
+    text-decoration: underline;
+    color: lightblue;
+}
+
 /* Navigation bar */
 .navbar {
     display: flex;
@@ -45,7 +55,6 @@ body {
     /* offset-x | offset-y | blur-radius | spread-radius | color */
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
-
 .navbar > li {
     display: flex;
     align-items: center;
@@ -60,7 +69,6 @@ body {
     width: 10rem; /* 160px */
     transition: 0.15s ease;
 }
-
 .navbar > li:first-child {
     margin-left: 8vw;
     background-color: transparent;
@@ -72,16 +80,13 @@ body {
     height: fit-content;
     width: fit-content;
 }
-
 .navbar > li:nth-child(2) {
     /* Push all the buttons to the very right */
     margin-left: auto;
 }
-
 .navbar > li:last-child {
     margin-right: 8vw;
 }
-
 .navbar > .active {
     font-weight: 700;
     color: #032830;
@@ -94,11 +99,9 @@ body {
 .navbar-icon {
     display: none;
 }
-
 .mini-navbar {
     display: none;
 }
-
 .overlay {
     background-color: rgba(0, 0, 0, 0);
 }
@@ -116,7 +119,6 @@ main.scroll-lock {
     /* Disable scrolling when read-overlay is active */
     overflow: hidden;
 }
-
 header {
     font-weight: 800;
     font-size: 4.5rem; /* 72px */
@@ -124,56 +126,61 @@ header {
     text-transform: uppercase;
     letter-spacing: 0.03125rem;
 }
-
 hr {
     border: 1.5px solid rgba(0, 0, 0, 0.125);
 }
 
+/* Reading & editing module notes */
 .read-overlay {
     background-color: rgba(0, 0, 0, 0);
     color: rgba(207, 244, 252, 1);
     opacity: 0; /* Only hides text */
-    -webkit-backdrop-filter: blur(0px);
     backdrop-filter: blur(0px);
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    pointer-events: none;
     z-index: 13;
     padding: 6.25rem 8vw; /* 100px */
+    pointer-events: none;
 
-    transition: 0.15s ease;
+    transition: 0.25s ease;
 }
-
 .read-overlay.active {
     background-color: rgba(0, 0, 0, 0.85);
     opacity: 1;
-    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     pointer-events: auto;
     overflow: scroll;
 }
-
+.read-overlay.active .formatted-text-wrapper {
+    overflow: visible;
+}
+.read-button::after {
+    content: "Read";
+}
 .read-button.push {
     position: fixed;
     box-shadow: none;
-    border: 2.5px solid rgb(255, 255, 255, 0.25);
+    border: 2px solid rgb(255, 255, 255, 0.25);
 }
-
+.read-button.push::after {
+    content: "Close";
+}
 .edit-button.active {
     box-shadow: none;
-    border: 2.5px solid rgb(255, 255, 255, 0.25);
 }
-
+.edit-button.active::after {
+    content: "Save";
+}
 .formatted-text-wrapper ul {
     list-style: disc outside; /* default */
-    padding-left: 15px;
+    padding-left: 16px;
 }
 .formatted-text-wrapper ol {
     list-style: decimal outside; /* default */
-    padding-left: 15px;
+    padding-left: 18px;
 }
 
 /* Quill Editor styling */
@@ -189,7 +196,6 @@ hr {
     text-transform: uppercase;
     margin: 0.5rem 0;
 }
-
 .lp {
     background: #0a97b4;
     box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -212,7 +218,6 @@ hr {
     justify-content: center;
     width: 80%;
 }
-
 .lp > .lp__list > li {
     display: flex;
     justify-content: center;
@@ -261,7 +266,6 @@ hr {
     height: 100%;
     width: 100%;
 }
-
 .rp__content.hidden {
     display: none;
     padding: 0;
@@ -286,6 +290,10 @@ hr {
     font-weight: bold;
     letter-spacing: 0.25px;
 }
+/* .rp__content .module-notes-wrapper {
+    position: relative;
+
+} */
 
 /* Responsive */
 /* Still a large screen */
@@ -299,11 +307,15 @@ hr {
         font-size: 2.25rem; /* 36px */
         letter-spacing: normal;
     }
-
+    .read-button.push::after {
+        content: "";
+    }
+    .edit-button.active::after {
+        content: "";
+    }
     .courses {
         grid-template-columns: 1fr;
     }
-
     .navbar {
         display: none;
     }
@@ -321,7 +333,6 @@ hr {
 
         transition: 0.25s ease;
     }
-
     .mini-navbar-top.active {
         box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
     }
@@ -337,7 +348,6 @@ hr {
         font-size: 1.5rem;
         /* navbar top = 68px, font-size = 24px  */
     }
-
     .mini-navbar {
         position: fixed;
         top: -5rem;
@@ -363,7 +373,6 @@ hr {
         top: 4.25rem;
         /* 64px */
     }
-
     .mini-navbar > li {
         font-size: 1rem;
         /* 16px */
@@ -382,7 +391,6 @@ hr {
 
         transition: 0.15s ease;
     }
-
     .mini-navbar > li.active {
         font-weight: 700;
         color: #032830;
@@ -406,7 +414,6 @@ hr {
 
         transition: 0.25s ease;
     }
-
     .overlay__active {
         background-color: rgba(0, 0, 0, 0.75);
         /* When overlay active, user can't click on anything */

@@ -225,7 +225,7 @@ export default function StudyHub() {
             </p>
             <hr />
             <br />
-            <section className="courses">
+            <article className="courses">
                 {/* Left panel */}
                 <div className="lp">
                     <p className="lp__title">Courses</p>
@@ -341,7 +341,7 @@ export default function StudyHub() {
                         <div className="contact-wrapper">{contact}</div>
                     </div>
                 </div>
-            </section>
+            </article>
         </>
     );
 }

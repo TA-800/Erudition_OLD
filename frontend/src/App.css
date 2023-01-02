@@ -144,7 +144,7 @@ hr {
     border: 1.5px solid rgba(0, 0, 0, 0.125);
 }
 
-/* Reading & editing module notes */
+/* Reading & editing module notes background */
 .read-overlay {
     background-color: rgba(0, 0, 0, 0);
     color: rgba(207, 244, 252, 1);
@@ -171,7 +171,9 @@ hr {
 .read-overlay.active .formatted-text-wrapper {
     overflow: visible;
 }
-.formatted-text-wrapper {
+
+/* Module notes formatted-text-wrapper */
+.formatted-text-wrapper ul {
     list-style: disc outside; /* default */
     padding-left: 16px;
 }
@@ -253,10 +255,6 @@ hr {
     gap: 12px;
     padding: 0 12px;
 }
-/* .rp__content .module-notes-wrapper {
-    position: relative;
-
-} */
 
 /* Responsive */
 /* Still a large screen */
@@ -366,7 +364,7 @@ hr {
         width: 100vw;
         z-index: 10;
 
-        /* VERY IMPORTANT, make this div non-interactable */
+        /* VERY IMPORTANT, to make this div non-interactable */
         pointer-events: none;
 
         transition: 0.25s ease;

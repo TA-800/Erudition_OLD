@@ -34,7 +34,7 @@ export default function StudyHub() {
         },
         moduleButton: {
             base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.25px]",
-            active: "font-bold tracking-[0.25px]",
+            active: "font-semibold tracking-[0.25px]",
         },
         editButton: {
             base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
@@ -43,6 +43,10 @@ export default function StudyHub() {
         readButton: {
             base: "absolute bottom-2 right-5 btn-dark w-20 h-9 z-20 flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
             active: "fixed shadow-none border-2 border-white border-opacity-25 after:content-['Close'] mdc:after:content-[]",
+        },
+        readOverlay: {
+            base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
+            active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
         },
     };
     // <div className="" />;
@@ -150,14 +154,22 @@ export default function StudyHub() {
         const html = converter.convert();
 
         return (
-            <div className="formatted-text-wrapper max-h-[40rem] overflow-y-auto" dangerouslySetInnerHTML={{ __html: html }} />
+            <div
+                className={"formatted-text-wrapper max-h-[40rem]" + (readingPanel ? " overflow-visible" : " overflow-y-auto")}
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
         );
     }
 
     return (
         <>
             {/* Overlay panel for reading and editing text */}
-            <div className={readingPanel ? "read-overlay active" : "read-overlay"}>
+            <div
+                className={
+                    readingPanel
+                        ? twMerge(CSSclasses.readOverlay.base, CSSclasses.readOverlay.active)
+                        : CSSclasses.readOverlay.base
+                }>
                 {/* Reading or editing */}
                 {!editable ? (
                     <FormattedNotes delta={selectedModule.module_notesDelta} />

@@ -13,7 +13,6 @@ export default function StudyHub() {
     const [courses, setCourses] = useState([]);
 
     const [modules, setModules] = useState([]);
-    const [moduleNotes, setModuleNotes] = useState("");
     const [selectedModule, setSelectedModule] = useState({});
     const [assignments, setAssignments] = useState([]);
     const [contact, setContact] = useState([]);
@@ -56,7 +55,10 @@ export default function StudyHub() {
     // // Debug console.log code
     // // Checks when state changes
     // useEffect(() => {
-    //     console.log("Selected module", selectedModule.module_name);
+    //     console.table({
+    //         name: selectedModule.module_name,
+    //         notes: selectedModule.module_notesDelta,
+    //     });
     // }, [selectedModule]);
 
     function fetchData(course_code) {
@@ -108,32 +110,8 @@ export default function StudyHub() {
 
         switch (contentType) {
             case "modules":
-                setModules(() =>
-                    data.map((module, index) => {
-                        if (index === 0) {
-                            // Default module notes when page loads
-                            setModuleNotes(module.module_notesDelta);
-                            setSelectedModule(module);
-                        }
-                        return (
-                            <p
-                                className="module"
-                                key={module.id}
-                                onClick={(e) => {
-                                    // Remove active class from other modules
-                                    e.currentTarget.parentNode.childNodes.forEach((child) => child.classList.remove("active"));
-                                    // Make the clicked module active
-                                    e.currentTarget.classList.add("active");
-                                    // Set the module notes
-                                    setModuleNotes(module.module_notesDelta);
-                                    // Set the selected module
-                                    setSelectedModule(module);
-                                }}>
-                                {index + 1}. {module.module_name}
-                            </p>
-                        );
-                    })
-                );
+                // Save the modules to state
+                setModules(data);
                 break;
             case "assignments":
                 break;
@@ -157,7 +135,11 @@ export default function StudyHub() {
             {/* Overlay panel for reading and editing text */}
             <div className={readingPanel ? "read-overlay active" : "read-overlay"}>
                 {/* Reading or editing */}
-                {!editable ? <FormattedNotes delta={moduleNotes} /> : <Texteditor initial={moduleNotes} qref={quillRef} />}
+                {!editable ? (
+                    <FormattedNotes delta={selectedModule.module_notesDelta} />
+                ) : (
+                    <Texteditor initial={selectedModule.module_notesDelta} qref={quillRef} />
+                )}
                 {/* Edit button */}
                 <button
                     className="edit-button fixed top-2 right-2 btn-dark w-16 h-9 z-20"
@@ -184,10 +166,22 @@ export default function StudyHub() {
                             })
                                 .then((res) => res.json())
                                 .then((data) => {
-                                    // Set the module notes to the new text
-                                    setModuleNotes(data.module_notesDelta);
                                     // Set the selected module to the new text
                                     setSelectedModule(data);
+                                    // Also update the modules in state
+                                    console.log(modules);
+                                    console.table(modules);
+                                    setModules(() => {
+                                        // Create a new array-object from the old one
+                                        const newModules = modules.map((module) => {
+                                            // For each module, return the same module unless it is the one that was edited
+                                            if (module.id === data.id) {
+                                                return data;
+                                            }
+                                            return module;
+                                        });
+                                        return newModules;
+                                    });
                                 })
                                 .catch((err) => alert(err));
                         } else {
@@ -196,6 +190,7 @@ export default function StudyHub() {
                     {!editable ? "Edit" : "Save"}
                 </button>
             </div>
+
             <header>Good evening, {user}.</header>
             <p
                 className="m-0 text-cyan-800 max-w-2xl
@@ -265,18 +260,34 @@ export default function StudyHub() {
                             <option value="contact">Contact</option>
                         </select>
                     </div>
+
                     {/* Content panel */}
                     <div className="rp__content">
                         {/* Modules */}
                         <div className="module-wrapper flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
-                            {modules}
+                            {modules.map((module, index) => {
+                                return (
+                                    <p
+                                        className="module"
+                                        key={module.id}
+                                        onClick={(e) => {
+                                            e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                                child.classList.remove("active");
+                                            });
+                                            e.currentTarget.classList.add("active");
+                                            setSelectedModule(module);
+                                        }}>
+                                        {index + 1}. {module.module_name}
+                                    </p>
+                                );
+                            })}
                         </div>
                         <div className="module-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
-                            <FormattedNotes delta={moduleNotes} />
+                            <FormattedNotes delta={selectedModule.module_notesDelta} />
                             <button
                                 className="read-button absolute bottom-2 right-2 btn-dark w-16 h-9 z-20"
                                 style={{
-                                    display: moduleNotes === "" ? "none" : "block",
+                                    display: selectedModule.module_notesDelta === "" ? "none" : "block",
                                 }}
                                 onClick={(e) => {
                                     e.currentTarget.classList.toggle("push");
@@ -287,8 +298,10 @@ export default function StudyHub() {
                                 Read
                             </button>
                         </div>
+
                         {/* Assignments */}
                         <div className="assignment-wrapper">{assignments}</div>
+
                         {/* Contact */}
                         <div className="contact-wrapper">{contact}</div>
                     </div>

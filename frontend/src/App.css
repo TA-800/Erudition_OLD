@@ -148,7 +148,7 @@ hr {
 }
 
 .read-overlay.active {
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.85);
     opacity: 1;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
@@ -165,6 +165,21 @@ hr {
 .edit-button.active {
     box-shadow: none;
     border: 2.5px solid rgb(255, 255, 255, 0.25);
+}
+
+.formatted-text-wrapper ul {
+    list-style: disc outside; /* default */
+    padding-left: 15px;
+}
+.formatted-text-wrapper ol {
+    list-style: decimal outside; /* default */
+    padding-left: 15px;
+}
+
+/* Quill Editor styling */
+.ql-toolbar.ql-snow {
+    background-color: white;
+    text-align: center;
 }
 
 /* Presets */

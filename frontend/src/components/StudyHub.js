@@ -127,7 +127,7 @@ export default function StudyHub() {
 
         const html = converter.convert();
 
-        return <div dangerouslySetInnerHTML={{ __html: html }} />;
+        return <div className="formatted-text-wrapper" dangerouslySetInnerHTML={{ __html: html }} />;
     }
 
     return (
@@ -168,9 +168,7 @@ export default function StudyHub() {
                                 .then((data) => {
                                     // Set the selected module to the new text
                                     setSelectedModule(data);
-                                    // Also update the modules in state
-                                    console.log(modules);
-                                    console.table(modules);
+                                    // Update the modules in state
                                     setModules(() => {
                                         // Create a new array-object from the old one
                                         const newModules = modules.map((module) => {
@@ -287,7 +285,7 @@ export default function StudyHub() {
                             <button
                                 className="read-button absolute bottom-2 right-2 btn-dark w-16 h-9 z-20"
                                 style={{
-                                    display: selectedModule.module_notesDelta === "" ? "none" : "block",
+                                    display: selectedModule.module_name == undefined ? "none" : "block",
                                 }}
                                 onClick={(e) => {
                                     e.currentTarget.classList.toggle("push");
@@ -295,7 +293,7 @@ export default function StudyHub() {
                                     document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);
                                 }}>
-                                Read
+                                {readingPanel ? "Close" : "Read"}
                             </button>
                         </div>
 

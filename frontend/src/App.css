@@ -21,15 +21,29 @@ body {
     overflow: hidden;
 }
 
+h1 {
+    font-size: 36px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 20px;
+}
+h4 {
+    font-size: 16px;
+}
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
+/* Scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(190, 95%, 30%) hsl(191, 95%, 10%, 0.75);
+    scrollbar-color: hsl(190, 95%, 30%) hsl(191, 95%, 10%, 0);
 }
 
 a {

@@ -17,6 +17,7 @@ import AuthContext from "../context/AuthContext";
 // Components
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import Texteditor from "./Texteditor";
+import Modal from "./Modal";
 // Other features
 import { twMerge } from "tailwind-merge";
 
@@ -35,6 +36,8 @@ export default function StudyHub() {
             return module.module_notes.toLowerCase().includes(search.toLowerCase());
         });
     }, [search, modules]);
+
+    const [modal, setModal] = useState(false);
 
     const [assignments, setAssignments] = useState([]);
     const [contact, setContact] = useState([]);
@@ -362,7 +365,8 @@ export default function StudyHub() {
                             flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
-                            }}>
+                            }}
+                            onClick={() => setModal(true)}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                         {/* Content selector drop-down */}
@@ -385,7 +389,7 @@ export default function StudyHub() {
                         <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
                             {searchedModules.map((module, index) => (
                                 <div
-                                    className="flex gap-2 flex-row items-center transition-all duration-500 max-h-20 py-2 overflow-hidden"
+                                    className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-20 py-2 overflow-hidden"
                                     data-mkey={module.id}
                                     key={module.id}>
                                     <span
@@ -404,7 +408,7 @@ export default function StudyHub() {
                                     </span>
                                     <p className="ml-auto" onClick={(e) => deleteModule(module.id)}>
                                         <FontAwesomeIcon
-                                            className="text-xs cursor-pointer opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
+                                            className="text-xs cursor-pointer w-4 opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
                                             icon={faTrash}
                                         />
                                     </p>

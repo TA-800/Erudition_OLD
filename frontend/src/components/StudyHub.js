@@ -2,24 +2,39 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faBookOpen,
-    faCheck,
-    faClose,
-    faDeleteLeft,
-    faEdit,
-    faPlusCircle,
-    faSearch,
-    faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBookOpen, faCheck, faClose, faEdit, faPlusCircle, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import Texteditor from "./Texteditor";
-import Modal from "./Modal";
+import NewModuleModal from "./NewModuleModal";
 // Other features
 import { twMerge } from "tailwind-merge";
+
+export const CSSclasses = {
+    courseButton: {
+        base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
+        active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
+    },
+    // On the span/module-text inside the div
+    moduleButton: {
+        base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.2px]",
+        active: "font-bold tracking-[0.2px]",
+    },
+    editButton: {
+        base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
+        active: "shadow-none after:content-['Save'] mdc:after:content-[]",
+    },
+    readButton: {
+        base: "absolute bottom-2 right-5 btn-dark w-20 h-9 z-20 flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
+        active: "fixed shadow-none border-2 border-white border-opacity-25 after:content-['Close'] mdc:after:content-[]",
+    },
+    readOverlay: {
+        base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
+        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
+    },
+};
 
 export default function StudyHub() {
     const [courses, setCourses] = useState([]);
@@ -36,7 +51,7 @@ export default function StudyHub() {
             return module.module_notes.toLowerCase().includes(search.toLowerCase());
         });
     }, [search, modules]);
-
+    // For module creation
     const [modal, setModal] = useState(false);
 
     const [assignments, setAssignments] = useState([]);
@@ -50,29 +65,7 @@ export default function StudyHub() {
     const contentRef = useRef();
 
     // CSS style classes
-    const CSSclasses = {
-        courseButton: {
-            base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
-            active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
-        },
-        // On the span/module-text inside the div
-        moduleButton: {
-            base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.2px]",
-            active: "font-bold tracking-[0.2px]",
-        },
-        editButton: {
-            base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
-            active: "shadow-none after:content-['Save'] mdc:after:content-[]",
-        },
-        readButton: {
-            base: "absolute bottom-2 right-5 btn-dark w-20 h-9 z-20 flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
-            active: "fixed shadow-none border-2 border-white border-opacity-25 after:content-['Close'] mdc:after:content-[]",
-        },
-        readOverlay: {
-            base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
-            active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
-        },
-    };
+
     // <div className="font-bold" />;
 
     // Fetch courses from backend
@@ -242,6 +235,7 @@ export default function StudyHub() {
 
     return (
         <>
+            <NewModuleModal className="absolute" modal={modal} setModal={setModal} />
             {/* Overlay panel for reading and editing text */}
             <div
                 className={

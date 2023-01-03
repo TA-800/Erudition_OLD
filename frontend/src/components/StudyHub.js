@@ -2,7 +2,16 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen, faCheck, faClose, faEdit, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookOpen,
+    faCheck,
+    faClose,
+    faDeleteLeft,
+    faEdit,
+    faPlusCircle,
+    faSearch,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
@@ -44,7 +53,7 @@ export default function StudyHub() {
             active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
         },
         moduleButton: {
-            base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.25px]",
+            base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.2px]",
             active: "font-semibold tracking-[0.25px]",
         },
         editButton: {
@@ -60,7 +69,7 @@ export default function StudyHub() {
             active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
         },
     };
-    // <div className="" />;
+    // <div className="items-center" />;
 
     // Fetch courses from backend
     useEffect(() => {
@@ -91,10 +100,10 @@ export default function StudyHub() {
     }, []);
 
     // // Debug console.log code
-    // // Checks when state changes
-    useEffect(() => {
-        console.table(selectedModule);
-    }, [selectedModule]);
+    // // // Checks when state changes
+    // useEffect(() => {
+    //     console.table(selectedModule);
+    // }, [selectedModule]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -167,6 +176,27 @@ export default function StudyHub() {
                 dangerouslySetInnerHTML={{ __html: html }}
             />
         );
+    }
+
+    function deleteModule(id) {
+        // console.log("Deleting module with id: " + id);
+        // console.log("The module to be deleted is: " + modules.find((module) => module.id === id).module_name);
+        // fetch(`http://127.0.0.1:8000/backend/modules/${id}`, {
+        //     method: "DELETE",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         Authorization: "Bearer " + localStorage.getItem("access"),
+        //     },
+        // })
+        // .then()
+
+        // Display confirmation dialog
+        if (window.confirm("Are you sure you want to delete this module?")) {
+            // Delete module
+            console.log("Deleting module with id: " + id);
+        } else {
+            // Do nothing
+        }
     }
 
     // Show modules based on search
@@ -333,21 +363,29 @@ export default function StudyHub() {
                         {/* Modules */}
                         <div className="modules flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
                             {searchedModules.map((module, index) => (
-                                <p
-                                    className={CSSclasses.moduleButton.base}
-                                    key={module.id}
-                                    onClick={(e) => {
-                                        e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                            child.className = CSSclasses.moduleButton.base;
-                                        });
-                                        e.currentTarget.className = twMerge(
-                                            CSSclasses.moduleButton.base,
-                                            CSSclasses.moduleButton.active
-                                        );
-                                        setSelectedModule(module);
-                                    }}>
-                                    {index + 1}. {module.module_name}
-                                </p>
+                                <div className="flex gap-2 flex-row justify-between items-center" key={module.id}>
+                                    <span
+                                        className={CSSclasses.moduleButton.base}
+                                        onClick={(e) => {
+                                            e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                                child.className = CSSclasses.moduleButton.base;
+                                            });
+                                            e.currentTarget.className = twMerge(
+                                                CSSclasses.moduleButton.base,
+                                                CSSclasses.moduleButton.active
+                                            );
+                                            setSelectedModule(module);
+                                        }}>
+                                        {index + 1}. {module.module_name}
+                                    </span>
+                                    <p>
+                                        <FontAwesomeIcon
+                                            className="text-xs cursor-pointer opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
+                                            icon={faTrash}
+                                            onClick={() => deleteModule(module.id)}
+                                        />
+                                    </p>
+                                </div>
                             ))}
                         </div>
                         {/* Module notes */}

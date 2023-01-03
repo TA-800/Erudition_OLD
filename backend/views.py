@@ -55,9 +55,10 @@ def courseList(request):
     serializer = CourseSerializer(courses, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def moduleList(request, course_code):
+    # GET MODULES
     if request.method == 'GET':
         modules = Module.objects.filter(
             module_user=User.objects.get(username=request.user),
@@ -65,6 +66,7 @@ def moduleList(request, course_code):
         )
         serializer = ModuleSerializer(modules, many=True)
         return Response(serializer.data)
+    # UPDATE MODULE
     elif request.method == 'PUT':
         try:
             delta = request.data["delta"]
@@ -80,6 +82,11 @@ def moduleList(request, course_code):
             return Response(serializer.data)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"})
+    # CREATE MODULE
+    elif request.method == "DELETE":
+        # course code in this case is the module id to delete
+        pass
+
 
 
 @api_view(['GET'])

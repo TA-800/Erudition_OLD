@@ -85,7 +85,12 @@ def moduleList(request, course_code):
     # CREATE MODULE
     elif request.method == "DELETE":
         # course code in this case is the module id to delete
-        pass
+        try:
+            module = Module.objects.get(id=course_code)
+            module.delete()
+            return Response({"detail": "Module deleted"}, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
 
 
 

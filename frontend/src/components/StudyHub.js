@@ -52,9 +52,10 @@ export default function StudyHub() {
             base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
             active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
         },
+        // On the span/module-text inside the div
         moduleButton: {
             base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.2px]",
-            active: "font-semibold tracking-[0.25px]",
+            active: "font-bold tracking-[0.2px]",
         },
         editButton: {
             base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
@@ -69,7 +70,7 @@ export default function StudyHub() {
             active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
         },
     };
-    // <div className="items-center" />;
+    // <div className="font-bold" />;
 
     // Fetch courses from backend
     useEffect(() => {
@@ -99,10 +100,11 @@ export default function StudyHub() {
             });
     }, []);
 
-    // // Debug console.log code
-    // // // Checks when state changes
+    // Debug console.log code
+    // Checks when state changes
     // useEffect(() => {
-    //     console.table(selectedModule);
+    //     console.log(selectedModule);
+    //     console.log(selectedModule.module_name === undefined);
     // }, [selectedModule]);
 
     function fetchData(course_code) {
@@ -179,23 +181,39 @@ export default function StudyHub() {
     }
 
     function deleteModule(id) {
-        // console.log("Deleting module with id: " + id);
-        // console.log("The module to be deleted is: " + modules.find((module) => module.id === id).module_name);
-        // fetch(`http://127.0.0.1:8000/backend/modules/${id}`, {
-        //     method: "DELETE",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         Authorization: "Bearer " + localStorage.getItem("access"),
-        //     },
-        // })
-        // .then()
-
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this module?")) {
             // Delete module
             console.log("Deleting module with id: " + id);
-        } else {
-            // Do nothing
+            fetch(`http://127.0.0.1:8000/backend/modules/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + localStorage.getItem("access"),
+                },
+            })
+                .then((resp) => {
+                    // If response is not 200 OK, throw an error
+                    if (resp.status !== 200) {
+                        return resp.json().then((json) => {
+                            throw new Error(`${resp.status} ${resp.statusText} ${json.detail}`);
+                        });
+                    }
+                    return resp.json();
+                })
+                .then((data) => {
+                    // console.log(data);
+                    // console.log(document.querySelector(`[data-mkey="${id}"]`));
+                    const moduleToDelete = document.querySelector(`[data-mkey="${id}"]`);
+                    moduleToDelete.ontransitionend = (event) => {
+                        if (event.propertyName !== "max-height") return;
+                        setModules(modules.filter((module) => module.id !== id));
+                    };
+                    moduleToDelete.className = twMerge(moduleToDelete.className, "max-h-0 py-0");
+                })
+                .catch((errMessage) => {
+                    alert(errMessage);
+                });
         }
     }
 
@@ -210,6 +228,9 @@ export default function StudyHub() {
                     // If selected module is not part of searched modules, and we have actual search results, set selected module to first module in searched modules
                     if (searchedModules.length > 0) {
                         setSelectedModule(searchedModules[0]);
+                    } else {
+                        // else, if we have no search results, set selected module to empty object
+                        setSelectedModule({});
                     }
                 }
             }
@@ -360,15 +381,18 @@ export default function StudyHub() {
 
                     {/* Content panel */}
                     <div className="rp__content">
-                        {/* Modules */}
-                        <div className="modules flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
+                        {/* Module List */}
+                        <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
                             {searchedModules.map((module, index) => (
-                                <div className="flex gap-2 flex-row justify-between items-center" key={module.id}>
+                                <div
+                                    className="flex gap-2 flex-row items-center transition-all duration-500 max-h-20 py-2 overflow-hidden"
+                                    data-mkey={module.id}
+                                    key={module.id}>
                                     <span
                                         className={CSSclasses.moduleButton.base}
                                         onClick={(e) => {
-                                            e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                                child.className = CSSclasses.moduleButton.base;
+                                            e.currentTarget.parentNode.parentNode.childNodes.forEach((child) => {
+                                                child.childNodes[0].className = CSSclasses.moduleButton.base;
                                             });
                                             e.currentTarget.className = twMerge(
                                                 CSSclasses.moduleButton.base,
@@ -378,11 +402,10 @@ export default function StudyHub() {
                                         }}>
                                         {index + 1}. {module.module_name}
                                     </span>
-                                    <p>
+                                    <p className="ml-auto" onClick={(e) => deleteModule(module.id)}>
                                         <FontAwesomeIcon
                                             className="text-xs cursor-pointer opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
                                             icon={faTrash}
-                                            onClick={() => deleteModule(module.id)}
                                         />
                                     </p>
                                 </div>

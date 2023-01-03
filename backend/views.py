@@ -55,7 +55,7 @@ def courseList(request):
     serializer = CourseSerializer(courses, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def moduleList(request, course_code):
     if request.method == 'GET':
@@ -65,7 +65,7 @@ def moduleList(request, course_code):
         )
         serializer = ModuleSerializer(modules, many=True)
         return Response(serializer.data)
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
         try:
             delta = request.data["delta"]
             text = request.data["text"]

@@ -169,6 +169,7 @@ export default function StudyHub() {
         );
     }
 
+    // Show modules based on search
     useEffect(() => {
         if (search) {
             // If modules have been fetched from backend
@@ -217,7 +218,7 @@ export default function StudyHub() {
 
                             // Send to backend
                             fetch(`http://127.0.0.1:8000/backend/modules/${selectedModule.id}`, {
-                                method: "POST",
+                                method: "PUT",
                                 headers: {
                                     "Content-Type": "application/json",
                                     Authorization: "Bearer " + localStorage.getItem("access"),

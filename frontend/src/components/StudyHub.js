@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,17 @@ export default function StudyHub() {
 
     const [modules, setModules] = useState([]);
     const [selectedModule, setSelectedModule] = useState({});
+    const [search, setSearch] = useState("");
+    const searchedModules = useMemo(() => {
+        if (!search) return modules;
+
+        return modules.filter((module) => {
+            // return true (true returns the element (complete module) into a new "filtered" array)
+            // if the module notes contains the search term
+            return module.module_notes.toLowerCase().includes(search.toLowerCase());
+        });
+    }, [search, modules]);
+
     const [assignments, setAssignments] = useState([]);
     const [contact, setContact] = useState([]);
 
@@ -81,12 +92,9 @@ export default function StudyHub() {
 
     // // Debug console.log code
     // // Checks when state changes
-    // useEffect(() => {
-    //     console.table({
-    //         name: selectedModule.module_name,
-    //         notes: selectedModule.module_notesDelta,
-    //     });
-    // }, [selectedModule]);
+    useEffect(() => {
+        console.table(selectedModule);
+    }, [selectedModule]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -160,6 +168,22 @@ export default function StudyHub() {
             />
         );
     }
+
+    useEffect(() => {
+        if (search) {
+            // If modules have been fetched from backend
+            if (modules.length > 0) {
+                // If selected module is part of searched modules, do nothing
+                if (searchedModules.includes(selectedModule)) {
+                } else {
+                    // If selected module is not part of searched modules, and we have actual search results, set selected module to first module in searched modules
+                    if (searchedModules.length > 0) {
+                        setSelectedModule(searchedModules[0]);
+                    }
+                }
+            }
+        }
+    }, [search]);
 
     return (
         <>
@@ -270,11 +294,13 @@ export default function StudyHub() {
                         <div className="w-4/6 mdc:w-2/4 h-12 mdc:h-10 relative">
                             <input
                                 type="text"
-                                placeholder="Search"
+                                placeholder="Search notes"
                                 className="bg-cyan-800 rounded-lg p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none"
                                 style={{
                                     boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
                                 }}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
                             <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
                         </div>
@@ -305,7 +331,7 @@ export default function StudyHub() {
                     <div className="rp__content">
                         {/* Modules */}
                         <div className="modules flex flex-col text-cyan-100 bg-cyan-800 gap-4 p-2 rounded-md">
-                            {modules.map((module, index) => (
+                            {searchedModules.map((module, index) => (
                                 <p
                                     className={CSSclasses.moduleButton.base}
                                     key={module.id}

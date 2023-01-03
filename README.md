@@ -4,15 +4,10 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind-lightgreen)
 ![Django](https://img.shields.io/badge/Django-blue)
 
-## What is Erudition?
-
 As a college student, it is easy to suffer from information overload when taking several courses simultaneously. Erudition serves as a platform to help students organize and manage their learning materials. It is a simple, easy-to-use, and free platform that allows students to manage their coursework and schedules in one place.
 
 ## Website Overview
-
-<p align="center">
-    <img src="website.png">
-</p>
+![image](https://user-images.githubusercontent.com/31612100/210319221-278c0610-7aca-479e-b21c-fdb1e663e9b4.png)
 
 ## Features
 

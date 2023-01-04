@@ -1,10 +1,15 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CSSclasses } from "./StudyHub";
 import { twMerge } from "tailwind-merge";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function NewCourseModal({ courseModal, setCourseModal, setCourses }) {
+export default function NewCourseModal({ setCourseModal, setCourses }) {
+    const overlayRef = useRef();
+    const [mountAnimation, setMountAnimation] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [ignoreUE, setIgnoreUE] = useState(false);
+
     const clearFormInputs = () => {
         document.querySelector("input[name='code']").value = "";
         document.querySelector("input[name='name']").value = "";
@@ -13,7 +18,6 @@ export default function NewCourseModal({ courseModal, setCourseModal, setCourses
         document.querySelector("input[name='contact']").value = "";
         document.querySelector("input[name='office_hours']").value = "";
     };
-    if (courseModal) clearFormInputs();
 
     function saveCourse(newCourse) {
         console.log(newCourse);
@@ -44,11 +48,38 @@ export default function NewCourseModal({ courseModal, setCourseModal, setCourses
         setCourseModal(false);
     }
 
+    function closeModal() {
+        if (mounted) {
+            setIgnoreUE(true);
+            overlayRef.current.ontransitionend = (e) => {
+                if (e.propertyName === "opacity") {
+                    console.log("transitionend");
+                    clearFormInputs();
+                    setCourseModal(false);
+                }
+            };
+            setMountAnimation(false);
+        }
+    }
+
+    useEffect(() => {
+        if (ignoreUE) return;
+        setMounted(true);
+
+        let timeout = setTimeout(() => {
+            setMountAnimation(true);
+        }, 10);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    });
+
     return (
         <>
             {/* Save new course button */}
             <button
-                className={courseModal ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
+                className={mountAnimation ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
                 onClick={() => {
                     saveCourse({
                         course_code: document.querySelector("input[name='code']").value.toUpperCase(),
@@ -61,7 +92,11 @@ export default function NewCourseModal({ courseModal, setCourseModal, setCourses
                 }}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
-            <div className={courseModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
+            <div
+                ref={overlayRef}
+                className={
+                    mountAnimation ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base
+                }>
                 <p className="text-6xl font-extrabold uppercase mdc:text-3xl">Add a new course</p>
 
                 <form className="new-course-form flex flex-col gap-y-2">
@@ -109,10 +144,8 @@ export default function NewCourseModal({ courseModal, setCourseModal, setCourses
                 </form>
             </div>
             <button
-                className={courseModal ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
-                onClick={() => {
-                    setCourseModal(false);
-                }}>
+                className={mountAnimation ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
+                onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

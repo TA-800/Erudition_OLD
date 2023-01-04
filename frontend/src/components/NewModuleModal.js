@@ -1,19 +1,21 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Texteditor from "./Texteditor";
 import { CSSclasses } from "./StudyHub";
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewModuleModal({ moduleModal, setModuleModal, course_id, setNewModules }) {
+export default function NewModuleModal({ setModuleModal, course_id, setNewModules }) {
     const quillRef = useRef();
     const moduleNameRef = useRef();
+    const [mountAnimation, setMountAnimation] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [ignoreUE, setIgnoreUE] = useState(false);
 
     const clearInputs = () => {
         moduleNameRef.current.value = "";
         quillRef.current.setContents([{ insert: "\n" }]);
     };
-    if (moduleModal) clearInputs();
 
     function saveModule() {
         const newModuleTitle = moduleNameRef.current.value;
@@ -45,22 +47,52 @@ export default function NewModuleModal({ moduleModal, setModuleModal, course_id,
                 console.log(data);
                 setNewModules(data);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => alert(error));
 
         // Close modal
-        setModuleModal(false);
+        closeModal();
     }
+
+    function closeModal() {
+        if (mounted) {
+            setIgnoreUE(true);
+            moduleNameRef.current.parentElement.ontransitionend = (e) => {
+                if (e.propertyName === "opacity") {
+                    console.log("transitionend");
+                    clearInputs();
+                    setModuleModal(false);
+                }
+            };
+            setMountAnimation(false);
+        }
+    }
+
+    useEffect(() => {
+        if (ignoreUE) return;
+        setMounted(true);
+
+        let timeout = setTimeout(() => {
+            setMountAnimation(true);
+        }, 10);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    });
 
     return (
         <>
             {/* Save new module button */}
             <button
-                className={moduleModal ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
+                className={mountAnimation ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
                 onClick={saveModule}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
 
-            <div className={moduleModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
+            <div
+                className={
+                    mountAnimation ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base
+                }>
                 <p className="text-5xl font-extrabold uppercase mdc:text-2xl">Add a new module</p>
 
                 {/* Module title input */}
@@ -75,10 +107,8 @@ export default function NewModuleModal({ moduleModal, setModuleModal, course_id,
             </div>
             {/* Cancel new module button */}
             <button
-                className={moduleModal ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
-                onClick={() => {
-                    setModuleModal(false);
-                }}>
+                className={mountAnimation ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
+                onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

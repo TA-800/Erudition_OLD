@@ -268,19 +268,15 @@ export default function StudyHub() {
 
     return (
         <>
-            <NewModuleModal
-                className="absolute"
-                moduleModal={moduleModal}
-                setModuleModal={setModuleModal}
-                course_id={selectedCourse.id}
-                setNewModules={setNewModules}
-            />
-            <NewCourseModal
-                className="absolute"
-                courseModal={courseModal}
-                setCourseModal={setCourseModal}
-                setCourses={setCourses}
-            />
+            {moduleModal && (
+                <NewModuleModal
+                    className="absolute"
+                    setModuleModal={setModuleModal}
+                    course_id={selectedCourse.id}
+                    setNewModules={setNewModules}
+                />
+            )}
+            {courseModal && <NewCourseModal className="absolute" setCourseModal={setCourseModal} setCourses={setCourses} />}
 
             {/* Overlay panel for reading and editing text */}
             <div
@@ -469,8 +465,6 @@ export default function StudyHub() {
                                     display: selectedModule.module_name === undefined ? "none" : "flex",
                                 }}
                                 onClick={() => {
-                                    // Disable scrolling for the body
-                                    // document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);
                                 }}>
                                 {readingPanel ? <FontAwesomeIcon icon={faClose} /> : <FontAwesomeIcon icon={faBookOpen} />}

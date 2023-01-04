@@ -9,14 +9,6 @@ export default function NewModuleModal({ moduleModal, setModuleModal, course_id,
     const quillRef = useRef();
     const moduleNameRef = useRef();
 
-    if (moduleModal) {
-        // Add scroll lock to main
-        document.querySelector("main")?.classList.add("scroll-lock");
-    } else {
-        // Remove scroll lock from main
-        document.querySelector("main")?.classList.remove("scroll-lock");
-    }
-
     function saveModule() {
         const newModuleTitle = moduleNameRef.current.value;
         const newModuleContentsDelta = JSON.stringify(quillRef.current.getContents());
@@ -54,28 +46,35 @@ export default function NewModuleModal({ moduleModal, setModuleModal, course_id,
     }
 
     return (
-        <div className={moduleModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
+        <>
             {/* Save new module button */}
-            <button className={twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active)} onClick={saveModule}>
+            <button
+                className={moduleModal ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
+                onClick={saveModule}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
-            {/* Module title input */}
-            <input
-                ref={moduleNameRef}
-                className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                placeholder="Module title"
-            />
 
-            {/* Text editor */}
-            <Texteditor initial={null} qref={quillRef} />
+            <div className={moduleModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
+                <p className="text-5xl font-extrabold uppercase mdc:text-2xl">Add a new module</p>
+
+                {/* Module title input */}
+                <input
+                    ref={moduleNameRef}
+                    className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                    placeholder="Module title"
+                />
+
+                {/* Text editor */}
+                <Texteditor initial={null} qref={quillRef} />
+            </div>
             {/* Cancel new module button */}
             <button
-                className={twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)}
+                className={moduleModal ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
                 onClick={() => {
                     setModuleModal(false);
                 }}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
-        </div>
+        </>
     );
 }

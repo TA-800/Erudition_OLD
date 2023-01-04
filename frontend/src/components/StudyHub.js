@@ -13,6 +13,7 @@ import NewModuleModal from "./NewModuleModal";
 import { twMerge } from "tailwind-merge";
 import NewCourseModal from "./NewCourseModal";
 
+// CSS tailwind classes
 export const CSSclasses = {
     courseButton: {
         base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
@@ -24,24 +25,28 @@ export const CSSclasses = {
         active: "font-bold tracking-[0.2px]",
     },
     editButton: {
-        base: "fixed top-2 right-5 btn-dark w-20 h-9 z-20 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
+        base: "fixed top-2 right-5 btn-dark w-20 h-9 z-30 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
         active: "shadow-none after:content-['Save'] mdc:after:content-[]",
     },
     readButton: {
-        base: "absolute bottom-2 right-5 btn-dark w-20 h-9 z-20 flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
-        active: "fixed shadow-none border-2 border-white border-opacity-25 after:content-['Close'] mdc:after:content-[]",
+        base: "absolute bottom-2 right-5 btn-dark w-20 h-9  flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
+        active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
         active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
     },
     overlay: {
-        base: "w-screen h-screen absolute top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-200",
-        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto",
+        base: "w-screen h-screen fixed top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-200",
+        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-auto",
     },
 };
+// <div className="min-h-0" />;
 
 export default function StudyHub() {
+    // First load to lock scrolls on overlay
+    const [firstload, setFirstload] = useState(true);
+
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState({});
     const [modules, setModules] = useState([]);
@@ -69,10 +74,6 @@ export default function StudyHub() {
 
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
-
-    // CSS style classes
-
-    // <div className="font-bold" />;
 
     // Fetch courses from backend
     useEffect(() => {
@@ -102,11 +103,17 @@ export default function StudyHub() {
             });
     }, []);
 
+    // Disable scrolling when overlays are active
+    useEffect(() => {
+        if (!firstload) document.querySelector("main").classList.toggle("scroll-lock");
+        if (firstload) setFirstload(false);
+    }, [moduleModal, courseModal, readingPanel]);
+
     // Debug console.log code
     // Checks when state changes
-    useEffect(() => {
-        console.log("Selected module: ", selectedModule);
-    }, [selectedModule]);
+    // useEffect(() => {
+    //     console.log("courses: ", courses);
+    // }, [courses]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -463,7 +470,7 @@ export default function StudyHub() {
                                 }}
                                 onClick={() => {
                                     // Disable scrolling for the body
-                                    document.querySelector("main").classList.toggle("scroll-lock");
+                                    // document.querySelector("main").classList.toggle("scroll-lock");
                                     setReadingPanel(!readingPanel);
                                 }}>
                                 {readingPanel ? <FontAwesomeIcon icon={faClose} /> : <FontAwesomeIcon icon={faBookOpen} />}

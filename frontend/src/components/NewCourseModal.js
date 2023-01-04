@@ -5,92 +5,106 @@ import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function NewCourseModal({ courseModal, setCourseModal, setCourses }) {
-    const courseNameRef = useRef();
-
     function saveCourse(newCourse) {
+        console.log(newCourse);
         // Send to backend
-        // Update courses to frontend
-        setCourses((courses) => [...courses, newCourse]);
+        fetch("http://127.0.0.1:8000/backend/courses/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+            body: JSON.stringify(newCourse),
+        })
+            .then((resp) => {
+                if (resp.status !== 201) {
+                    return resp.json().then((json) => {
+                        throw new Error(`${resp.status} ${resp.statusText} ${json.detail}`);
+                    });
+                }
+                return resp.json();
+            })
+            .then((data) => {
+                // Update courses to frontend
+                setCourses((courses) => [...courses, data]);
+            })
+            .catch((error) => console.log(error));
 
         // Close modal
         setCourseModal(false);
     }
 
-    if (courseModal) {
-        // Add scroll lock to main
-        document.querySelector("main")?.classList.add("scroll-lock");
-    } else {
-        // Remove scroll lock from main
-        document.querySelector("main")?.classList.remove("scroll-lock");
-    }
-
     return (
-        <div className={courseModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
-            {/* Save new module button */}
+        <>
+            {/* Save new course button */}
             <button
-                className={twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active)}
+                className={courseModal ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
                 onClick={() => {
                     saveCourse({
-                        id: 99,
-                        course_user: "ta800",
-                        course_name: courseNameRef.current.value,
-                        course_description: "Course description",
-                        course_instructor: "Instructor",
-                        course_instructor_contact: "Instructor contact",
-                        course_instructor_office_hours: "Instructor office hours",
+                        course_code: document.querySelector("input[name='code']").value.toUpperCase(),
+                        course_name: document.querySelector("input[name='name']").value,
+                        course_description: document.querySelector("textarea[name='desc']").value,
+                        course_instructor: document.querySelector("input[name='instructor']").value,
+                        course_instructor_contact: document.querySelector("input[name='contact']").value,
+                        course_instructor_office_hours: document.querySelector("input[name='office_hours']").value,
                     });
                 }}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
-            <div className="flex flex-col gap-y-2">
-                <div className="grid grid-cols-2 gap-x-2 mdc:flex mdc:flex-col mdc:gap-y-2">
-                    <div>
-                        Course Code*
-                        <input
-                            ref={courseNameRef}
-                            className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                            placeholder="e.g. COMP101"
-                        />
+            <div className={courseModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
+                <p className="text-6xl font-extrabold uppercase mdc:text-3xl">Add a new course</p>
+
+                <form className="new-course-form flex flex-col gap-y-2">
+                    <div className="grid grid-cols-2 gap-x-2 mdc:flex mdc:flex-col mdc:gap-y-2">
+                        <div>
+                            Course Code*
+                            <input
+                                className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                                placeholder="e.g. COMP101"
+                                name="code"
+                            />
+                        </div>
+                        <div>
+                            Course Name
+                            <input
+                                className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                                placeholder="e.g. Introduction to Computer Science"
+                                name="name"
+                            />
+                        </div>
                     </div>
-                    <div>
-                        Course Name
-                        <input
-                            ref={courseNameRef}
-                            className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                            placeholder="e.g. Introduction to Computer Science"
-                        />
-                    </div>
-                </div>
-                Course Description
-                <textarea
-                    className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-24 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                    placeholder="e.g. This course introduces learners to the very basic concepts of CS and Python."></textarea>
-                Course Instructor
-                <input
-                    ref={courseNameRef}
-                    className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                    placeholder="e.g. Dr John Doe"
-                />
-                Course Instructor Contact
-                <input
-                    ref={courseNameRef}
-                    className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                    placeholder="e.g. johndoe@gmail.com, +1 (012) 345 6789"
-                />
-                Course Instructor Office Hours
-                <input
-                    ref={courseNameRef}
-                    className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
-                    placeholder="e.g. Mon, 11am - 12pm; Wed, 2pm - 3pm; Fri, 4pm - 5pm"
-                />
+                    Course Description
+                    <textarea
+                        className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-24 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                        placeholder="e.g. This course introduces learners to the very basic concepts of CS and Python."
+                        name="desc"></textarea>
+                    Course Instructor
+                    <input
+                        className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                        placeholder="e.g. Dr John Doe"
+                        name="instructor"
+                    />
+                    Course Instructor Contact
+                    <input
+                        className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                        placeholder="e.g. johndoe@gmail.com, +1 (012) 345 6789"
+                        name="contact"
+                    />
+                    Course Instructor Office Hours
+                    <input
+                        className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                        placeholder="e.g. Mon, 11am - 12pm; Wed, 2pm - 3pm; Fri, 4pm - 5pm"
+                        name="office_hours"
+                    />
+                </form>
             </div>
             <button
-                className={twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)}
+                className={courseModal ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
                 onClick={() => {
                     setCourseModal(false);
                 }}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
-        </div>
+        </>
     );
 }

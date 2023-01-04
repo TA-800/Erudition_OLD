@@ -45,15 +45,35 @@ def register(request):
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"})
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def courseList(request):
 
-    courses = Course.objects.filter(course_user=
-        User.objects.get(username=request.user)
-    )
-    serializer = CourseSerializer(courses, many=True)
-    return Response(serializer.data)
+    # GET COURSES
+    if request.method == 'GET':
+        courses = Course.objects.filter(course_user=
+            User.objects.get(username=request.user)
+        )
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+    # CREATE COURSE
+    elif request.method == 'POST':
+        try:
+            course = Course(
+                course_code=request.data["course_code"],
+                course_name=request.data["course_name"],
+                course_description=request.data["course_description"],
+                course_instructor=request.data["course_instructor"],
+                course_instructor_contact=request.data["course_instructor_contact"],
+                course_instructor_office_hours=request.data["course_instructor_office_hours"],
+            )
+            course.save()
+            course.course_user.add(User.objects.get(username=request.user))
+            serializer = CourseSerializer(course, many=False)
+            return Response(serializer.data, status=201)
+        except Exception as e:
+            print(e.args[0])
+            return Response({"detail": f"{e.args[0]}"}, status=400)
 
 @api_view(['GET', 'PUT', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])

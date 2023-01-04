@@ -175,6 +175,13 @@ hr {
     border-bottom-right-radius: 0.5rem;
     border-bottom: 1px solid hsl(193, 82%, 31%, 0.5);
 }
+/* Placeholder text in the editor, to match theme */
+.ql-editor.ql-blank::before {
+    color: hsl(218, 11%, 65%) !important;
+    font-style: normal !important;
+    font-family: "Open Sans", sans-serif !important;
+    font-size: 14px;
+}
 
 /* Presets */
 .lp__title {

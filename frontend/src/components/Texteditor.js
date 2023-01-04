@@ -13,9 +13,14 @@ export default function Texteditor({ initial, qref }) {
         const editor = document.createElement("div");
         wrapper.append(editor);
         // Instantiate the Quill editor into the editor div
-        const quillInstance = new Quill(editor, { theme: "snow" });
+        const quillInstance = new Quill(editor, { theme: "snow", placeholder: "Start writing here" });
         // Set the initial value of the editor
-        quillInstance.setContents(JSON.parse(initial).ops);
+        try {
+            quillInstance.setContents(JSON.parse(initial).ops);
+        } catch (e) {
+            quillInstance.setContents([{ insert: "\n" }]);
+        }
+
         // Set the reference to the Quill instance for use in other components
         qref.current = quillInstance;
     }, []);

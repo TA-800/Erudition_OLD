@@ -38,7 +38,7 @@ export const CSSclasses = {
 
 export default function StudyHub() {
     const [courses, setCourses] = useState([]);
-
+    const [selectedCourse, setSelectedCourse] = useState({});
     const [modules, setModules] = useState([]);
     const [selectedModule, setSelectedModule] = useState({});
     const [search, setSearch] = useState("");
@@ -98,10 +98,9 @@ export default function StudyHub() {
 
     // Debug console.log code
     // Checks when state changes
-    // useEffect(() => {
-    //     console.log(selectedModule);
-    //     console.log(selectedModule.module_name === undefined);
-    // }, [selectedModule]);
+    useEffect(() => {
+        console.log("Searched module changed");
+    }, [searchedModules]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -213,6 +212,11 @@ export default function StudyHub() {
         }
     }
 
+    function setNewModules(newModuleData) {
+        const oldModules = modules.filter((module) => module.id !== newModuleData.id);
+        setModules([...oldModules, newModuleData]);
+    }
+
     // Show modules based on search
     useEffect(() => {
         if (search) {
@@ -235,7 +239,13 @@ export default function StudyHub() {
 
     return (
         <>
-            <NewModuleModal className="absolute" modal={modal} setModal={setModal} />
+            <NewModuleModal
+                className="absolute"
+                modal={modal}
+                setModal={setModal}
+                course_id={selectedCourse.id}
+                setNewModules={setNewModules}
+            />
             {/* Overlay panel for reading and editing text */}
             <div
                 className={
@@ -281,17 +291,18 @@ export default function StudyHub() {
                                     // Set the selected module to the new text
                                     setSelectedModule(data);
                                     // Update the modules in state
-                                    setModules(() => {
-                                        // Create a new array-object from the old one
-                                        const newModules = modules.map((module) => {
-                                            // For each module, return the same module unless it is the one that was edited
-                                            if (module.id === data.id) {
-                                                return data;
-                                            }
-                                            return module;
-                                        });
-                                        return newModules;
-                                    });
+                                    // setModules(() => {
+                                    //     // Create a new array-object from the old one
+                                    //     const newModules = modules.map((module) => {
+                                    //         // For each module, return the same module unless it is the one that was edited
+                                    //         if (module.id === data.id) {
+                                    //             return data;
+                                    //         }
+                                    //         return module;
+                                    //     });
+                                    //     return newModules;
+                                    // });
+                                    setNewModules(data);
                                 })
                                 .catch((err) => alert(err));
                         }
@@ -327,6 +338,7 @@ export default function StudyHub() {
                                         CSSclasses.courseButton.base,
                                         CSSclasses.courseButton.active
                                     );
+                                    setSelectedCourse(course);
                                     fetchData(course.id);
                                 }}>
                                 {course.course_code}
@@ -360,7 +372,9 @@ export default function StudyHub() {
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}
-                            onClick={() => setModal(true)}>
+                            onClick={() => {
+                                if (selectedCourse.course_name !== undefined) setModal(true);
+                            }}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                         {/* Content selector drop-down */}
@@ -383,7 +397,7 @@ export default function StudyHub() {
                         <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
                             {searchedModules.map((module, index) => (
                                 <div
-                                    className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-20 py-2 overflow-hidden"
+                                    className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
                                     data-mkey={module.id}
                                     key={module.id}>
                                     <span

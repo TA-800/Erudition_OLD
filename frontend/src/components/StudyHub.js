@@ -8,10 +8,11 @@ import AuthContext from "../context/AuthContext";
 // Components
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import Texteditor from "./Texteditor";
-import NewModuleModal from "./NewModuleModal";
 // Other features
 import { twMerge } from "tailwind-merge";
 import NewCourseModal from "./NewCourseModal";
+import NewModuleModal from "./NewModuleModal";
+import ReadingPanel from "./ReadingPanel";
 
 // CSS tailwind classes
 export const CSSclasses = {
@@ -69,9 +70,6 @@ export default function StudyHub() {
     const [contact, setContact] = useState([]);
 
     const [readingPanel, setReadingPanel] = useState(false);
-    const [editable, setEditable] = useState(false);
-    const quillRef = useRef();
-
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
 
@@ -182,7 +180,7 @@ export default function StudyHub() {
 
         return (
             <div
-                className={"formatted-text-wrapper max-h-[40rem]" + (readingPanel ? " overflow-visible" : " overflow-y-auto")}
+                className={"formatted-text-wrapper max-h-[40rem]" + (readingPanel ? props.hide : " overflow-y-auto")}
                 dangerouslySetInnerHTML={{ __html: html }}
             />
         );
@@ -279,57 +277,16 @@ export default function StudyHub() {
             {courseModal && <NewCourseModal className="absolute" setCourseModal={setCourseModal} setCourses={setCourses} />}
 
             {/* Overlay panel for reading and editing text */}
-            <div
-                className={
-                    readingPanel
-                        ? twMerge(CSSclasses.readOverlay.base, CSSclasses.readOverlay.active)
-                        : CSSclasses.readOverlay.base
-                }>
-                {/* Reading or editing */}
-                {!editable ? (
-                    <FormattedNotes delta={selectedModule.module_notesDelta} />
-                ) : (
-                    <Texteditor initial={selectedModule.module_notesDelta} qref={quillRef} />
-                )}
-            </div>
-            {/* Edit button */}
             {readingPanel && (
-                <button
-                    className={
-                        editable ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : CSSclasses.editButton.base
-                    }
-                    onClick={() => {
-                        setEditable(!editable);
-                        if (editable) {
-                            // What to do when going from editable to not editable
-                            // Get the text from the editor
-                            const delta = quillRef.current.getContents();
-                            const text = quillRef.current.getText();
-
-                            // Send to backend
-                            fetch(`http://127.0.0.1:8000/backend/modules/${selectedModule.id}`, {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    Authorization: "Bearer " + localStorage.getItem("access"),
-                                },
-                                body: JSON.stringify({
-                                    delta: JSON.stringify(delta),
-                                    text: text,
-                                }),
-                            })
-                                .then((res) => res.json())
-                                .then((data) => {
-                                    // Set the selected module to the new text
-                                    setSelectedModule(data);
-                                    // Update the modules in state
-                                    setNewModules(data);
-                                })
-                                .catch((err) => alert(err));
-                        }
-                    }}>
-                    {!editable ? <FontAwesomeIcon icon={faEdit} /> : <FontAwesomeIcon icon={faCheck} />}
-                </button>
+                <ReadingPanel
+                    className="absolute"
+                    selectedModule={selectedModule}
+                    setReadingPanel={setReadingPanel}
+                    setSelectedModule={setSelectedModule}
+                    setNewModules={setNewModules}
+                    FormattedNotes={FormattedNotes}
+                    Texteditor={Texteditor}
+                />
             )}
 
             <header>Good evening, {user}.</header>
@@ -452,22 +409,18 @@ export default function StudyHub() {
                         </div>
                         {/* Module notes */}
                         <div className="modules-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
-                            <FormattedNotes delta={selectedModule.module_notesDelta} />
+                            <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-hidden" />
 
                             {/* Read button */}
                             <button
-                                className={
-                                    readingPanel
-                                        ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)
-                                        : CSSclasses.readButton.base
-                                }
+                                className={CSSclasses.readButton.base}
                                 style={{
-                                    display: selectedModule.module_name === undefined ? "none" : "flex",
+                                    display: selectedModule.module_name === undefined || readingPanel ? "none" : "flex",
                                 }}
                                 onClick={() => {
-                                    setReadingPanel(!readingPanel);
+                                    setReadingPanel(true);
                                 }}>
-                                {readingPanel ? <FontAwesomeIcon icon={faClose} /> : <FontAwesomeIcon icon={faBookOpen} />}
+                                <FontAwesomeIcon icon={faBookOpen} />
                             </button>
                         </div>
 

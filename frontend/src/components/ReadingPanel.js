@@ -1,9 +1,19 @@
-import { faBookOpen, faCheck, faEdit } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useRef, useState } from "react";
+import { faCheck, faClose, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect } from "react";
+import { CSSclasses } from "./StudyHub";
+import { twMerge } from "tailwind-merge";
 
-export default function ReadingPanel({ setReadingPanel, setSelectedModule, setNewModules, FormattedNotes, Texteditor }) {
+export default function ReadingPanel({
+    selectedModule,
+    setReadingPanel,
+    setSelectedModule,
+    setNewModules,
+    FormattedNotes,
+    Texteditor,
+}) {
     const overlayRef = useRef();
+    const quillRef = useRef();
     const [editable, setEditable] = useState(false);
     const [mountAnimation, setMountAnimation] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -15,7 +25,6 @@ export default function ReadingPanel({ setReadingPanel, setSelectedModule, setNe
             overlayRef.current.ontransitionend = (e) => {
                 if (e.propertyName === "opacity") {
                     console.log("transitionend");
-                    clearFormInputs();
                     setReadingPanel(false);
                 }
             };
@@ -38,7 +47,6 @@ export default function ReadingPanel({ setReadingPanel, setSelectedModule, setNe
     return (
         <>
             {/* Edit button */}
-
             <button
                 className={
                     editable ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : CSSclasses.editButton.base
@@ -88,15 +96,15 @@ export default function ReadingPanel({ setReadingPanel, setSelectedModule, setNe
                 }>
                 {/* Reading or editing */}
                 {!editable ? (
-                    <FormattedNotes delta={selectedModule.module_notesDelta} />
+                    <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-visible" />
                 ) : (
                     <Texteditor initial={selectedModule.module_notesDelta} qref={quillRef} />
                 )}
             </div>
 
             {/* Read button */}
-            <button className={CSSclasses.readButton.active} onClick={closeModal}>
-                <FontAwesomeIcon icon={faBookOpen} />
+            <button className={twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)} onClick={closeModal}>
+                <FontAwesomeIcon icon={faClose} />
             </button>
         </>
     );

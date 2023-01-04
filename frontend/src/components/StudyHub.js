@@ -99,8 +99,8 @@ export default function StudyHub() {
     // Debug console.log code
     // Checks when state changes
     useEffect(() => {
-        console.log("Searched module changed");
-    }, [searchedModules]);
+        console.log("Selected module: ", selectedModule);
+    }, [selectedModule]);
 
     function fetchData(course_code) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -197,12 +197,15 @@ export default function StudyHub() {
                     return resp.json();
                 })
                 .then((data) => {
-                    // console.log(data);
-                    // console.log(document.querySelector(`[data-mkey="${id}"]`));
                     const moduleToDelete = document.querySelector(`[data-mkey="${id}"]`);
                     moduleToDelete.ontransitionend = (event) => {
                         if (event.propertyName !== "max-height") return;
+                        // Remove the module
                         setModules(modules.filter((module) => module.id !== id));
+                        // Select someother module
+                        if (selectedModule.id === id && modules.length > 0) {
+                            simulateModuleSelect(modules[0].id);
+                        }
                     };
                     moduleToDelete.className = twMerge(moduleToDelete.className, "max-h-0 py-0");
                 })
@@ -212,9 +215,22 @@ export default function StudyHub() {
         }
     }
 
+    // This function simulates a click on a module which will also update the selected module
+    function simulateModuleSelect(module_id = 0) {
+        const moduleToSelect = document.querySelector(`[data-mkey="${module_id}"]`).childNodes[0];
+        moduleToSelect.click();
+    }
+
+    // This can be used to create a new module or update an existing module
     function setNewModules(newModuleData) {
-        const oldModules = modules.filter((module) => module.id !== newModuleData.id);
-        setModules([...oldModules, newModuleData]);
+        if (modules.find((module) => module.id === newModuleData.id)) {
+            // Update existing module
+            // Need to use this method to keep order of modules
+            setModules(modules.map((module) => (module.id === newModuleData.id ? newModuleData : module)));
+        } else {
+            // Create new module
+            setModules([...modules, newModuleData]);
+        }
     }
 
     // Show modules based on search
@@ -227,7 +243,7 @@ export default function StudyHub() {
                 } else {
                     // If selected module is not part of searched modules, and we have actual search results, set selected module to first module in searched modules
                     if (searchedModules.length > 0) {
-                        setSelectedModule(searchedModules[0]);
+                        simulateModuleSelect(searchedModules[0].id);
                     } else {
                         // else, if we have no search results, set selected module to empty object
                         setSelectedModule({});
@@ -291,17 +307,6 @@ export default function StudyHub() {
                                     // Set the selected module to the new text
                                     setSelectedModule(data);
                                     // Update the modules in state
-                                    // setModules(() => {
-                                    //     // Create a new array-object from the old one
-                                    //     const newModules = modules.map((module) => {
-                                    //         // For each module, return the same module unless it is the one that was edited
-                                    //         if (module.id === data.id) {
-                                    //             return data;
-                                    //         }
-                                    //         return module;
-                                    //     });
-                                    //     return newModules;
-                                    // });
                                     setNewModules(data);
                                 })
                                 .catch((err) => alert(err));

@@ -4,7 +4,7 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind-lightgreen)
 ![Django](https://img.shields.io/badge/Django-blue)
 
-As a college student, it is easy to suffer from information overload when taking several courses simultaneously. Erudition serves as a platform to help students organize and manage their learning materials. It is a simple, easy-to-use, and a free platform that allows students to manage their coursework and schedules in one place.
+As a college student, it is easy to suffer from information overload when taking several courses simultaneously. Erudition serves as a platform to help students organize and manage their learning materials. It is a simple, easy-to-use, and free platform that allows students to manage their coursework and schedules in one place.
 
 ## Website Overview
 

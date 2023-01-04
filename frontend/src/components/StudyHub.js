@@ -2,16 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faBookOpen,
-    faCheck,
-    faClose,
-    faEdit,
-    faPlusCircle,
-    faSearch,
-    faTrash,
-    faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBookOpen, faPlusCircle, faSearch, faTrash, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
@@ -25,10 +16,10 @@ import ReadingPanel from "./ReadingPanel";
 
 // CSS tailwind classes
 export const CSSclasses = {
-    // className = "after:"
+    // className = "transition-[height_0.5s] ease-out"
     courseButton: {
-        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
-        active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
+        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden",
+        active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
     },
     // On the span/module-text inside the div
     moduleButton: {
@@ -56,7 +47,6 @@ export const CSSclasses = {
 export default function StudyHub() {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
-
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState({});
     const [modules, setModules] = useState([]);
@@ -82,7 +72,7 @@ export default function StudyHub() {
     const { user, logout } = useContext(AuthContext);
     const contentRef = useRef();
 
-    // Fetch courses from backend
+    // COURSE FETCH
     useEffect(() => {
         fetch("http://127.0.0.1:8000/backend/courses/0", {
             method: "GET",
@@ -110,7 +100,7 @@ export default function StudyHub() {
             });
     }, []);
 
-    // Disable scrolling when overlays are active
+    // SCROLL LOCK UPDATES
     useEffect(() => {
         if (firstload) setFirstload(false);
         if (!firstload) document.querySelector("main").classList.toggle("scroll-lock");
@@ -122,10 +112,9 @@ export default function StudyHub() {
     //     console.log("courses: ", courses);
     // }, [courses]);
 
-    function fetchData(course_code) {
+    function fetchData(course_code, contentType) {
         // Fetch content from backend depending on the content selected (contentRef)
         // and add it to the rp__content element
-        const contentType = contentRef.current.value;
         fetch(`http://127.0.0.1:8000/backend/${contentType}/${course_code}`, {
             method: "GET",
             headers: {
@@ -145,9 +134,7 @@ export default function StudyHub() {
             .then((data) => {
                 printContentToPanel(data, contentType);
             })
-            .catch((errMessage) => {
-                alert(errMessage);
-            });
+            .catch((errMessage) => console.log(errMessage));
     }
 
     function printContentToPanel(data, contentType) {
@@ -222,10 +209,8 @@ export default function StudyHub() {
                         if (event.propertyName !== "max-height") return;
                         // Remove the module
                         setModules(modules.filter((module) => module.id !== id));
-                        // Select someother module
-                        if (selectedModule.id === id && modules.length > 0) {
-                            simulateModuleSelect(modules[0].id);
-                        }
+                        // Select some other module
+                        if (selectedModule.id === id && modules.length > 0) simulateModuleSelect(modules[0].id);
                     };
                     moduleToDelete.className = twMerge(moduleToDelete.className, "max-h-0 py-0");
                 })
@@ -259,7 +244,14 @@ export default function StudyHub() {
                 })
                 .then((data) => {
                     // Remove the course
-                    console.log(data);
+                    const courseToDelete = document.querySelector(`[data-ckey="${id}"]`);
+                    courseToDelete.ontransitionend = (event) => {
+                        if (event.propertyName !== "height") return;
+                        setCourses(courses.filter((course) => course.id !== id));
+                        // Select some other course
+                        if (selectedCourse.id === id && courses.length > 0) simulateCourseSelect(courses[0].id);
+                    };
+                    courseToDelete.className = twMerge(courseToDelete.className, "h-0 font-normal text-xs");
                 })
                 .catch((errMessage) => {
                     alert(errMessage);
@@ -267,10 +259,14 @@ export default function StudyHub() {
         }
     }
 
-    // This function simulates a click on a module which will also update the selected module
+    // This function simulates a click on a module/course which will also update the selected module/course
     function simulateModuleSelect(module_id = 0) {
         const moduleToSelect = document.querySelector(`[data-mkey="${module_id}"]`).childNodes[0];
         moduleToSelect.click();
+    }
+    function simulateCourseSelect(course_id = 0) {
+        const courseToSelect = document.querySelector(`[data-ckey="${course_id}"]`);
+        courseToSelect.click();
     }
 
     // This can be used to create a new module or update an existing module
@@ -285,7 +281,7 @@ export default function StudyHub() {
         }
     }
 
-    // Show modules based on search
+    // SEARCH UPDATE
     useEffect(() => {
         if (search) {
             // If modules have been fetched from backend
@@ -348,6 +344,7 @@ export default function StudyHub() {
                         {courses.map((course) => (
                             <li
                                 className={CSSclasses.courseButton.base}
+                                data-ckey={course.id}
                                 key={course.id}
                                 onClick={(e) => {
                                     e.currentTarget.parentNode.childNodes.forEach((child) => {
@@ -358,7 +355,6 @@ export default function StudyHub() {
                                         CSSclasses.courseButton.active
                                     );
                                     setSelectedCourse(course);
-                                    fetchData(course.id);
                                 }}>
                                 {course.course_code}
                                 <div
@@ -414,14 +410,17 @@ export default function StudyHub() {
                         </button>
                         {/* Content selector drop-down */}
                         <select
-                            ref={contentRef}
                             className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center
                         "
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
-                            <option value="modules">Modules</option>
-                            <option value="assignments">Assgnmts</option>
+                            <option value="modules" onClick={() => fetchData(selectedCourse.id, "modules")}>
+                                Modules
+                            </option>
+                            <option value="assignments" onClick={() => console.log("assignments chosen")}>
+                                Assgnmts
+                            </option>
                             <option value="contact">Contact</option>
                         </select>
                     </div>

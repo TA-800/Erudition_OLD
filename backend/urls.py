@@ -10,4 +10,5 @@ urlpatterns = [
     path('', views.apiOverview, name='api-overview'),
     path('courses/<int:course_id>', views.courseList, name='course-list'),
     path('modules/<int:course_id>', views.moduleList, name='module-list'),
+    path('assignments/<int:course_id>', views.assignmentList, name='assignment-list'),
 ]

@@ -2,7 +2,16 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen, faCheck, faClose, faEdit, faPlusCircle, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookOpen,
+    faCheck,
+    faClose,
+    faEdit,
+    faPlusCircle,
+    faSearch,
+    faTrash,
+    faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../context/AuthContext";
 // Components
@@ -16,8 +25,9 @@ import ReadingPanel from "./ReadingPanel";
 
 // CSS tailwind classes
 export const CSSclasses = {
+    // className = "after:"
     courseButton: {
-        base: "flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
+        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-200",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-lg tracking-wide",
     },
     // On the span/module-text inside the div
@@ -42,7 +52,6 @@ export const CSSclasses = {
         active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-auto",
     },
 };
-// <div className="min-h-0" />;
 
 export default function StudyHub() {
     // First load to lock scrolls on overlay
@@ -75,7 +84,7 @@ export default function StudyHub() {
 
     // Fetch courses from backend
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/backend/courses/", {
+        fetch("http://127.0.0.1:8000/backend/courses/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -103,8 +112,8 @@ export default function StudyHub() {
 
     // Disable scrolling when overlays are active
     useEffect(() => {
-        if (!firstload) document.querySelector("main").classList.toggle("scroll-lock");
         if (firstload) setFirstload(false);
+        if (!firstload) document.querySelector("main").classList.toggle("scroll-lock");
     }, [moduleModal, courseModal, readingPanel]);
 
     // Debug console.log code
@@ -226,6 +235,38 @@ export default function StudyHub() {
         }
     }
 
+    function deleteCourse(id) {
+        console.log("Deleting course with id: " + id);
+        // Display confirmation dialog
+        if (window.confirm("Are you sure you want to delete this course?")) {
+            // Delete course
+            console.log("Deleting course with id: " + id);
+            fetch(`http://127.0.0.1:8000/backend/courses/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + localStorage.getItem("access"),
+                },
+            })
+                .then((resp) => {
+                    // If response is not 200 OK, throw an error
+                    if (resp.status !== 200) {
+                        return resp.json().then((json) => {
+                            throw new Error(`${resp.status} ${resp.statusText} ${json.detail}`);
+                        });
+                    }
+                    return resp.json();
+                })
+                .then((data) => {
+                    // Remove the course
+                    console.log(data);
+                })
+                .catch((errMessage) => {
+                    alert(errMessage);
+                });
+        }
+    }
+
     // This function simulates a click on a module which will also update the selected module
     function simulateModuleSelect(module_id = 0) {
         const moduleToSelect = document.querySelector(`[data-mkey="${module_id}"]`).childNodes[0];
@@ -320,6 +361,16 @@ export default function StudyHub() {
                                     fetchData(course.id);
                                 }}>
                                 {course.course_code}
+                                <div
+                                    className="absolute right-2"
+                                    onClick={() => {
+                                        deleteCourse(course.id);
+                                    }}>
+                                    <FontAwesomeIcon
+                                        icon={faTrashAlt}
+                                        className="text-md cursor-pointer opacity-50 transition-all duration-200 hover:text-xl hover:opacity-90"
+                                    />
+                                </div>
                             </li>
                         ))}
                         <li
@@ -398,7 +449,7 @@ export default function StudyHub() {
                                         }}>
                                         {index + 1}. {module.module_name}
                                     </span>
-                                    <p className="ml-auto" onClick={(e) => deleteModule(module.id)}>
+                                    <p className="ml-auto" onClick={() => deleteModule(module.id)}>
                                         <FontAwesomeIcon
                                             className="text-xs cursor-pointer w-4 opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
                                             icon={faTrash}

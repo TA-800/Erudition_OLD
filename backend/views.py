@@ -45,9 +45,9 @@ def register(request):
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"})
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def courseList(request):
+def courseList(request, course_id):
 
     # GET COURSES
     if request.method == 'GET':
@@ -75,17 +75,28 @@ def courseList(request):
             serializer = CourseSerializer(course, many=False)
             return Response(serializer.data, status=201)
         except Exception as e:
-            print(e.args[0])
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+    # DELETE COURSE
+    elif request.method == "DELETE":
+        try:
+            # Get id of course to delete, then remove the user from the course's many to many field
+            course = Course.objects.get(id=course_id)
+            course.course_user.remove(User.objects.get(username=request.user))
+            # If the user is the last user in the course, delete the course
+            if course.course_user.count() == 0:
+                course.delete()
+            return Response({"detail": "Course deleted"}, status=200)
+        except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)
 
 @api_view(['GET', 'PUT', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def moduleList(request, course_code):
+def moduleList(request, course_id):
     # GET MODULES
     if request.method == 'GET':
         modules = Module.objects.filter(
             module_user=User.objects.get(username=request.user),
-            module_course=Course.objects.get(id=course_code)
+            module_course=Course.objects.get(id=course_id)
         )
         serializer = ModuleSerializer(modules, many=True)
         return Response(serializer.data)
@@ -95,7 +106,7 @@ def moduleList(request, course_code):
             delta = request.data["delta"]
             text = request.data["text"]
             # The module to update
-            module = Module.objects.get(id=course_code)
+            module = Module.objects.get(id=course_id)
             # Update the module
             module.module_notesDelta=delta
             module.module_notes=text
@@ -110,7 +121,7 @@ def moduleList(request, course_code):
         try:
             module = Module(
                 module_user=User.objects.get(username=request.user),
-                module_course=Course.objects.get(id=course_code),
+                module_course=Course.objects.get(id=course_id),
                 module_name=request.data["title"],
                 module_notesDelta=request.data["delta"],
                 module_notes=request.data["text"]
@@ -125,7 +136,7 @@ def moduleList(request, course_code):
     elif request.method == "DELETE":
         # course code in this case is the module id to delete
         try:
-            module = Module.objects.get(id=course_code)
+            module = Module.objects.get(id=course_id)
             module.delete()
             return Response({"detail": "Module deleted"}, status=200)
         except Exception as e:

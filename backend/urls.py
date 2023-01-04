@@ -8,6 +8,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', views.apiOverview, name='api-overview'),
-    path('courses/', views.courseList, name='course-list'),
-    path('modules/<int:course_code>', views.moduleList, name='module-list'),
+    path('courses/<int:course_id>', views.courseList, name='course-list'),
+    path('modules/<int:course_id>', views.moduleList, name='module-list'),
 ]

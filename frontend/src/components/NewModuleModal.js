@@ -5,14 +5,17 @@ import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewModuleModal({ modal, setModal, course_id, setNewModules }) {
+export default function NewModuleModal({ moduleModal, setModuleModal, course_id, setNewModules }) {
     const quillRef = useRef();
     const moduleNameRef = useRef();
 
-    const overlayClasses = {
-        base: "w-screen h-screen absolute top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-200",
-        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto",
-    };
+    if (moduleModal) {
+        // Add scroll lock to main
+        document.querySelector("main")?.classList.add("scroll-lock");
+    } else {
+        // Remove scroll lock from main
+        document.querySelector("main")?.classList.remove("scroll-lock");
+    }
 
     function saveModule() {
         const newModuleTitle = moduleNameRef.current.value;
@@ -47,11 +50,11 @@ export default function NewModuleModal({ modal, setModal, course_id, setNewModul
             .catch((error) => console.log(error));
 
         // Close modal
-        setModal(false);
+        setModuleModal(false);
     }
 
     return (
-        <div className={modal ? twMerge(overlayClasses.base, overlayClasses.active) : overlayClasses.base}>
+        <div className={moduleModal ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base}>
             {/* Save new module button */}
             <button className={twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active)} onClick={saveModule}>
                 <FontAwesomeIcon icon={faCheck} />
@@ -69,7 +72,7 @@ export default function NewModuleModal({ modal, setModal, course_id, setNewModul
             <button
                 className={twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)}
                 onClick={() => {
-                    setModal(false);
+                    setModuleModal(false);
                 }}>
                 <FontAwesomeIcon icon={faClose} />
             </button>

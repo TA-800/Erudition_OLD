@@ -11,6 +11,7 @@ import Texteditor from "./Texteditor";
 import NewModuleModal from "./NewModuleModal";
 // Other features
 import { twMerge } from "tailwind-merge";
+import NewCourseModal from "./NewCourseModal";
 
 export const CSSclasses = {
     courseButton: {
@@ -34,6 +35,10 @@ export const CSSclasses = {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
         active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
     },
+    overlay: {
+        base: "w-screen h-screen absolute top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-200",
+        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto",
+    },
 };
 
 export default function StudyHub() {
@@ -52,7 +57,8 @@ export default function StudyHub() {
         });
     }, [search, modules]);
     // For module creation
-    const [modal, setModal] = useState(false);
+    const [moduleModal, setModuleModal] = useState(false);
+    const [courseModal, setCourseModal] = useState(false);
 
     const [assignments, setAssignments] = useState([]);
     const [contact, setContact] = useState([]);
@@ -257,11 +263,18 @@ export default function StudyHub() {
         <>
             <NewModuleModal
                 className="absolute"
-                modal={modal}
-                setModal={setModal}
+                moduleModal={moduleModal}
+                setModuleModal={setModuleModal}
                 course_id={selectedCourse.id}
                 setNewModules={setNewModules}
             />
+            <NewCourseModal
+                className="absolute"
+                courseModal={courseModal}
+                setCourseModal={setCourseModal}
+                setCourses={setCourses}
+            />
+
             {/* Overlay panel for reading and editing text */}
             <div
                 className={
@@ -349,6 +362,12 @@ export default function StudyHub() {
                                 {course.course_code}
                             </li>
                         ))}
+                        <li
+                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-1")}
+                            onClick={() => setCourseModal(true)}>
+                            <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
+                            Add course
+                        </li>
                     </ul>
                 </div>
 
@@ -378,7 +397,7 @@ export default function StudyHub() {
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}
                             onClick={() => {
-                                if (selectedCourse.course_name !== undefined) setModal(true);
+                                if (selectedCourse.course_name !== undefined) setModuleModal(true);
                             }}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>

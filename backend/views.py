@@ -59,6 +59,9 @@ def courseList(request):
     # CREATE COURSE
     elif request.method == 'POST':
         try:
+            # Throw an error if course code is empty
+            if request.data["course_code"] == "":
+                raise Exception("Course code cannot be empty")
             course = Course(
                 course_code=request.data["course_code"],
                 course_name=request.data["course_name"],

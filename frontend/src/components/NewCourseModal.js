@@ -5,6 +5,16 @@ import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function NewCourseModal({ courseModal, setCourseModal, setCourses }) {
+    const clearFormInputs = () => {
+        document.querySelector("input[name='code']").value = "";
+        document.querySelector("input[name='name']").value = "";
+        document.querySelector("textarea[name='desc']").value = "";
+        document.querySelector("input[name='instructor']").value = "";
+        document.querySelector("input[name='contact']").value = "";
+        document.querySelector("input[name='office_hours']").value = "";
+    };
+    if (courseModal) clearFormInputs();
+
     function saveCourse(newCourse) {
         console.log(newCourse);
         // Send to backend
@@ -28,7 +38,7 @@ export default function NewCourseModal({ courseModal, setCourseModal, setCourses
                 // Update courses to frontend
                 setCourses((courses) => [...courses, data]);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => alert(error));
 
         // Close modal
         setCourseModal(false);

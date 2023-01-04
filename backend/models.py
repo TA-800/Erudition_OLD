@@ -12,7 +12,7 @@ class User(AbstractUser):
 
 class Course(models.Model):
     course_user = models.ManyToManyField(User, blank=True, related_name="courses")
-    course_code = models.CharField(max_length=8) # COMP101
+    course_code = models.CharField(max_length=8, unique=True) # COMP101
     course_name = models.CharField(max_length=64) # Data Structures in Python
     course_description = models.TextField(blank=True)
     course_instructor = models.CharField(max_length=64) # "Dr. John Smith"

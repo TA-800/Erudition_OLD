@@ -9,6 +9,12 @@ export default function NewModuleModal({ moduleModal, setModuleModal, course_id,
     const quillRef = useRef();
     const moduleNameRef = useRef();
 
+    const clearInputs = () => {
+        moduleNameRef.current.value = "";
+        quillRef.current.setContents([{ insert: "\n" }]);
+    };
+    if (moduleModal) clearInputs();
+
     function saveModule() {
         const newModuleTitle = moduleNameRef.current.value;
         const newModuleContentsDelta = JSON.stringify(quillRef.current.getContents());

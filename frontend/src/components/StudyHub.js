@@ -370,7 +370,7 @@ export default function StudyHub() {
                             </li>
                         ))}
                         <li
-                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-1")}
+                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
                             onClick={() => setCourseModal(true)}>
                             <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
                             Add course

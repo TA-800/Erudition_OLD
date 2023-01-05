@@ -13,12 +13,13 @@ import { twMerge } from "tailwind-merge";
 import NewCourseModal from "./NewCourseModal";
 import NewModuleModal from "./NewModuleModal";
 import ReadingPanel from "./ReadingPanel";
+import NewAssignment from "./NewAssignment";
 
 // CSS tailwind classes
 export const CSSclasses = {
-    // className = "transition-[height_0.5s] ease-out"
+    // className = "transition-[height_0.5s]"
     courseButton: {
-        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden",
+        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
     },
     // On the span/module-text inside the div
@@ -33,6 +34,10 @@ export const CSSclasses = {
     readButton: {
         base: "absolute bottom-2 right-5 btn-dark w-20 h-9  flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
         active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
+    },
+    assignment: {
+        base: "bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1",
+        active: "",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
@@ -49,12 +54,14 @@ export default function StudyHub() {
     const [firstload, setFirstload] = useState(true);
     // Content selection
     const contentSelector = useRef(null);
+    // Search
+    const [search, setSearch] = useState("");
 
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState({});
+    // Modules
     const [modules, setModules] = useState([]);
     const [selectedModule, setSelectedModule] = useState({});
-    const [search, setSearch] = useState("");
     const searchedModules = useMemo(() => {
         if (!search) return modules;
 
@@ -64,11 +71,23 @@ export default function StudyHub() {
             return module.module_notes.toLowerCase().includes(search.toLowerCase());
         });
     }, [search, modules]);
-    // For module creation
+    // For module and course creation
     const [moduleModal, setModuleModal] = useState(false);
     const [courseModal, setCourseModal] = useState(false);
 
+    // Assignments
     const [assignments, setAssignments] = useState([]);
+    const searchedAssignments = useMemo(() => {
+        if (!search) return assignments;
+
+        return assignments.filter((assignment) => {
+            // return true (true returns the element (complete module) into a new "filtered" array)
+            // if the assignment name contains the search term
+            return assignment.assignment_name.toLowerCase().includes(search.toLowerCase());
+        });
+    }, [search, assignments]);
+    const [createAssignment, setCreateAssignment] = useState(false);
+
     const [contact, setContact] = useState([]);
 
     const [readingPanel, setReadingPanel] = useState(false);
@@ -308,9 +327,10 @@ export default function StudyHub() {
         return shortdate.toUTCString("en-US", options).substring(0, 11);
     }
 
-    // SEARCH UPDATE
+    // SEARCH UPDATE (for modules)
     useEffect(() => {
-        if (search) {
+        if (search && contentSelector.current.value === "modules") {
+            console.log("searching for: " + search);
             // If modules have been fetched from backend
             if (modules.length > 0) {
                 // If selected module is part of searched modules, do nothing
@@ -507,15 +527,13 @@ export default function StudyHub() {
                             </button>
                         </div>
 
+                        {true && <NewAssignment />}
                         {/* Assignments */}
-                        <div className="assignments-wrapper hidden max-h-96 overflow-scroll">
-                            <ul className="flex flex-col w-full gap-y-3 border-0 border-blue-800">
-                                {assignments.map((assignment) => {
+                        <div className="assignments-wrapper hidden max-h-96 overflow-auto">
+                            <ul className="flex flex-col w-full gap-y-3">
+                                {searchedAssignments.map((assignment) => {
                                     return (
-                                        <li
-                                            key={assignment.id}
-                                            className="bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center 
-                                            grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1 border-0 border-black">
+                                        <li key={assignment.id} className={CSSclasses.assignment.base}>
                                             <span className="">
                                                 <strong>{assignment.assignment_course_code}</strong>
                                             </span>

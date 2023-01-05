@@ -146,6 +146,7 @@ def moduleList(request, course_id):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def assignmentList(request, course_id):
     # GET ASSIGNMENTS
     if request.method == "GET":
@@ -154,6 +155,7 @@ def assignmentList(request, course_id):
                 assignment_course=Course.objects.get(id=course_id),
                 assignment_user = User.objects.get(username=request.user)
             )
+            assignments.order_by("assignment_due_date")
             serializer = AssignmentSerializer(assignments, many=True)
             return Response(serializer.data, status=200)
         except Exception as e:

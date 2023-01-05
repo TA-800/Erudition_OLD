@@ -47,6 +47,9 @@ export const CSSclasses = {
 export default function StudyHub() {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
+    // Content selection
+    const contentSelector = useRef(null);
+
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState({});
     const [modules, setModules] = useState([]);
@@ -70,7 +73,6 @@ export default function StudyHub() {
 
     const [readingPanel, setReadingPanel] = useState(false);
     const { user, logout } = useContext(AuthContext);
-    const contentRef = useRef();
 
     // COURSE FETCH
     useEffect(() => {
@@ -112,10 +114,10 @@ export default function StudyHub() {
     //     console.log("assignments:\n", assignments);
     // }, [assignments]);
 
-    function fetchData(course_code, contentType) {
+    function fetchData(course_id, contentType) {
         // Fetch content from backend depending on the content selected (contentRef)
         // and add it to the rp__content element
-        fetch(`http://127.0.0.1:8000/backend/${contentType}/${course_code}`, {
+        fetch(`http://127.0.0.1:8000/backend/${contentType}/${course_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -297,11 +299,13 @@ export default function StudyHub() {
 
     // ASSIGNMENTS' FUNCTIONS
     function getLongDate(date) {
+        // Remove the letters T and Z from the date string
+        let newDate = date.replace("T", " ").replace("Z", "");
         // Extract the YYYY-MM-DD characters from the date string
-        const shortdate = new Date(date.substring(0, 10));
+        const shortdate = new Date(newDate + "+00:00");
         const options = { weekday: "long", month: "long", day: "numeric" };
 
-        return shortdate.toLocaleDateString("en-US", options);
+        return shortdate.toUTCString("en-US", options).substring(0, 11);
     }
 
     // SEARCH UPDATE
@@ -381,6 +385,8 @@ export default function StudyHub() {
                                         CSSclasses.courseButton.base,
                                         CSSclasses.courseButton.active
                                     );
+                                    // Also fetch data for clicked course for selected content
+                                    fetchData(course.id, contentSelector.current.value);
                                     setSelectedCourse(course);
                                 }}>
                                 {course.course_code}
@@ -437,6 +443,7 @@ export default function StudyHub() {
                         </button>
                         {/* Content selector drop-down */}
                         <select
+                            ref={contentSelector}
                             className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
@@ -507,7 +514,7 @@ export default function StudyHub() {
                                     return (
                                         <li
                                             key={assignment.id}
-                                            className="bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 rounded-lg items-center 
+                                            className="bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center 
                                             grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1 border-0 border-black">
                                             <span className="">
                                                 <strong>{assignment.assignment_course_code}</strong>
@@ -515,9 +522,7 @@ export default function StudyHub() {
                                             {/* Add FontAwesomeIcon instead of default icon */}
                                             <input type="checkbox" className="h-4" />
                                             <div className="flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
-                                                <span style={{ overflowWrap: "anywhere" }}>
-                                                    {assignment.assignment_name}
-                                                </span>
+                                                <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
                                             </div>
                                             <span className="text-left" style={{ overflowWrap: "break-word" }}>
                                                 {getLongDate(assignment.assignment_due_date) === "Invalid Date"

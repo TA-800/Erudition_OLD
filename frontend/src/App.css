@@ -238,7 +238,9 @@ hr {
     height: 100%;
     width: 100%;
 }
-.rp__content.hidden {
+
+/* Hide the containers that have hidden class attached to it */
+.rp__content .hidden {
     display: none;
     padding: 0;
 }
@@ -250,6 +252,8 @@ hr {
     gap: 12px;
     padding: 0 12px;
 }
+
+/* Assignments/Todos */
 
 /* Responsive */
 /* Still a large screen */

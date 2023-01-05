@@ -21,6 +21,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 from .models import *
 from .serializers import *
 
+from django.utils.timezone import now
 import json
 
 # Create your views here.
@@ -145,7 +146,57 @@ def moduleList(request, course_id):
 
 
 @api_view(['GET'])
-def assignmentList(request):
-    assignments = Assignment.objects.all()
-    serializer = AssignmentSerializer(assignments, many=True)
-    return Response(serializer.data)
+def assignmentList(request, course_id):
+    # GET ASSIGNMENTS
+    if request.method == "GET":
+        try:
+            assignments = Assignment.objects.filter(
+                assignment_course=Course.objects.get(id=course_id),
+                assignment_user = User.objects.get(username=request.user)
+            )
+            serializer = AssignmentSerializer(assignments, many=True)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+    # CREATE ASSIGNMENT
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            assignment = Assignment(
+                assignment_course=Course.objects.get(id=course_id),
+                assignment_user=User.objects.get(username=request.user),
+                assignment_name=data["assignment_name"],
+                assignment_description=data["assignment_description"],
+                assignment_due_date=data["assignment_due_date"],
+                assignment_completed=data["assignment_completed"],
+                assignment_priority = data["assignment_priority"]
+            )
+            assignment.save()
+            serializer = AssignmentSerializer(assignment, many=False)
+            return Response(serializer.data, status=201)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+    # UPDATE ASSIGNMENT
+    elif request.method == "PUT":
+        try:
+            # course_id is the assignment id in this case
+            assignment = Assignment.objects.get(id=course_id)
+            data = json.loads(request.body)
+            assignment.assignment_name = data["assignment_name"]
+            assignment.assignment_description = data["assignment_description"]
+            assignment.assignment_due_date = data["assignment_due_date"]
+            assignment.assignment_completed = data["assignment_completed"]
+            assignment.assignment_priority = data["assignment_priority"]
+            assignment.save()
+            serializer = AssignmentSerializer(assignment, many=False)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+    # DELETE ASSIGNMENT
+    elif request.method == "DELETE":
+        try:
+            assignment = Assignment.objects.get(id=course_id)
+            assignment.delete()
+            return Response({"detail": "Assignment deleted"}, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)

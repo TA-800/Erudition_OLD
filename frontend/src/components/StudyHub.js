@@ -109,8 +109,8 @@ export default function StudyHub() {
     // Debug console.log code
     // Checks when state changes
     // useEffect(() => {
-    //     console.log("courses: ", courses);
-    // }, [courses]);
+    //     console.log("assignments:\n", assignments);
+    // }, [assignments]);
 
     function fetchData(course_code, contentType) {
         // Fetch content from backend depending on the content selected (contentRef)
@@ -140,18 +140,20 @@ export default function StudyHub() {
     function printContentToPanel(data, contentType) {
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
-        root.classList.add(contentType);
+        root.className = "rp__content " + contentType;
+        console.log(root);
 
-        // Hide other content
+        // Hide other other classes by checking if the child has the `contentType` class
         outer: for (let child of root.childNodes) {
             for (let clName of child.classList) {
                 if (clName.includes(contentType)) {
+                    // Remove the hidden class
+                    child.classList.remove("hidden");
                     // This continue forces move onto next child
                     continue outer;
                 }
             }
-
-            // If this code is reached, the child does not have the comparison class
+            // If this code is reached, the child does not have the `contentType` class
             child.classList.add("hidden");
         }
 
@@ -161,12 +163,25 @@ export default function StudyHub() {
                 setModules(data);
                 break;
             case "assignments":
+                // Save the assignments to state
+                setAssignments(() => {
+                    // Go through each assignment in data and add assignment_course_name property
+                    const assignmentsWithCourseName = data.map((assignment) => {
+                        // Find the course name from the course id, and courses will already have been loaded when page first loads
+                        const course = courses.find((course) => course.id === assignment.assignment_course).course_code;
+                        // Add the course name to the assignment object
+                        assignment.assignment_course_code = course;
+                        return assignment;
+                    });
+                    return assignmentsWithCourseName;
+                });
                 break;
             case "contact":
                 break;
         }
     }
 
+    // MODULES' FUNCTIONS
     function FormattedNotes(props) {
         if (!props.delta) return "Select a course to read module notes";
         const delta = JSON.parse(props.delta);
@@ -219,7 +234,6 @@ export default function StudyHub() {
                 });
         }
     }
-
     function deleteCourse(id) {
         console.log("Deleting course with id: " + id);
         // Display confirmation dialog
@@ -281,6 +295,15 @@ export default function StudyHub() {
         }
     }
 
+    // ASSIGNMENTS' FUNCTIONS
+    function getLongDate(date) {
+        // Extract the YYYY-MM-DD characters from the date string
+        const shortdate = new Date(date.substring(0, 10));
+        const options = { weekday: "long", month: "long", day: "numeric" };
+
+        return shortdate.toLocaleDateString("en-US", options);
+    }
+
     // SEARCH UPDATE
     useEffect(() => {
         if (search) {
@@ -303,6 +326,8 @@ export default function StudyHub() {
 
     return (
         <>
+            {/* OVERLAYS BEGIN */}
+            {/* Overlay panel for adding modules */}
             {moduleModal && (
                 <NewModuleModal
                     className="absolute"
@@ -311,6 +336,7 @@ export default function StudyHub() {
                     setNewModules={setNewModules}
                 />
             )}
+            {/* Overlay panel for adding courses */}
             {courseModal && <NewCourseModal className="absolute" setCourseModal={setCourseModal} setCourses={setCourses} />}
 
             {/* Overlay panel for reading and editing text */}
@@ -325,6 +351,7 @@ export default function StudyHub() {
                     Texteditor={Texteditor}
                 />
             )}
+            {/* OVERLAYS END */}
 
             <header>Good evening, {user}.</header>
             <p
@@ -410,16 +437,15 @@ export default function StudyHub() {
                         </button>
                         {/* Content selector drop-down */}
                         <select
-                            className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center
-                        "
+                            className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
                             <option value="modules" onClick={() => fetchData(selectedCourse.id, "modules")}>
                                 Modules
                             </option>
-                            <option value="assignments" onClick={() => console.log("assignments chosen")}>
-                                Assgnmts
+                            <option value="assignments" onClick={() => fetchData(selectedCourse.id, "assignments")}>
+                                Assign/Todo
                             </option>
                             <option value="contact">Contact</option>
                         </select>
@@ -475,10 +501,38 @@ export default function StudyHub() {
                         </div>
 
                         {/* Assignments */}
-                        <div className="assignment-wrapper">{assignments}</div>
+                        <div className="assignments-wrapper hidden max-h-96 overflow-scroll">
+                            <ul className="flex flex-col w-full gap-y-3 border-0 border-blue-800">
+                                {assignments.map((assignment) => {
+                                    return (
+                                        <li
+                                            key={assignment.id}
+                                            className="bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 rounded-lg items-center 
+                                            grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1 border-0 border-black">
+                                            <span className="">
+                                                <strong>{assignment.assignment_course_code}</strong>
+                                            </span>
+                                            {/* Add FontAwesomeIcon instead of default icon */}
+                                            <input type="checkbox" className="h-4" />
+                                            <div className="flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
+                                                <span style={{ overflowWrap: "anywhere" }}>
+                                                    {assignment.assignment_name}
+                                                </span>
+                                            </div>
+                                            <span className="text-left" style={{ overflowWrap: "break-word" }}>
+                                                {getLongDate(assignment.assignment_due_date) === "Invalid Date"
+                                                    ? "Past due"
+                                                    : getLongDate(assignment.assignment_due_date)}
+                                            </span>
+                                            <span className="text-right">{assignment.days_left} days left</span>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
 
                         {/* Contact */}
-                        <div className="contact-wrapper">{contact}</div>
+                        <div className="contact-wrapper hidden">{contact}</div>
                     </div>
                 </div>
             </article>

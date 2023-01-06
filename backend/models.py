@@ -41,8 +41,7 @@ class Assignment(models.Model):
     assignment_description = models.TextField(blank=True)
     assignment_due_date = models.DateTimeField(blank=False) # "2021-09-30 23:59:59"
     assignment_completed = models.BooleanField(default=False)
-    assignment_priority = models.IntegerField(default=1) # 1 = High (assignment, exam/quiz, project), 0 = Low (to-do, reminder, reading)
-
+    
     def __str__(self):
         return f"{self.assignment_course}: {self.assignment_name}"
 

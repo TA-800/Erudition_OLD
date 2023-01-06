@@ -40,6 +40,7 @@ h4 {
 *::before,
 *::after {
     box-sizing: border-box;
+    transition: 0.3s ease;
 }
 
 /* Scrollbar */

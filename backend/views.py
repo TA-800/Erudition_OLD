@@ -145,7 +145,7 @@ def moduleList(request, course_id):
 
 
 
-@api_view(['GET'])
+@api_view(['GET', "POST", "DELETE"])
 @permission_classes([IsAuthenticated])
 def assignmentList(request, course_id):
     # GET ASSIGNMENTS
@@ -164,19 +164,19 @@ def assignmentList(request, course_id):
     elif request.method == "POST":
         try:
             data = json.loads(request.body)
-            assignment = Assignment(
-                assignment_course=Course.objects.get(id=course_id),
-                assignment_user=User.objects.get(username=request.user),
-                assignment_name=data["assignment_name"],
-                assignment_description=data["assignment_description"],
-                assignment_due_date=data["assignment_due_date"],
-                assignment_completed=data["assignment_completed"],
-                assignment_priority = data["assignment_priority"]
-            )
-            assignment.save()
-            serializer = AssignmentSerializer(assignment, many=False)
-            return Response(serializer.data, status=201)
+            if data["auto_amount"] == 0:
+                assignment = Assignment(
+                    assignment_course=Course.objects.get(id=course_id),
+                    assignment_user=User.objects.get(username=request.user),
+                    assignment_name=data["name"],
+                    assignment_description=data["desc"],
+                    assignment_due_date=datetime.strptime(data["due_date"], "%Y-%m-%d %H:%M:%S"),
+                )
+                assignment.save()
+                serializer = AssignmentSerializer(assignment, many=False)
+                return Response(serializer.data, status=201)
         except Exception as e:
+            print(e.args[0])
             return Response({"detail": f"{e.args[0]}"}, status=400)
     # UPDATE ASSIGNMENT
     elif request.method == "PUT":
@@ -188,7 +188,6 @@ def assignmentList(request, course_id):
             assignment.assignment_description = data["assignment_description"]
             assignment.assignment_due_date = data["assignment_due_date"]
             assignment.assignment_completed = data["assignment_completed"]
-            assignment.assignment_priority = data["assignment_priority"]
             assignment.save()
             serializer = AssignmentSerializer(assignment, many=False)
             return Response(serializer.data, status=200)

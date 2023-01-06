@@ -17,7 +17,7 @@ import NewAssignment from "./NewAssignment";
 
 // CSS tailwind classes
 export const CSSclasses = {
-    // className = "cursor-not-allowed bg-gray-500"
+    // className = "shadow"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -52,8 +52,8 @@ export const CSSclasses = {
         active: "",
     },
     newassignment: {
-        base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-y-hidden transition-all duration-500",
-        active: "bg-cyan-900 mb-3 p-1 h-44",
+        base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-x-hidden overflow-y-hidden transition-all duration-500",
+        active: "bg-cyan-900 p-1 pb-3 mb-3 h-44",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
@@ -547,7 +547,7 @@ export default function StudyHub() {
                             </button>
                         </div>
 
-                        {createAssignment && <NewAssignment setCreateAssignment={setCreateAssignment} />}
+                        {createAssignment && <NewAssignment setCreateAssignment={setCreateAssignment} courses={courses} setAssignments={setAssignments} />}
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">

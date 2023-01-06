@@ -199,7 +199,7 @@ export default function StudyHub() {
                 break;
             case "assignments":
                 // Save the assignments to state
-                setNewAssignments(data);
+                setNewAssignments(data, true);
                 break;
             case "contact":
                 break;
@@ -319,47 +319,38 @@ export default function StudyHub() {
     }
 
     // ASSIGNMENTS' FUNCTIONS
-    function setNewAssignments(newAssignmentData) {
-        // If newAssignmentData is an array of assignments
-        if (Array.isArray(newAssignmentData)) {
-            setAssignments((prev) => {
-                const newAssignmentsWithCourseCode = [...prev, ...newAssignmentData].map((assignment) => {
-                    return {
-                        ...assignment,
-                        assignment_due_date: new Date(assignment.assignment_due_date).toString(),
-                        assignment_course_code: courses.find((course) => course.id === assignment.assignment_course).course_code,
-                    };
-                });
-                return newAssignmentsWithCourseCode;
-            });
-        } else {
-            // If newAssignmentData is a single assignment
-            const newAssignmentWithCourseCode = newAssignmentData;
-            // Convert date to local string
-            newAssignmentWithCourseCode.assignment_due_date = new Date(
-                newAssignmentWithCourseCode.assignment_due_date
-            ).toString();
-            newAssignmentWithCourseCode.assignment_course_code = courses.find(
-                (course) => course.id === newAssignmentData.assignment_course
-            ).course_code;
-            // Update existing assignment
-            if (assignments.find((assignment) => assignment.id === newAssignmentData.id)) {
-                setAssignments((prev) => {
-                    return prev.map((assignment) =>
-                        assignment.id === newAssignmentData.id ? newAssignmentWithCourseCode : assignment
-                    );
-                });
-            } else {
-                // Else create new assignment
-                setAssignments((prev) => [...prev, newAssignmentWithCourseCode]);
-            }
+    function setNewAssignments(newAssignmentData, fetch = false) {
+        let newAssignments = [];
+        // Force array mapping
+        if (!Array.isArray(newAssignmentData)) newAssignments.push(newAssignmentData);
+        else {
+            newAssignments = newAssignmentData;
+        }
+        newAssignments = newAssignments.map((assignment) => {
+            // Convert date to local time string
+            assignment.assignment_due_date = new Date(assignment.assignment_due_date).toString();
+            return assignment;
+        });
+
+        // Replace all assignments with newAssignmentData when fetching from server
+        if (fetch) {
+            setAssignments(newAssignments);
+        }
+        // Else just append new assignments to assignments
+        else {
+            setAssignments([...assignments, ...newAssignments]);
         }
     }
+    function splitDate(date) {
+        let hours = parseInt(date.substring(0, 21).slice(16, 18));
+        let minutes = date.substring(0, 21).slice(19);
+        let time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
+        return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
+    }
 
-    // SEARCH UPDATE (for modules)
+    // SEARCH UPDATE (for modules and assignments)
     useEffect(() => {
         if (search && contentSelector.current.value === "modules") {
-            console.log("searching for: " + search);
             // If modules have been fetched from backend
             if (modules.length > 0) {
                 // If selected module is part of searched modules, do nothing
@@ -511,7 +502,7 @@ export default function StudyHub() {
                             <option
                                 value="assignments"
                                 onClick={() => {
-                                    if (assignments.length > 0 || selectedCourse.course_name === undefined) return;
+                                    if (selectedCourse.course_name === undefined) return;
                                     fetchData(selectedCourse.id, "assignments");
                                 }}>
                                 Assign/Todo
@@ -584,7 +575,7 @@ export default function StudyHub() {
                                         <li key={assignment.id} className={CSSclasses.assignment.base}>
                                             {/* Course of assignment */}
                                             <span className="">
-                                                <strong>{assignment.assignment_course_code}</strong>
+                                                <strong>{assignment.course_code}</strong>
                                             </span>
                                             {/* Completed checkbox */}
                                             <input type="checkbox" className="h-4" />
@@ -594,7 +585,9 @@ export default function StudyHub() {
                                             </div>
                                             {/* Due date */}
                                             <span className="col-span-2 text-left" style={{ overflowWrap: "break-word" }}>
-                                                {assignment.assignment_due_date.substring(0, 21)}
+                                                {splitDate(assignment.assignment_due_date).map((date, index) => {
+                                                    return <p key={index}>{date}</p>;
+                                                })}
                                             </span>
                                             {/* Days left */}
                                             <span className="text-right">{assignment.days_left} days left</span>

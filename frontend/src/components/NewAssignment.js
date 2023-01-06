@@ -61,6 +61,8 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
             .catch((err) => {
                 alert(err);
             });
+
+        closeNewAssignment();   
     }
 
     useEffect(() => {

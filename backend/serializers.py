@@ -20,13 +20,17 @@ class ModuleSerializer(serializers.ModelSerializer):
 class AssignmentSerializer(serializers.ModelSerializer):
     # Add a field to the serializer that is not in the model
     # This field calculates the number of days left until the assignment is due
+    course_code = serializers.SerializerMethodField()
     days_left = serializers.SerializerMethodField()
-    # time_left = serializers.SerializerMethodField()
+    
 
     class Meta:
         model = Assignment
         fields = '__all__'
-    
+
+    def get_course_code(self, obj):
+        return obj.assignment_course.course_code
+
     def get_days_left(self, obj):
         today = datetime.now(timezone.utc)
         due_date = obj.assignment_due_date

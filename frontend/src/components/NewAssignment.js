@@ -18,7 +18,6 @@ export default function NewAssignment({ setCreateAssignment }) {
         setIgnoreUE(true);
         newAssignmentRef.current.ontransitionend = (e) => {
             if (e.propertyName === "height") {
-                console.log("transitionend");
                 setCreateAssignment(false);
             }
         };

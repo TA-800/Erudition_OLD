@@ -57,7 +57,6 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
         setIgnoreUE(true);
         moduleNameRef.current.parentElement.ontransitionend = (e) => {
             if (e.propertyName === "opacity") {
-                console.log("transitionend");
                 clearInputs();
                 setModuleModal(false);
             }

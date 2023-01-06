@@ -17,7 +17,7 @@ import NewAssignment from "./NewAssignment";
 
 // CSS tailwind classes
 export const CSSclasses = {
-    // className = "scale-0 overflow-y-hidden h-48"
+    // className = "cursor-not-allowed bg-gray-500"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -34,6 +34,10 @@ export const CSSclasses = {
     moduleButton: {
         base: "font-normal cursor-pointer transition-all duration-200 hover:tracking-[0.2px]",
         active: "font-bold tracking-[0.2px]",
+    },
+    add: {
+        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[] transition-all duration-200",
+        disabled: "cursor-not-allowed opacity-50",
     },
     editButton: {
         base: "fixed top-2 right-5 btn-dark w-20 h-9 z-30 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
@@ -464,8 +468,9 @@ export default function StudyHub() {
                         </div>
                         {/* Add button */}
                         <button
-                            className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2
-                            flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
+                            className={
+                                createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base
+                            } //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}
@@ -542,9 +547,7 @@ export default function StudyHub() {
                             </button>
                         </div>
 
-                        {createAssignment && (
-                            <NewAssignment setCreateAssignment={setCreateAssignment} />
-                        )}
+                        {createAssignment && <NewAssignment setCreateAssignment={setCreateAssignment} />}
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">

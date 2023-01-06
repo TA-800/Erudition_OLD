@@ -52,7 +52,6 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
         setIgnoreUE(true);
         overlayRef.current.ontransitionend = (e) => {
             if (e.propertyName === "opacity") {
-                console.log("transitionend");
                 clearFormInputs();
                 setCourseModal(false);
             }

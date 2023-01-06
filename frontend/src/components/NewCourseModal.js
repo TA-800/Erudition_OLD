@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function NewCourseModal({ setCourseModal, setCourses }) {
     const overlayRef = useRef();
+    // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    const [mounted, setMounted] = useState(false);
     const [ignoreUE, setIgnoreUE] = useState(false);
 
     const clearFormInputs = () => {
@@ -49,22 +49,19 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
     }
 
     function closeModal() {
-        if (mounted) {
-            setIgnoreUE(true);
-            overlayRef.current.ontransitionend = (e) => {
-                if (e.propertyName === "opacity") {
-                    console.log("transitionend");
-                    clearFormInputs();
-                    setCourseModal(false);
-                }
-            };
-            setMountAnimation(false);
-        }
+        setIgnoreUE(true);
+        overlayRef.current.ontransitionend = (e) => {
+            if (e.propertyName === "opacity") {
+                console.log("transitionend");
+                clearFormInputs();
+                setCourseModal(false);
+            }
+        };
+        setMountAnimation(false);
     }
 
     useEffect(() => {
         if (ignoreUE) return;
-        setMounted(true);
 
         let timeout = setTimeout(() => {
             setMountAnimation(true);

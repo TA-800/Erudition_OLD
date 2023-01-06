@@ -17,10 +17,18 @@ import NewAssignment from "./NewAssignment";
 
 // CSS tailwind classes
 export const CSSclasses = {
-    // className = "transition-[height_0.5s]"
+    // className = "scale-0 overflow-y-hidden h-48"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
+    },
+    search: {
+        base: "bg-cyan-800 rounded-lg p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none",
+        // active: ""
+    },
+    dropdown: {
+        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center",
+        // active: "",
     },
     // On the span/module-text inside the div
     moduleButton: {
@@ -38,6 +46,10 @@ export const CSSclasses = {
     assignment: {
         base: "bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1",
         active: "",
+    },
+    newassignment: {
+        base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-y-hidden transition-all duration-500",
+        active: "bg-cyan-900 mb-3 p-1 h-44",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
@@ -326,6 +338,7 @@ export default function StudyHub() {
 
         return shortdate.toUTCString("en-US", options).substring(0, 11);
     }
+    function submitNewAssignment(data) {}
 
     // SEARCH UPDATE (for modules)
     useEffect(() => {
@@ -440,7 +453,7 @@ export default function StudyHub() {
                             <input
                                 type="text"
                                 placeholder="Search notes"
-                                className="bg-cyan-800 rounded-lg p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none"
+                                className={CSSclasses.search.base}
                                 style={{
                                     boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
                                 }}
@@ -457,14 +470,16 @@ export default function StudyHub() {
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}
                             onClick={() => {
-                                if (selectedCourse.course_name !== undefined) setModuleModal(true);
+                                if (selectedCourse.course_name === undefined) return;
+                                if (contentSelector.current.value === "modules") setModuleModal(true);
+                                else if (contentSelector.current.value === "assignments") setCreateAssignment(true);
                             }}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                         {/* Content selector drop-down */}
                         <select
                             ref={contentSelector}
-                            className="bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
+                            className={CSSclasses.dropdown.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
@@ -527,7 +542,9 @@ export default function StudyHub() {
                             </button>
                         </div>
 
-                        {true && <NewAssignment />}
+                        {createAssignment && (
+                            <NewAssignment setCreateAssignment={setCreateAssignment} />
+                        )}
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">

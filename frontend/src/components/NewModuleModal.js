@@ -8,8 +8,8 @@ import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 export default function NewModuleModal({ setModuleModal, course_id, setNewModules }) {
     const quillRef = useRef();
     const moduleNameRef = useRef();
+    // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    const [mounted, setMounted] = useState(false);
     const [ignoreUE, setIgnoreUE] = useState(false);
 
     const clearInputs = () => {
@@ -54,23 +54,19 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
     }
 
     function closeModal() {
-        if (mounted) {
-            setIgnoreUE(true);
-            moduleNameRef.current.parentElement.ontransitionend = (e) => {
-                if (e.propertyName === "opacity") {
-                    console.log("transitionend");
-                    clearInputs();
-                    setModuleModal(false);
-                }
-            };
-            setMountAnimation(false);
-        }
+        setIgnoreUE(true);
+        moduleNameRef.current.parentElement.ontransitionend = (e) => {
+            if (e.propertyName === "opacity") {
+                console.log("transitionend");
+                clearInputs();
+                setModuleModal(false);
+            }
+        };
+        setMountAnimation(false);
     }
 
     useEffect(() => {
         if (ignoreUE) return;
-        setMounted(true);
-
         let timeout = setTimeout(() => {
             setMountAnimation(true);
         }, 10);

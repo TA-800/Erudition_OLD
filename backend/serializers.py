@@ -29,10 +29,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
     
     def get_days_left(self, obj):
         today = datetime.now(timezone.utc)
-        print("\tToday: ", today)
         due_date = obj.assignment_due_date
-        print("\tdue_date: ", due_date)
-        print("\ttype(due_date): ", type(due_date))
         days_left = (due_date - today).days
         return days_left
 

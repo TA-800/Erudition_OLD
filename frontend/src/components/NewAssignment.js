@@ -37,6 +37,7 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
             auto_amount: auto ? form.auto_amount.value : 0,
             auto_freq: auto ? form.freq.value : 0,
         };
+        console.log(data);
 
         fetch(`http://127.0.0.1:8000/backend/assignments/${form.course.value}`, {
             method: "POST",
@@ -55,7 +56,7 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
                 return res.json();
             })
             .then((received) => {
-                console.table(received);
+                // console.table(received); 
                 setNewAssignments(received);
             })
             .catch((err) => {

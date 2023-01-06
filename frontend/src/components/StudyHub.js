@@ -508,10 +508,20 @@ export default function StudyHub() {
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
-                            <option value="modules" onClick={() => fetchData(selectedCourse.id, "modules")}>
+                            <option
+                                value="modules"
+                                onClick={() => {
+                                    if (selectedCourse.course_name === undefined) return;
+                                    fetchData(selectedCourse.id, "modules");
+                                }}>
                                 Modules
                             </option>
-                            <option value="assignments" onClick={() => fetchData(selectedCourse.id, "assignments")}>
+                            <option
+                                value="assignments"
+                                onClick={() => {
+                                    if (assignments.length > 0 || selectedCourse.course_name === undefined) return;
+                                    fetchData(selectedCourse.id, "assignments");
+                                }}>
                                 Assign/Todo
                             </option>
                             <option value="contact">Contact</option>
@@ -593,7 +603,7 @@ export default function StudyHub() {
                                                     ? "Past due"
                                                     : getLongDate(assignment.assignment_due_date)}
                                             </span>
-                                            <span className="text-right">{assignment.days_left} days left</span>
+                                            <span className="text-right">{assignment.assignment_due_date}</span>
                                         </li>
                                     );
                                 })}

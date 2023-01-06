@@ -182,16 +182,13 @@ def assignmentList(request, course_id):
                 print("\t>Line 0: ", type(data["auto_amount"]))
                 for i in range(int(data["auto_amount"])):
                     # freq = 1 -> daily, freq = 2 -> weekly, freq = 3 -> monthly
-                    print("\t>Loop information: ", i)
                     increment_timeObject = relativedelta(days=i) if data["auto_freq"] == "1" else relativedelta(weeks=i) if data["auto_freq"] == "2" else relativedelta(months=i)
-                    print("\t>RELATIVE TIME DELTA", increment_timeObject)
                     assignment = Assignment(
                         assignment_course=Course.objects.get(id=course_id),
                         assignment_user=User.objects.get(username=request.user),
                         assignment_name=f"{data['name']} {i+1}",
                         assignment_description=data["desc"],
                         assignment_due_date=pytz.utc.localize(datetime.strptime(data["due_date"], "%a, %d %b %Y %H:%M:%S %Z") + increment_timeObject),
-                        #assignment_due_date=pytz.utc.localize(datetime.strptime(data["due_date"], "%a, %d %b %Y %H:%M:%S %Z")),
                     )
                     assignment.save()
                     assignments.append(assignment)

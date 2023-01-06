@@ -48,7 +48,7 @@ export const CSSclasses = {
         active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
     },
     assignment: {
-        base: "bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center grid grid-cols-[1fr_0.5fr_2.25fr_3fr_1.75fr] gap-x-1",
+        base: "bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center grid grid-cols-8 gap-x-1",
         active: "",
     },
     newassignment: {
@@ -317,6 +317,8 @@ export default function StudyHub() {
             setModules([...modules, newModuleData]);
         }
     }
+
+    // ASSIGNMENTS' FUNCTIONS
     function setNewAssignments(newAssignmentData) {
         // If newAssignmentData is an array of assignments
         if (Array.isArray(newAssignmentData)) {
@@ -324,7 +326,7 @@ export default function StudyHub() {
                 const newAssignmentsWithCourseCode = [...prev, ...newAssignmentData].map((assignment) => {
                     return {
                         ...assignment,
-                        assignment_due_date: new Date(assignment.assignment_due_date).toLocaleString(),
+                        assignment_due_date: new Date(assignment.assignment_due_date).toString(),
                         assignment_course_code: courses.find((course) => course.id === assignment.assignment_course).course_code,
                     };
                 });
@@ -336,7 +338,7 @@ export default function StudyHub() {
             // Convert date to local string
             newAssignmentWithCourseCode.assignment_due_date = new Date(
                 newAssignmentWithCourseCode.assignment_due_date
-            ).toLocaleString();
+            ).toString();
             newAssignmentWithCourseCode.assignment_course_code = courses.find(
                 (course) => course.id === newAssignmentData.assignment_course
             ).course_code;
@@ -352,16 +354,6 @@ export default function StudyHub() {
                 setAssignments((prev) => [...prev, newAssignmentWithCourseCode]);
             }
         }
-    }
-    // ASSIGNMENTS' FUNCTIONS
-    function getLongDate(date) {
-        // Remove the letters T and Z from the date string
-        let newDate = date.replace("T", " ").replace("Z", "");
-        // Extract the YYYY-MM-DD characters from the date string
-        const shortdate = new Date(newDate + "+00:00");
-        const options = { weekday: "long", month: "long", day: "numeric" };
-
-        return shortdate.toUTCString("en-US", options).substring(0, 11);
     }
 
     // SEARCH UPDATE (for modules)
@@ -590,20 +582,22 @@ export default function StudyHub() {
                                 {searchedAssignments.map((assignment) => {
                                     return (
                                         <li key={assignment.id} className={CSSclasses.assignment.base}>
+                                            {/* Course of assignment */}
                                             <span className="">
                                                 <strong>{assignment.assignment_course_code}</strong>
                                             </span>
-                                            {/* Add FontAwesomeIcon instead of default icon */}
+                                            {/* Completed checkbox */}
                                             <input type="checkbox" className="h-4" />
-                                            <div className="flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
+                                            {/* Name */}
+                                            <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
                                                 <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
                                             </div>
-                                            <span className="text-left" style={{ overflowWrap: "break-word" }}>
-                                                {getLongDate(assignment.assignment_due_date) === "Invalid Date"
-                                                    ? "Past due"
-                                                    : getLongDate(assignment.assignment_due_date)}
+                                            {/* Due date */}
+                                            <span className="col-span-2 text-left" style={{ overflowWrap: "break-word" }}>
+                                                {assignment.assignment_due_date.substring(0, 21)}
                                             </span>
-                                            <span className="text-right">{assignment.assignment_due_date}</span>
+                                            {/* Days left */}
+                                            <span className="text-right">{assignment.days_left} days left</span>
                                         </li>
                                     );
                                 })}

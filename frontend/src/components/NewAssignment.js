@@ -26,8 +26,9 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
 
     function submitAssignment(e) {
         e.preventDefault();
-        console.log("submitting assignment");
         const form = e.target.parentElement;
+        console.log("date input: " + startDate);
+        console.log("date sent: " + startDate.toUTCString());
         const data = {
             // Select the first course if none is selected
             course: form.course.value || courses[0].id,
@@ -37,7 +38,6 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
             auto_amount: auto ? form.auto_amount.value : 0,
             auto_freq: auto ? form.freq.value : 0,
         };
-        console.log(data);
 
         fetch(`http://127.0.0.1:8000/backend/assignments/${form.course.value}`, {
             method: "POST",
@@ -56,7 +56,6 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
                 return res.json();
             })
             .then((received) => {
-                // console.table(received); 
                 setNewAssignments(received);
             })
             .catch((err) => {

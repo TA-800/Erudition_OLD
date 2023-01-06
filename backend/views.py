@@ -21,8 +21,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 from .models import *
 from .serializers import *
 
-from django.utils.timezone import now
 import json
+import pytz
 
 # Create your views here.
 @api_view(['GET'])
@@ -170,7 +170,7 @@ def assignmentList(request, course_id):
                     assignment_user=User.objects.get(username=request.user),
                     assignment_name=data["name"],
                     assignment_description=data["desc"],
-                    assignment_due_date=datetime.strptime(data["due_date"], "%Y-%m-%d %H:%M:%S"),
+                    assignment_due_date=pytz.utc.localize(datetime.strptime(data["due_date"], "%a, %d %b %Y %H:%M:%S %Z")),
                 )
                 assignment.save()
                 serializer = AssignmentSerializer(assignment, many=False)

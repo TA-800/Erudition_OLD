@@ -173,12 +173,10 @@ export default function StudyHub() {
             })
             .catch((errMessage) => console.log(errMessage));
     }
-
     function printContentToPanel(data, contentType) {
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
         root.className = "rp__content " + contentType;
-        console.log(root);
 
         // Hide other other classes by checking if the child has the `contentType` class
         outer: for (let child of root.childNodes) {
@@ -201,17 +199,7 @@ export default function StudyHub() {
                 break;
             case "assignments":
                 // Save the assignments to state
-                setAssignments(() => {
-                    // Go through each assignment in data and add assignment_course_name property
-                    const assignmentsWithCourseName = data.map((assignment) => {
-                        // Find the course name from the course id, and courses will already have been loaded when page first loads
-                        const course = courses.find((course) => course.id === assignment.assignment_course).course_code;
-                        // Add the course name to the assignment object
-                        assignment.assignment_course_code = course;
-                        return assignment;
-                    });
-                    return assignmentsWithCourseName;
-                });
+                setNewAssignments(data);
                 break;
             case "contact":
                 break;
@@ -233,7 +221,6 @@ export default function StudyHub() {
             />
         );
     }
-
     function deleteModule(id) {
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this module?")) {
@@ -319,7 +306,6 @@ export default function StudyHub() {
         const courseToSelect = document.querySelector(`[data-ckey="${course_id}"]`);
         courseToSelect.click();
     }
-
     // This can be used to create a new module or update an existing module
     function setNewModules(newModuleData) {
         if (modules.find((module) => module.id === newModuleData.id)) {
@@ -331,7 +317,42 @@ export default function StudyHub() {
             setModules([...modules, newModuleData]);
         }
     }
-
+    function setNewAssignments(newAssignmentData) {
+        // If newAssignmentData is an array of assignments
+        if (Array.isArray(newAssignmentData)) {
+            setAssignments((prev) => {
+                const newAssignmentsWithCourseCode = [...prev, ...newAssignmentData].map((assignment) => {
+                    return {
+                        ...assignment,
+                        assignment_due_date: new Date(assignment.assignment_due_date).toLocaleString(),
+                        assignment_course_code: courses.find((course) => course.id === assignment.assignment_course).course_code,
+                    };
+                });
+                return newAssignmentsWithCourseCode;
+            });
+        } else {
+            // If newAssignmentData is a single assignment
+            const newAssignmentWithCourseCode = newAssignmentData;
+            // Convert date to local string
+            newAssignmentWithCourseCode.assignment_due_date = new Date(
+                newAssignmentWithCourseCode.assignment_due_date
+            ).toLocaleString();
+            newAssignmentWithCourseCode.assignment_course_code = courses.find(
+                (course) => course.id === newAssignmentData.assignment_course
+            ).course_code;
+            // Update existing assignment
+            if (assignments.find((assignment) => assignment.id === newAssignmentData.id)) {
+                setAssignments((prev) => {
+                    return prev.map((assignment) =>
+                        assignment.id === newAssignmentData.id ? newAssignmentWithCourseCode : assignment
+                    );
+                });
+            } else {
+                // Else create new assignment
+                setAssignments((prev) => [...prev, newAssignmentWithCourseCode]);
+            }
+        }
+    }
     // ASSIGNMENTS' FUNCTIONS
     function getLongDate(date) {
         // Remove the letters T and Z from the date string
@@ -342,7 +363,6 @@ export default function StudyHub() {
 
         return shortdate.toUTCString("en-US", options).substring(0, 11);
     }
-    function submitNewAssignment(data) {}
 
     // SEARCH UPDATE (for modules)
     useEffect(() => {
@@ -547,7 +567,13 @@ export default function StudyHub() {
                             </button>
                         </div>
 
-                        {createAssignment && <NewAssignment setCreateAssignment={setCreateAssignment} courses={courses} setAssignments={setAssignments} />}
+                        {createAssignment && (
+                            <NewAssignment
+                                setCreateAssignment={setCreateAssignment}
+                                courses={courses}
+                                setNewAssignments={setNewAssignments}
+                            />
+                        )}
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">

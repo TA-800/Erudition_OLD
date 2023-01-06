@@ -6,7 +6,7 @@ import { CSSclasses } from "./StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewAssignment({ setCreateAssignment, courses, setAssignments }) {
+export default function NewAssignment({ setCreateAssignment, courses, setNewAssignments }) {
     const [auto, setAuto] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const newAssignmentRef = useRef();
@@ -26,18 +26,17 @@ export default function NewAssignment({ setCreateAssignment, courses, setAssignm
 
     function submitAssignment(e) {
         e.preventDefault();
-
+        console.log("submitting assignment");
         const form = e.target.parentElement;
         const data = {
-            course: form.course.value,
-            due_date: startDate.toISOString().replace("T", " ").substring(0, 19),
+            // Select the first course if none is selected
+            course: form.course.value || courses[0].id,
+            due_date: startDate.toUTCString(),
             name: form.name.value || "Assignment ",
             desc: form.desc.value,
             auto_amount: auto ? form.auto_amount.value : 0,
             auto_freq: auto ? form.freq.value : 0,
         };
-        console.log(data);
-        console.log(JSON.stringify(data));
 
         fetch(`http://127.0.0.1:8000/backend/assignments/${form.course.value}`, {
             method: "POST",
@@ -55,9 +54,9 @@ export default function NewAssignment({ setCreateAssignment, courses, setAssignm
                 }
                 return res.json();
             })
-            .then((newdata) => {
-                console.log("newdata RECEIVED");
-                console.log(newdata);
+            .then((received) => {
+                console.table(received);
+                setNewAssignments(received);
             })
             .catch((err) => {
                 alert(err);

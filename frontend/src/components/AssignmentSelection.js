@@ -36,7 +36,6 @@ export default function AssignmentSelection({
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
                 // Remove deleted assignments from state
                 setAssignments(assignments.filter((assignment) => !assignmentSelection.includes(String(assignment.id))));
                 setAssignmentSelection([]);
@@ -59,10 +58,8 @@ export default function AssignmentSelection({
     // When unmounting
     useEffect(() => {
         if (assignmentSelection.length === 0) {
-            wrapperRef.current.ontransitionend = (e) => {
-                if (e.propertyName === "height") {
-                    setAssignmentSelectionBox(false);
-                }
+            wrapperRef.current.ontransitionend = () => {
+                setAssignmentSelectionBox(false);
             };
             setMountAnimation(false);
         }

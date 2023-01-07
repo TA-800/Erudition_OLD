@@ -155,10 +155,15 @@ export default function StudyHub() {
     // Debug console.log code
     // Checks when state changes
     // useEffect(() => {
-    //     console.log("assignments:\n", assignments);
-    // }, [assignments]);
+    //     console.log("selection: ", assignmentSelection, "selectionBox: ", assignmentSelectionBox);
+    // }, [assignmentSelection, assignmentSelectionBox]);
 
     function fetchData(course_id, contentType) {
+        // Unselect all assignments
+        setAssignmentSelection([]);
+        // Hide the assignment selection box
+        setAssignmentSelectionBox(false);
+
         // Fetch content from backend depending on the content selected (contentRef)
         // and add it to the rp__content element
         fetch(`http://127.0.0.1:8000/backend/${contentType}/${course_id}`, {
@@ -183,6 +188,10 @@ export default function StudyHub() {
             .catch((errMessage) => console.log(errMessage));
     }
     function printContentToPanel(data, contentType) {
+        // Deselect all selected assignments
+        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
+            el.checked = false;
+        });
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
         root.className = "rp__content " + contentType;
@@ -364,12 +373,9 @@ export default function StudyHub() {
             setAssignmentSelectionBox(true);
         }
         // If unchecked, remove from assignmentSelection
-        else
-            setAssignmentSelection(
-                assignmentSelection.filter((assignment) => {
-                    return assignment !== assignmentID;
-                })
-            );
+        else {
+            setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
+        }
     }
 
     // SEARCH UPDATE (for modules and assignments)

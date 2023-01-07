@@ -8,7 +8,6 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
     const overlayRef = useRef();
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    const [ignoreUE, setIgnoreUE] = useState(false);
 
     const clearFormInputs = () => {
         document.querySelector("input[name='code']").value = "";
@@ -49,7 +48,6 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
     }
 
     function closeModal() {
-        setIgnoreUE(true);
         overlayRef.current.ontransitionend = (e) => {
             if (e.propertyName === "opacity") {
                 clearFormInputs();
@@ -60,8 +58,6 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
     }
 
     useEffect(() => {
-        if (ignoreUE) return;
-
         let timeout = setTimeout(() => {
             setMountAnimation(true);
         }, 10);
@@ -69,7 +65,7 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
         return () => {
             clearTimeout(timeout);
         };
-    });
+    }, []);
 
     return (
         <>

@@ -12,10 +12,8 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
     const newAssignmentRef = useRef();
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    const [ignoreUE, setIgnoreUE] = useState(false);
 
     function closeNewAssignment() {
-        setIgnoreUE(true);
         newAssignmentRef.current.ontransitionend = (e) => {
             if (e.propertyName === "height") {
                 setCreateAssignment(false);
@@ -62,12 +60,10 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
                 alert(err);
             });
 
-        closeNewAssignment();   
+        closeNewAssignment();
     }
 
     useEffect(() => {
-        if (ignoreUE) return;
-
         let timeout = setTimeout(() => {
             setMountAnimation(true);
         }, 10);

@@ -14,6 +14,7 @@ import NewCourseModal from "./NewCourseModal";
 import NewModuleModal from "./NewModuleModal";
 import ReadingPanel from "./ReadingPanel";
 import NewAssignment from "./NewAssignment";
+import AssignmentSelection from "./AssignmentSelection";
 
 // CSS tailwind classes
 export const CSSclasses = {
@@ -55,15 +56,21 @@ export const CSSclasses = {
         base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-x-hidden overflow-y-hidden transition-all duration-500",
         active: "bg-cyan-900 p-1 pb-3 mb-3 h-44",
     },
+    assignmentSelect: {
+        base: "bg-cyan-900 text-cyan-100 h-0 w-full flex flex-row justify-around items-center px-3 py-0 mt-0 rounded-lg overflow-hidden transition-all duration-500",
+        active: "h-14 mt-3 py-3",
+    },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
         active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
     },
     overlay: {
-        base: "w-screen h-screen fixed top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-200",
+        base: "w-screen h-screen fixed top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-300",
         active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-auto",
     },
 };
+
+// <div className="bg-cyan-900 text-cyan-100 h-14 w-full flex flex-row justify-around items-center p-3 mt-3 rounded-lg"
 
 export default function StudyHub() {
     // First load to lock scrolls on overlay
@@ -103,6 +110,8 @@ export default function StudyHub() {
         });
     }, [search, assignments]);
     const [createAssignment, setCreateAssignment] = useState(false);
+    const [assignmentSelection, setAssignmentSelection] = useState([]);
+    const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
 
     const [contact, setContact] = useState([]);
 
@@ -347,6 +356,21 @@ export default function StudyHub() {
         let time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
         return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
     }
+    function assignmentSelectionChange(e) {
+        const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
+        // If checked, add to assignmentSelection
+        if (e.target.checked) {
+            setAssignmentSelection([...assignmentSelection, assignmentID]);
+            setAssignmentSelectionBox(true);
+        }
+        // If unchecked, remove from assignmentSelection
+        else
+            setAssignmentSelection(
+                assignmentSelection.filter((assignment) => {
+                    return assignment !== assignmentID;
+                })
+            );
+    }
 
     // SEARCH UPDATE (for modules and assignments)
     useEffect(() => {
@@ -572,13 +596,19 @@ export default function StudyHub() {
                             <ul className="flex flex-col w-full gap-y-3">
                                 {searchedAssignments.map((assignment) => {
                                     return (
-                                        <li key={assignment.id} className={CSSclasses.assignment.base}>
+                                        <li key={assignment.id} data-akey={assignment.id} className={CSSclasses.assignment.base}>
                                             {/* Course of assignment */}
                                             <span className="">
                                                 <strong>{assignment.course_code}</strong>
                                             </span>
-                                            {/* Completed checkbox */}
-                                            <input type="checkbox" className="h-4" />
+                                            {/* Selection checkbox */}
+                                            <div className="text-right pr-2 sm:pr-1">
+                                                <input
+                                                    type="checkbox"
+                                                    className="h-4"
+                                                    onChange={(e) => assignmentSelectionChange(e)}
+                                                />
+                                            </div>
                                             {/* Name */}
                                             <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
                                                 <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
@@ -596,6 +626,15 @@ export default function StudyHub() {
                                 })}
                             </ul>
                         </div>
+                        {assignmentSelectionBox && (
+                            <AssignmentSelection
+                                assignments={assignments}
+                                assignmentSelection={assignmentSelection}
+                                setAssignments={setAssignments}
+                                setAssignmentSelection={setAssignmentSelection}
+                                setAssignmentSelectionBox={setAssignmentSelectionBox}
+                            />
+                        )}
 
                         {/* Contact */}
                         <div className="contact-wrapper hidden">{contact}</div>

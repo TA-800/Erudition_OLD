@@ -179,7 +179,6 @@ def assignmentList(request, course_id):
                 return Response(serializer.data, status=201)
             else:
                 assignments = []
-                print("\t>Line 0: ", type(data["auto_amount"]))
                 for i in range(int(data["auto_amount"])):
                     # freq = 1 -> daily, freq = 2 -> weekly, freq = 3 -> monthly
                     increment_timeObject = relativedelta(days=i) if data["auto_freq"] == "1" else relativedelta(weeks=i) if data["auto_freq"] == "2" else relativedelta(months=i)
@@ -216,8 +215,11 @@ def assignmentList(request, course_id):
     # DELETE ASSIGNMENT
     elif request.method == "DELETE":
         try:
-            assignment = Assignment.objects.get(id=course_id)
-            assignment.delete()
-            return Response({"detail": "Assignment deleted"}, status=200)
+            data = json.loads(request.body)
+            # Go through the array of assignment ids to delete
+            for id in data["assignments"]:
+                assignment = Assignment.objects.get(id=id)
+                assignment.delete()
+            return Response({"detail": "Assignments deleted"}, status=200)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)

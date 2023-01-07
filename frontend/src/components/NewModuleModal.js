@@ -10,7 +10,6 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
     const moduleNameRef = useRef();
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    const [ignoreUE, setIgnoreUE] = useState(false);
 
     const clearInputs = () => {
         moduleNameRef.current.value = "";
@@ -54,7 +53,6 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
     }
 
     function closeModal() {
-        setIgnoreUE(true);
         moduleNameRef.current.parentElement.ontransitionend = (e) => {
             if (e.propertyName === "opacity") {
                 clearInputs();
@@ -65,7 +63,6 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
     }
 
     useEffect(() => {
-        if (ignoreUE) return;
         let timeout = setTimeout(() => {
             setMountAnimation(true);
         }, 10);
@@ -73,7 +70,7 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
         return () => {
             clearTimeout(timeout);
         };
-    });
+    }, []);
 
     return (
         <>

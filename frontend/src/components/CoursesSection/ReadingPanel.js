@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { faCheck, faClose, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CSSclasses } from "./StudyHub";
+import { CSSclasses } from "../StudyHub";
 import { twMerge } from "tailwind-merge";
 
 export default function ReadingPanel({

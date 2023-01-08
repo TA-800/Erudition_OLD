@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "./StudyHub";
+import { CSSclasses } from "../StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 

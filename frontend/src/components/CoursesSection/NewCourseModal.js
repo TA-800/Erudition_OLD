@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CSSclasses } from "./StudyHub";
+import { CSSclasses } from "../StudyHub";
 import { twMerge } from "tailwind-merge";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

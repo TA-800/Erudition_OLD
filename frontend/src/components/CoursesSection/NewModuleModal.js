@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Texteditor from "./Texteditor";
-import { CSSclasses } from "./StudyHub";
+import { CSSclasses } from "../StudyHub";
 import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";

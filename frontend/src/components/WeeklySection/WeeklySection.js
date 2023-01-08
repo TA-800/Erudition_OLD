@@ -5,16 +5,27 @@ import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import NewAssignment from "../CoursesSection/NewAssignment";
 import AssignmentSelection from "../CoursesSection/AssignmentSelection";
+import { endOfISOWeek, startOfISOWeek } from "date-fns";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
-    const [selectedWeek, setSelectedWeek] = useState(null);
+    const [selectedWeek, setSelectedWeek] = useState(1);
 
     const [search, setSearch] = useState("");
     const searchedAssignments = useMemo(() => {
-        if (!search) return assignments;
+        // Get all assignments that are due in the selected week.
+        // Selected week = 0 -> this week, 1 -> next week, 2 -> choose custom week
+        const date = new Date();
+        const start = startOfISOWeek(date);
+        const end = endOfISOWeek(date);
+        const weekFilteredAssignments = assignments.filter((assignment) => {
+            const assignmentDate = new Date(assignment.assignment_due_date);
+            return assignmentDate >= start && assignmentDate <= end;
+        });
 
-        return assignments.filter((assignment) => {
-            // return true (true returns the element (complete module) into a new "filtered" array)
+        if (!search) return weekFilteredAssignments;
+
+        return weekFilteredAssignments.filter((assignment) => {
+            // return true (true returns the element (complete assignment) into a new "filtered" array)
             // if the assignment name contains the search term
             return assignment.assignment_name.toLowerCase().includes(search.toLowerCase());
         });
@@ -46,17 +57,13 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
             .catch((err) => alert(err.message));
     }, [selectedWeek]);
 
-    // DEBUGGING
     // useEffect(() => {
-    //     console.log(
-    //         "Selected week: ",
-    //         selectedWeek,
-    //         "\nAssignments: ",
-    //         assignments,
-    //         "\nSearched Assignments ",
-    //         searchedAssignments
-    //     );
-    // }, [selectedWeek, assignments, searchedAssignments]);
+    //     const date = new Date();
+    //     console.log(date);
+    //     const start = startOfISOWeek(date);
+    //     const end = endOfISOWeek(date);
+    //     console.log(start, end);
+    // }, []);
 
     // ASSIGNMENTS' FUNCTIONS
     function setNewAssignments(newAssignmentData, fetch = false) {

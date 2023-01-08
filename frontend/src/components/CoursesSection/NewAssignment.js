@@ -169,6 +169,7 @@ function ManualAssignment({ startDate, setStartDate, courses }) {
                 className={twMerge(CSSclasses.search.base, "p-2 col-span-3 resize-none")}
                 placeholder="Assignment Description"
                 style={{
+                    scrollbarWidth: "none",
                     boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
                 }}></textarea>
         </>
@@ -235,6 +236,7 @@ function AutoAssignment({ startDate, setStartDate, courses }) {
                 className={twMerge(CSSclasses.search.base, "p-2 col-span-3 resize-none")}
                 placeholder="Assignment Description"
                 style={{
+                    scrollbarWidth: "none",
                     boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
                 }}></textarea>
             {/* Assignment auto name */}

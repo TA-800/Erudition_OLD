@@ -147,7 +147,7 @@ def moduleList(request, course_id):
 
 
 
-@api_view(['GET', "POST", "DELETE"])
+@api_view(['GET', "POST", "PUT", "DELETE"])
 @permission_classes([IsAuthenticated])
 def assignmentList(request, course_id):
     # GET ASSIGNMENTS
@@ -200,15 +200,15 @@ def assignmentList(request, course_id):
     # UPDATE ASSIGNMENT
     elif request.method == "PUT":
         try:
-            # course_id is the assignment id in this case
-            assignment = Assignment.objects.get(id=course_id)
+            assignments = []
+            # Go through the array of assignment ids to delete
             data = json.loads(request.body)
-            assignment.assignment_name = data["assignment_name"]
-            assignment.assignment_description = data["assignment_description"]
-            assignment.assignment_due_date = data["assignment_due_date"]
-            assignment.assignment_completed = data["assignment_completed"]
-            assignment.save()
-            serializer = AssignmentSerializer(assignment, many=False)
+            for id in data["assignments"]:
+                assignment = Assignment.objects.get(id=id)
+                assignment.assignment_completed = (not assignment.assignment_completed)
+                assignment.save()
+                assignments.append(assignment)
+            serializer = AssignmentSerializer(assignments, many=True)
             return Response(serializer.data, status=200)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)

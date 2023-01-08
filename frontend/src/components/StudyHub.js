@@ -49,15 +49,15 @@ export const CSSclasses = {
         active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
     },
     assignment: {
-        base: "bg-cyan-800 text-cyan-100 w-full min-h-[3.5rem] px-2 sm:px-1 rounded-lg items-center grid grid-cols-8 gap-x-1",
-        active: "",
+        base: "bg-red-800 bg-opacity-50 text-white border-2 border-red-900 w-full min-h-[3.5rem] px-2 sm:px-1  items-center grid grid-cols-8 gap-x-1",
+        completed: "bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100",
     },
     newassignment: {
         base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-x-hidden overflow-y-hidden transition-all duration-500",
         active: "bg-cyan-900 p-1 pb-3 mb-3 h-44",
     },
     assignmentSelect: {
-        base: "bg-cyan-900 text-cyan-100 h-0 w-full flex flex-row justify-around items-center px-3 py-0 mt-0 rounded-lg overflow-hidden transition-all duration-500",
+        base: "bg-cyan-900 text-cyan-100 h-0 w-full flex flex-row justify-around items-center px-3 py-0 mt-0 rounded-lg overflow-hidden transition-all duration-300",
         active: "h-14 mt-3 py-3",
     },
     readOverlay: {
@@ -70,7 +70,7 @@ export const CSSclasses = {
     },
 };
 
-// <div className="bg-cyan-900 text-cyan-100 h-14 w-full flex flex-row justify-around items-center p-3 mt-3 rounded-lg"
+// <div className="bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100"
 
 export default function StudyHub() {
     // First load to lock scrolls on overlay
@@ -160,7 +160,7 @@ export default function StudyHub() {
 
     function fetchData(course_id, contentType) {
         // Unselect all assignments
-        setAssignmentSelection([]);
+        clearAssignmentSelection();
         // Hide the assignment selection box
         setAssignmentSelectionBox(false);
 
@@ -376,6 +376,13 @@ export default function StudyHub() {
         else {
             setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
         }
+    }
+    function clearAssignmentSelection() {
+        // Deselect all selected assignments
+        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
+            el.checked = false;
+        });
+        setAssignmentSelection([]);
     }
 
     // SEARCH UPDATE (for modules and assignments)
@@ -602,7 +609,14 @@ export default function StudyHub() {
                             <ul className="flex flex-col w-full gap-y-3">
                                 {searchedAssignments.map((assignment) => {
                                     return (
-                                        <li key={assignment.id} data-akey={assignment.id} className={CSSclasses.assignment.base}>
+                                        <li
+                                            key={assignment.id}
+                                            data-akey={assignment.id}
+                                            className={
+                                                assignment.assignment_completed
+                                                    ? twMerge(CSSclasses.assignment.base, CSSclasses.assignment.completed)
+                                                    : CSSclasses.assignment.base
+                                            }>
                                             {/* Course of assignment */}
                                             <span className="">
                                                 <strong>{assignment.course_code}</strong>
@@ -637,8 +651,9 @@ export default function StudyHub() {
                                 assignments={assignments}
                                 assignmentSelection={assignmentSelection}
                                 setAssignments={setAssignments}
-                                setAssignmentSelection={setAssignmentSelection}
+                                // setAssignmentSelection={setAssignmentSelection}
                                 setAssignmentSelectionBox={setAssignmentSelectionBox}
+                                clearAssignmentSelection={clearAssignmentSelection}
                             />
                         )}
 

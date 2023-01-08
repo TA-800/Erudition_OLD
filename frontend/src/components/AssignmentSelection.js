@@ -8,8 +8,9 @@ export default function AssignmentSelection({
     assignments,
     assignmentSelection,
     setAssignments,
-    setAssignmentSelection,
+    // setAssignmentSelection,
     setAssignmentSelectionBox,
+    clearAssignmentSelection,
 }) {
     const wrapperRef = useRef(null);
     // For (un)mount animation
@@ -38,7 +39,43 @@ export default function AssignmentSelection({
             .then((data) => {
                 // Remove deleted assignments from state
                 setAssignments(assignments.filter((assignment) => !assignmentSelection.includes(String(assignment.id))));
-                setAssignmentSelection([]);
+                clearAssignmentSelection();
+            })
+            .catch((err) => {
+                alert(err);
+            });
+    }
+    function markAssignmentsComplete() {
+        // Delete assignments
+        fetch(`http://127.0.0.1:8000/backend/assignments/0`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+            body: JSON.stringify({
+                assignments: assignmentSelection, // Array of assignment IDs to mark complete
+            }),
+        })
+            .then((res) => {
+                if (res.status !== 200) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText} ${json.detail}}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                // Update assignments in state by marking them complete
+                setAssignments(
+                    assignments.map((assignment) => {
+                        if (assignmentSelection.includes(String(assignment.id)))
+                            assignment.assignment_completed = data.find((a) => a.id === assignment.id).assignment_completed;
+                        return assignment;
+                    })
+                );
+                clearAssignmentSelection();
             })
             .catch((err) => {
                 alert(err);
@@ -73,7 +110,7 @@ export default function AssignmentSelection({
                     ? twMerge(CSSclasses.assignmentSelect.base, CSSclasses.assignmentSelect.active)
                     : CSSclasses.assignmentSelect.base
             }>
-            <div className="flex flex-row gap-1 items-center cursor-pointer hover:text-lg">
+            <div className="flex flex-row gap-1 items-center cursor-pointer hover:text-lg" onClick={markAssignmentsComplete}>
                 <span>Mark as complete</span>
                 <FontAwesomeIcon icon={faCheckCircle} />
             </div>

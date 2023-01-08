@@ -159,6 +159,7 @@ export default function StudyHub() {
     // }, [assignmentSelection, assignmentSelectionBox]);
 
     function fetchData(course_id, contentType) {
+        console.log("fetch function called");
         // Unselect all assignments
         clearAssignmentSelection();
         // Hide the assignment selection box
@@ -523,27 +524,17 @@ export default function StudyHub() {
                         </button>
                         {/* Content selector drop-down */}
                         <select
+                            onChange={() => {
+                                if (selectedCourse.course_name === undefined) return;
+                                fetchData(selectedCourse.id, contentSelector.current.value);
+                            }}
                             ref={contentSelector}
                             className={CSSclasses.dropdown.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
-                            <option
-                                value="modules"
-                                onClick={() => {
-                                    if (selectedCourse.course_name === undefined) return;
-                                    fetchData(selectedCourse.id, "modules");
-                                }}>
-                                Modules
-                            </option>
-                            <option
-                                value="assignments"
-                                onClick={() => {
-                                    if (selectedCourse.course_name === undefined) return;
-                                    fetchData(selectedCourse.id, "assignments");
-                                }}>
-                                Assign/Todo
-                            </option>
+                            <option value="modules">Modules</option>
+                            <option value="assignments">Assign/Todo</option>
                             <option value="contact">Contact</option>
                         </select>
                     </div>
@@ -607,43 +598,45 @@ export default function StudyHub() {
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">
-                                {searchedAssignments.map((assignment) => {
-                                    return (
-                                        <li
-                                            key={assignment.id}
-                                            data-akey={assignment.id}
-                                            className={
-                                                assignment.assignment_completed
-                                                    ? twMerge(CSSclasses.assignment.base, CSSclasses.assignment.completed)
-                                                    : CSSclasses.assignment.base
-                                            }>
-                                            {/* Course of assignment */}
-                                            <span className="">
-                                                <strong>{assignment.course_code}</strong>
-                                            </span>
-                                            {/* Selection checkbox */}
-                                            <div className="text-right pr-2 sm:pr-1">
-                                                <input
-                                                    type="checkbox"
-                                                    className="h-4"
-                                                    onChange={(e) => assignmentSelectionChange(e)}
-                                                />
-                                            </div>
-                                            {/* Name */}
-                                            <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
-                                                <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
-                                            </div>
-                                            {/* Due date */}
-                                            <span className="col-span-2 text-left" style={{ overflowWrap: "break-word" }}>
-                                                {splitDate(assignment.assignment_due_date).map((date, index) => {
-                                                    return <p key={index}>{date}</p>;
-                                                })}
-                                            </span>
-                                            {/* Days left */}
-                                            <span className="text-right">{assignment.days_left} days left</span>
-                                        </li>
-                                    );
-                                })}
+                                {searchedAssignments
+                                    .sort((a, b) => a.days_left - b.days_left)
+                                    .map((assignment) => {
+                                        return (
+                                            <li
+                                                key={assignment.id}
+                                                data-akey={assignment.id}
+                                                className={
+                                                    assignment.assignment_completed
+                                                        ? twMerge(CSSclasses.assignment.base, CSSclasses.assignment.completed)
+                                                        : CSSclasses.assignment.base
+                                                }>
+                                                {/* Course of assignment */}
+                                                <span className="">
+                                                    <strong>{assignment.course_code}</strong>
+                                                </span>
+                                                {/* Selection checkbox */}
+                                                <div className="text-right pr-2 sm:pr-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="h-4"
+                                                        onChange={(e) => assignmentSelectionChange(e)}
+                                                    />
+                                                </div>
+                                                {/* Name */}
+                                                <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
+                                                    <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
+                                                </div>
+                                                {/* Due date */}
+                                                <span className="col-span-2 text-left" style={{ overflowWrap: "break-word" }}>
+                                                    {splitDate(assignment.assignment_due_date).map((date, index) => {
+                                                        return <p key={index}>{date}</p>;
+                                                    })}
+                                                </span>
+                                                {/* Days left */}
+                                                <span className="text-right">{assignment.days_left} days left</span>
+                                            </li>
+                                        );
+                                    })}
                             </ul>
                         </div>
                         {assignmentSelectionBox && (
@@ -651,7 +644,6 @@ export default function StudyHub() {
                                 assignments={assignments}
                                 assignmentSelection={assignmentSelection}
                                 setAssignments={setAssignments}
-                                // setAssignmentSelection={setAssignmentSelection}
                                 setAssignmentSelectionBox={setAssignmentSelectionBox}
                                 clearAssignmentSelection={clearAssignmentSelection}
                             />

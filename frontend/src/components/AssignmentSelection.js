@@ -110,11 +110,11 @@ export default function AssignmentSelection({
                     ? twMerge(CSSclasses.assignmentSelect.base, CSSclasses.assignmentSelect.active)
                     : CSSclasses.assignmentSelect.base
             }>
-            <div className="flex flex-row gap-1 items-center cursor-pointer hover:text-lg" onClick={markAssignmentsComplete}>
+            <div className="flex flex-row gap-1 items-center cursor-pointer" onClick={markAssignmentsComplete}>
                 <span>Mark as complete</span>
                 <FontAwesomeIcon icon={faCheckCircle} />
             </div>
-            <div className="flex flex-row gap-1 items-center cursor-pointer hover:text-lg" onClick={deleteAssignments}>
+            <div className="flex flex-row gap-1 items-center cursor-pointer" onClick={deleteAssignments}>
                 <span>Delete</span>
                 <FontAwesomeIcon icon={faTrashAlt} />
             </div>

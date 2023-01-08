@@ -6,7 +6,7 @@ import { CSSclasses } from "../StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewAssignment({ setCreateAssignment, courses, setNewAssignments }) {
+export default function NewAssignment({ setCreateAssignment, courses, selectedCourse, setNewAssignments }) {
     const [auto, setAuto] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const newAssignmentRef = useRef();
@@ -25,8 +25,6 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
     function submitAssignment(e) {
         e.preventDefault();
         const form = e.target.parentElement;
-        console.log("date input: " + startDate);
-        console.log("date sent: " + startDate.toUTCString());
         const data = {
             // Select the first course if none is selected
             course: form.course.value || courses[0].id,
@@ -54,7 +52,7 @@ export default function NewAssignment({ setCreateAssignment, courses, setNewAssi
                 return res.json();
             })
             .then((received) => {
-                setNewAssignments(received);
+                if (selectedCourse.course_name === received.course_name) setNewAssignments(received);
             })
             .catch((err) => {
                 alert(err);

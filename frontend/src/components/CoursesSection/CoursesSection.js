@@ -17,7 +17,7 @@ import NewAssignment from "./NewAssignment";
 import AssignmentSelection from "./AssignmentSelection";
 import { CSSclasses } from "../StudyHub";
 
-export default function CoursesSection() {
+export default function CoursesSection({ courses, setCourses }) {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
     // Content selection
@@ -25,7 +25,6 @@ export default function CoursesSection() {
     // Search
     const [search, setSearch] = useState("");
 
-    const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState({});
     // Modules
     const [modules, setModules] = useState([]);
@@ -104,7 +103,6 @@ export default function CoursesSection() {
     // }, [assignmentSelection, assignmentSelectionBox]);
 
     function fetchData(course_id, contentType) {
-        console.log("fetch function called");
         // Unselect all assignments
         clearAssignmentSelection();
         // Hide the assignment selection box
@@ -223,7 +221,6 @@ export default function CoursesSection() {
         }
     }
     function deleteCourse(id) {
-        console.log("Deleting course with id: " + id);
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this course?")) {
             // Delete course
@@ -527,6 +524,7 @@ export default function CoursesSection() {
                             <NewAssignment
                                 setCreateAssignment={setCreateAssignment}
                                 courses={courses}
+                                selectedCourse={selectedCourse}
                                 setNewAssignments={setNewAssignments}
                             />
                         )}

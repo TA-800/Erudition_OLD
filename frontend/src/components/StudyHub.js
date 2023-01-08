@@ -1,6 +1,7 @@
 import CoursesSection from "./CoursesSection/CoursesSection";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import WeeklySection from "./WeeklySection/WeeklySection";
 
 export const CSSclasses = {
     // className = "shadow"
@@ -59,6 +60,7 @@ export const CSSclasses = {
 
 export default function StudyHub() {
     const { user } = useContext(AuthContext);
+    const [courses, setCourses] = useState([]);
     return (
         <>
             <header>Good evening, {user}.</header>
@@ -69,8 +71,18 @@ export default function StudyHub() {
                 you can become Hokage” - Uchiha Itachi.
             </p>
             <hr />
+
             <br />
-            <CoursesSection />
+            <CoursesSection courses={courses} setCourses={setCourses} />
+            <br />
+
+            <hr />
+
+            <br />
+            <WeeklySection courses={courses} />
+            <br />
+
+            <hr />
         </>
     );
 }

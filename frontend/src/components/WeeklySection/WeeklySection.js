@@ -1,0 +1,207 @@
+import React, { useMemo, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { twMerge } from "tailwind-merge";
+import { CSSclasses } from "../StudyHub";
+import NewAssignment from "../CoursesSection/NewAssignment";
+import AssignmentSelection from "../CoursesSection/AssignmentSelection";
+
+export default function WeeklySection({ courses }) {
+    const [search, setSearch] = useState("");
+    const [assignments, setAssignments] = useState([]);
+    const searchedAssignments = useMemo(() => {
+        if (!search) return assignments;
+
+        return assignments.filter((assignment) => {
+            // return true (true returns the element (complete module) into a new "filtered" array)
+            // if the assignment name contains the search term
+            return assignment.assignment_name.toLowerCase().includes(search.toLowerCase());
+        });
+    }, [search, assignments]);
+    const [createAssignment, setCreateAssignment] = useState(false);
+    const [assignmentSelection, setAssignmentSelection] = useState([]);
+    const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
+
+    // ASSIGNMENTS' FUNCTIONS
+    function setNewAssignments(newAssignmentData, fetch = false) {
+        let newAssignments = [];
+        // Force array mapping
+        if (!Array.isArray(newAssignmentData)) newAssignments.push(newAssignmentData);
+        else {
+            newAssignments = newAssignmentData;
+        }
+        newAssignments = newAssignments.map((assignment) => {
+            // Convert date to local time string
+            assignment.assignment_due_date = new Date(assignment.assignment_due_date).toString();
+            return assignment;
+        });
+
+        // Replace all assignments with newAssignmentData when fetching from server
+        if (fetch) {
+            setAssignments(newAssignments);
+        }
+        // Else just append new assignments to assignments
+        else {
+            setAssignments([...assignments, ...newAssignments]);
+        }
+    }
+    function splitDate(date) {
+        let hours = parseInt(date.substring(0, 21).slice(16, 18));
+        let minutes = date.substring(0, 21).slice(19);
+        let time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
+        return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
+    }
+    function assignmentSelectionChange(e) {
+        const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
+        // If checked, add to assignmentSelection
+        if (e.target.checked) {
+            setAssignmentSelection([...assignmentSelection, assignmentID]);
+            setAssignmentSelectionBox(true);
+        }
+        // If unchecked, remove from assignmentSelection
+        else {
+            setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
+        }
+    }
+    function clearAssignmentSelection() {
+        // Deselect all selected assignments
+        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
+            el.checked = false;
+        });
+        setAssignmentSelection([]);
+    }
+
+    return (
+        <article className="weekly">
+            {/* Left panel */}
+            <div className="lp">
+                <p className="lp__title">WEEK</p>
+                <ul className="lp__list">
+                    <li
+                        className={CSSclasses.courseButton.base}
+                        onClick={(e) => {
+                            e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                child.className = CSSclasses.courseButton.base;
+                            });
+                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                        }}>
+                        This week
+                    </li>
+                    <li
+                        className={CSSclasses.courseButton.base}
+                        onClick={(e) => {
+                            e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                child.className = CSSclasses.courseButton.base;
+                            });
+                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                        }}>
+                        Next week
+                    </li>
+                    <li className={CSSclasses.courseButton.base}>
+                        <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
+                        Custom Week
+                    </li>
+                </ul>
+            </div>
+
+            {/* Right panel */}
+            <div className="rp">
+                {/* Utility bar */}
+                <div className="p-2 w-full h-fit flex flex-row gap-6 mdc:gap-1 mdc:text-sm">
+                    {/* Search bar with icon */}
+                    <div className="w-4/6 mdc:w-2/4 h-12 mdc:h-10 relative">
+                        <input
+                            type="text"
+                            placeholder="Search notes"
+                            className={CSSclasses.search.base}
+                            style={{
+                                boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
+                            }}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
+                    </div>
+                    {/* Add button */}
+                    <button
+                        className={createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
+                        style={{
+                            boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
+                        }}
+                        onClick={() => setCreateAssignment(true)}>
+                        <FontAwesomeIcon icon={faPlusCircle} />
+                    </button>
+                </div>
+
+                {/* Content panel */}
+                <div className="rp__content">
+                    {createAssignment && (
+                        <NewAssignment
+                            setCreateAssignment={setCreateAssignment}
+                            courses={courses}
+                            setNewAssignments={setNewAssignments}
+                        />
+                    )}
+                    {/* Assignments */}
+                    <div className="assignments-wrapper hidden max-h-96 overflow-auto">
+                        <ul className="flex flex-col w-full gap-y-3">
+                            {searchedAssignments
+                                .sort(
+                                    (a, b) =>
+                                        // Sort by completed, then by days left
+                                        (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
+                                        a.days_left - b.days_left
+                                )
+                                .map((assignment) => {
+                                    return (
+                                        <li
+                                            key={assignment.id}
+                                            data-akey={assignment.id}
+                                            className={
+                                                assignment.assignment_completed
+                                                    ? twMerge(CSSclasses.assignment.base, CSSclasses.assignment.completed)
+                                                    : CSSclasses.assignment.base
+                                            }>
+                                            {/* Course of assignment */}
+                                            <span className="">
+                                                <strong>{assignment.course_code}</strong>
+                                            </span>
+                                            {/* Selection checkbox */}
+                                            <div className="text-right pr-2 sm:pr-1">
+                                                <input
+                                                    type="checkbox"
+                                                    className="h-4"
+                                                    onChange={(e) => assignmentSelectionChange(e)}
+                                                />
+                                            </div>
+                                            {/* Name */}
+                                            <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">
+                                                <span style={{ overflowWrap: "anywhere" }}>{assignment.assignment_name}</span>
+                                            </div>
+                                            {/* Due date */}
+                                            <span className="col-span-2 text-left" style={{ overflowWrap: "break-word" }}>
+                                                {splitDate(assignment.assignment_due_date).map((date, index) => {
+                                                    return <p key={index}>{date}</p>;
+                                                })}
+                                            </span>
+                                            {/* Days left */}
+                                            <span className="text-right">{assignment.days_left} days left</span>
+                                        </li>
+                                    );
+                                })}
+                        </ul>
+                    </div>
+                    {assignmentSelectionBox && (
+                        <AssignmentSelection
+                            assignments={assignments}
+                            assignmentSelection={assignmentSelection}
+                            setAssignments={setAssignments}
+                            setAssignmentSelectionBox={setAssignmentSelectionBox}
+                            clearAssignmentSelection={clearAssignmentSelection}
+                        />
+                    )}
+                </div>
+            </div>
+        </article>
+    );
+}

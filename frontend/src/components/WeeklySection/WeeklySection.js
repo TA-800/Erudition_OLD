@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
@@ -6,9 +6,10 @@ import { CSSclasses } from "../StudyHub";
 import NewAssignment from "../CoursesSection/NewAssignment";
 import AssignmentSelection from "../CoursesSection/AssignmentSelection";
 
-export default function WeeklySection({ courses }) {
+export default function WeeklySection({ courses, assignments, setAssignments }) {
+    const [selectedWeek, setSelectedWeek] = useState(null);
+
     const [search, setSearch] = useState("");
-    const [assignments, setAssignments] = useState([]);
     const searchedAssignments = useMemo(() => {
         if (!search) return assignments;
 
@@ -21,6 +22,41 @@ export default function WeeklySection({ courses }) {
     const [createAssignment, setCreateAssignment] = useState(false);
     const [assignmentSelection, setAssignmentSelection] = useState([]);
     const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
+
+    // Fetch this week assignments from server
+    useEffect(() => {
+        fetch("http://127.0.0.1:8000/backend/assignments/0", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (res.status !== 200) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText} ${json.detail}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setNewAssignments(data, true);
+            })
+            .catch((err) => alert(err.message));
+    }, [selectedWeek]);
+
+    // DEBUGGING
+    // useEffect(() => {
+    //     console.log(
+    //         "Selected week: ",
+    //         selectedWeek,
+    //         "\nAssignments: ",
+    //         assignments,
+    //         "\nSearched Assignments ",
+    //         searchedAssignments
+    //     );
+    // }, [selectedWeek, assignments, searchedAssignments]);
 
     // ASSIGNMENTS' FUNCTIONS
     function setNewAssignments(newAssignmentData, fetch = false) {
@@ -48,7 +84,10 @@ export default function WeeklySection({ courses }) {
     function splitDate(date) {
         let hours = parseInt(date.substring(0, 21).slice(16, 18));
         let minutes = date.substring(0, 21).slice(19);
-        let time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
+        let time =
+            hours > 12
+                ? `${hours - 12}:${minutes} PM`
+                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes} AM`;
         return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
     }
     function assignmentSelectionChange(e) {
@@ -65,7 +104,7 @@ export default function WeeklySection({ courses }) {
     }
     function clearAssignmentSelection() {
         // Deselect all selected assignments
-        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
+        document.querySelectorAll("article.weekly input[type=checkbox]").forEach((el) => {
             el.checked = false;
         });
         setAssignmentSelection([]);
@@ -139,11 +178,12 @@ export default function WeeklySection({ courses }) {
                         <NewAssignment
                             setCreateAssignment={setCreateAssignment}
                             courses={courses}
+                            selectedCourse={{ course_name: "all" }}
                             setNewAssignments={setNewAssignments}
                         />
                     )}
                     {/* Assignments */}
-                    <div className="assignments-wrapper hidden max-h-96 overflow-auto">
+                    <div className="weekly-assignment-wrapper max-h-96 overflow-auto">
                         <ul className="flex flex-col w-full gap-y-3">
                             {searchedAssignments
                                 .sort(

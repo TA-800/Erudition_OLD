@@ -17,7 +17,7 @@ import NewAssignment from "./NewAssignment";
 import AssignmentSelection from "./AssignmentSelection";
 import { CSSclasses } from "../StudyHub";
 
-export default function CoursesSection({ courses, setCourses }) {
+export default function CoursesSection({ courses, setCourses, assignments, setAssignments }) {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
     // Content selection
@@ -43,11 +43,11 @@ export default function CoursesSection({ courses, setCourses }) {
     const [courseModal, setCourseModal] = useState(false);
 
     // Assignments
-    const [assignments, setAssignments] = useState([]);
     const searchedAssignments = useMemo(() => {
-        if (!search) return assignments;
+        const courseFilteredAssignments = assignments.filter((assignment) => assignment.assignment_course === selectedCourse.id);
+        if (!search) return courseFilteredAssignments;
 
-        return assignments.filter((assignment) => {
+        return courseFilteredAssignments.filter((assignment) => {
             // return true (true returns the element (complete module) into a new "filtered" array)
             // if the assignment name contains the search term
             return assignment.assignment_name.toLowerCase().includes(search.toLowerCase());
@@ -110,7 +110,7 @@ export default function CoursesSection({ courses, setCourses }) {
 
         // Fetch content from backend depending on the content selected (contentRef)
         // and add it to the rp__content element
-        fetch(`http://127.0.0.1:8000/backend/${contentType}/${course_id}`, {
+        fetch(`http://127.0.0.1:8000/backend/${contentType}/${contentType === "assignments" ? 0 : course_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -132,10 +132,7 @@ export default function CoursesSection({ courses, setCourses }) {
             .catch((errMessage) => console.log(errMessage));
     }
     function printContentToPanel(data, contentType) {
-        // Deselect all selected assignments
-        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
-            el.checked = false;
-        });
+
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
         root.className = "rp__content " + contentType;
@@ -305,7 +302,10 @@ export default function CoursesSection({ courses, setCourses }) {
     function splitDate(date) {
         let hours = parseInt(date.substring(0, 21).slice(16, 18));
         let minutes = date.substring(0, 21).slice(19);
-        let time = hours > 12 ? `${hours - 12}:${minutes} PM` : `${hours}:${minutes} AM`;
+        let time =
+            hours > 12
+                ? `${hours - 12}:${minutes} PM`
+                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes} AM`;
         return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
     }
     function assignmentSelectionChange(e) {
@@ -322,7 +322,7 @@ export default function CoursesSection({ courses, setCourses }) {
     }
     function clearAssignmentSelection() {
         // Deselect all selected assignments
-        document.querySelectorAll("input[type=checkbox]").forEach((el) => {
+        document.querySelectorAll("article.courses input[type=checkbox]").forEach((el) => {
             el.checked = false;
         });
         setAssignmentSelection([]);

@@ -48,7 +48,7 @@ export const CSSclasses = {
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
-        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll",
+        active: "bg-opacity-80 opacity-100 backdrop-blur-md pointer-events-auto overflow-scroll overflow-x-hidden",
     },
     overlay: {
         base: "w-screen h-screen fixed top-0 left-0 z-[21] bg-black bg-opacity-0 opacity-0 backdrop-blur-0 pointer-events-none flex flex-col gap-y-10 p-[6.25rem_8vw] text-cyan-100 transition-all duration-300",
@@ -61,6 +61,7 @@ export const CSSclasses = {
 export default function StudyHub() {
     const { user } = useContext(AuthContext);
     const [courses, setCourses] = useState([]);
+    const [assignments, setAssignments] = useState([]);
     return (
         <>
             <header>Good evening, {user}.</header>
@@ -73,13 +74,13 @@ export default function StudyHub() {
             <hr />
 
             <br />
-            <CoursesSection courses={courses} setCourses={setCourses} />
+            <CoursesSection courses={courses} setCourses={setCourses} assignments={assignments} setAssignments={setAssignments} />
             <br />
 
             <hr />
 
             <br />
-            <WeeklySection courses={courses} />
+            <WeeklySection courses={courses} assignments={assignments} setAssignments={setAssignments} />
             <br />
 
             <hr />

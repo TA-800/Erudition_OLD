@@ -46,7 +46,7 @@ h4 {
 /* Scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(190, 95%, 30%) hsl(191, 95%, 10%, 0);
+    scrollbar-color: hsl(0, 0%, 0%, 1) hsl(191, 100%, 51%);
 }
 
 a {

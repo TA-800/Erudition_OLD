@@ -8,7 +8,6 @@ export default function AssignmentSelection({
     assignments,
     assignmentSelection,
     setAssignments,
-    // setAssignmentSelection,
     setAssignmentSelectionBox,
     clearAssignmentSelection,
 }) {

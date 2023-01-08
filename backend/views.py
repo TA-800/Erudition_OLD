@@ -153,10 +153,10 @@ def assignmentList(request, course_id):
     # GET ASSIGNMENTS
     if request.method == "GET":
         try:
-            assignments = Assignment.objects.filter(
-                assignment_course=Course.objects.get(id=course_id),
-                assignment_user = User.objects.get(username=request.user)
-            )
+            assignments = Assignment.objects.filter(assignment_user=User.objects.get(username=request.user))
+            # Retrieve all assignments if course_id is 0
+            if (course_id != 0):
+                assignments = assignments.filter(assignment_course=Course.objects.get(id=course_id))
             assignments.order_by("-assignment_due_date")
             serializer = AssignmentSerializer(assignments, many=True)
             return Response(serializer.data, status=200)

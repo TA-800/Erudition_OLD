@@ -52,7 +52,8 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                 return res.json();
             })
             .then((received) => {
-                if (selectedCourse.course_name === received.course_name) setNewAssignments(received);
+                if (selectedCourse.course_name === "all" || selectedCourse.course_name === received.course_name)
+                    setNewAssignments(received);
             })
             .catch((err) => {
                 alert(err);

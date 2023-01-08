@@ -599,7 +599,12 @@ export default function StudyHub() {
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">
                                 {searchedAssignments
-                                    .sort((a, b) => a.days_left - b.days_left)
+                                    .sort(
+                                        (a, b) =>
+                                            // Sort by completed, then by days left
+                                            (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
+                                            a.days_left - b.days_left
+                                    )
                                     .map((assignment) => {
                                         return (
                                             <li

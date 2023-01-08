@@ -12,7 +12,14 @@ class User(AbstractUser):
 
 # blank = True -> optional, blank = False -> required.
 
+# class University(models.Model):
+#     # User can be in multiple universities (double degree, etc.)
+#     university_user = models.ManyToManyField(User, blank=True, related_name="universities")
+#     university_name = models.CharField(max_length=82, blank=False)
+
 class Course(models.Model):
+    # A course can only belong to one university. Courses with same name can exist in different universities.
+    #course_university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="courses")
     course_user = models.ManyToManyField(User, blank=True, related_name="courses")
     course_code = models.CharField(max_length=8, unique=True) # COMP101
     course_name = models.CharField(max_length=64, blank=False) # Data Structures in Python

@@ -85,6 +85,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
         }
         // Else just append new assignments to assignments
         else {
+            console.log("Appending new assignments: " + newAssignments);
             setAssignments([...assignments, ...newAssignments]);
         }
     }

@@ -295,6 +295,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         }
         // Else just append new assignments to assignments
         else {
+            console.log("Appending new assignments: " + newAssignments);
             setAssignments([...assignments, ...newAssignments]);
         }
     }

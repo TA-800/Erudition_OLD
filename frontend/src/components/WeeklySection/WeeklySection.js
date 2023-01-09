@@ -5,18 +5,18 @@ import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import NewAssignment from "../CoursesSection/NewAssignment";
 import AssignmentSelection from "../CoursesSection/AssignmentSelection";
-import { endOfISOWeek, startOfISOWeek } from "date-fns";
+import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
+import DatePicker from "react-datepicker";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
-    const [selectedWeek, setSelectedWeek] = useState(1);
+    const [selectedWeek, setSelectedWeek] = useState(new Date());
 
     const [search, setSearch] = useState("");
     const searchedAssignments = useMemo(() => {
         // Get all assignments that are due in the selected week.
-        // Selected week = 0 -> this week, 1 -> next week, 2 -> choose custom week
-        const date = new Date();
-        const start = startOfISOWeek(date);
-        const end = endOfISOWeek(date);
+        const start = startOfISOWeek(selectedWeek);
+        const end = endOfISOWeek(selectedWeek);
+
         const weekFilteredAssignments = assignments.filter((assignment) => {
             const assignmentDate = new Date(assignment.assignment_due_date);
             return assignmentDate >= start && assignmentDate <= end;
@@ -29,7 +29,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
             // if the assignment name contains the search term
             return assignment.assignment_name.toLowerCase().includes(search.toLowerCase());
         });
-    }, [search, assignments]);
+    }, [search, assignments, selectedWeek]);
     const [createAssignment, setCreateAssignment] = useState(false);
     const [assignmentSelection, setAssignmentSelection] = useState([]);
     const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
@@ -85,7 +85,6 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
         }
         // Else just append new assignments to assignments
         else {
-            console.log("Appending new assignments: " + newAssignments);
             setAssignments([...assignments, ...newAssignments]);
         }
     }
@@ -94,9 +93,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
         let minutes = date.substring(0, 21).slice(19);
         let time =
             hours > 12
-                ? `${hours - 12}:${minutes} PM`
-                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes} AM`;
-        return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
+                ? `${hours - 12}:${minutes}`
+                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes}`;
+        return [`${date.substring(0, 21).slice(0, 10)}`, `${time} ${hours >= 12 ? "PM" : "AM"}`]; // Thu Jan 05, 1:00 PM
     }
     function assignmentSelectionChange(e) {
         const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
@@ -131,6 +130,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                                 child.className = CSSclasses.courseButton.base;
                             });
                             e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                            setSelectedWeek(new Date()); // Get today's date
                         }}>
                         This week
                     </li>
@@ -141,12 +141,15 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                                 child.className = CSSclasses.courseButton.base;
                             });
                             e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                            setSelectedWeek(addWeeks(new Date(), 1));
                         }}>
                         Next week
                     </li>
-                    <li className={CSSclasses.courseButton.base}>
+                    <li className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}>
                         <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
-                        Custom Week
+                        <div>
+                            <DatePicker customInput={<button>Add week</button>} onChange={(date) => setSelectedWeek(date)} />
+                        </div>
                     </li>
                 </ul>
             </div>

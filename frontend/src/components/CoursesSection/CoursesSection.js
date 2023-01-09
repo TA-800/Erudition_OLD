@@ -132,7 +132,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
             .catch((errMessage) => console.log(errMessage));
     }
     function printContentToPanel(data, contentType) {
-
         // Add class to rp__content
         const root = document.querySelector(".rp__content");
         root.className = "rp__content " + contentType;
@@ -534,9 +533,9 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 {searchedAssignments
                                     .sort(
                                         (a, b) =>
-                                            // Sort by completed, then by days left
+                                            // Sort by completed, then by time
                                             (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
-                                            a.days_left - b.days_left
+                                            new Date(a.assignment_due_date) - new Date(b.assignment_due_date)
                                     )
                                     .map((assignment) => {
                                         return (

@@ -195,9 +195,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                             {searchedAssignments
                                 .sort(
                                     (a, b) =>
-                                        // Sort by completed, then by days left
+                                        // Sort by completed, then by time
                                         (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
-                                        a.days_left - b.days_left
+                                        new Date(a.assignment_due_date) - new Date(b.assignment_due_date)
                                 )
                                 .map((assignment) => {
                                     return (

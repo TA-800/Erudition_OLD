@@ -4,7 +4,7 @@ import AuthContext from "../context/AuthContext";
 import WeeklySection from "./WeeklySection/WeeklySection";
 
 export const CSSclasses = {
-    // className = "shadow"
+    // className = "sm:row-"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -35,7 +35,7 @@ export const CSSclasses = {
         active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
     },
     assignment: {
-        base: "bg-red-800 bg-opacity-50 text-white border-2 border-red-900 w-full min-h-[3.5rem] px-2 sm:px-1  items-center grid grid-cols-8 gap-x-1",
+        base: "bg-red-800 bg-opacity-50 text-white border-2 border-red-900 w-full min-h-[3.5rem] px-2 sm:px-1  items-center grid grid-cols-8 sm:grid-rows-[max-content_max-content] gap-x-1",
         completed: "bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100",
     },
     newassignment: {
@@ -74,13 +74,13 @@ export default function StudyHub() {
             <hr />
 
             <br />
-            <CoursesSection courses={courses} setCourses={setCourses} assignments={assignments} setAssignments={setAssignments} />
+            <WeeklySection courses={courses} assignments={assignments} setAssignments={setAssignments} />
             <br />
 
             <hr />
 
             <br />
-            <WeeklySection courses={courses} assignments={assignments} setAssignments={setAssignments} />
+            <CoursesSection courses={courses} setCourses={setCourses} assignments={assignments} setAssignments={setAssignments} />
             <br />
 
             <hr />

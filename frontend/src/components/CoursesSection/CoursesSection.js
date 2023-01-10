@@ -13,8 +13,8 @@ import { twMerge } from "tailwind-merge";
 import NewCourseModal from "./NewCourseModal";
 import NewModuleModal from "./NewModuleModal";
 import ReadingPanel from "./ReadingPanel";
-import NewAssignment from "./NewAssignment";
-import AssignmentSelection from "./AssignmentSelection";
+import NewAssignment from "../Utilities/NewAssignment";
+import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { CSSclasses } from "../StudyHub";
 
 export default function CoursesSection({ courses, setCourses, assignments, setAssignments }) {
@@ -295,7 +295,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         }
         // Else just append new assignments to assignments
         else {
-            console.log("Appending new assignments: " + newAssignments);
             setAssignments([...assignments, ...newAssignments]);
         }
     }
@@ -304,9 +303,9 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         let minutes = date.substring(0, 21).slice(19);
         let time =
             hours > 12
-                ? `${hours - 12}:${minutes} PM`
-                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes} AM`;
-        return [`${date.substring(0, 21).slice(0, 10)}`, `${time}`]; // Thu Jan 05, 1:00 PM
+                ? `${hours - 12}:${minutes}`
+                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes}`;
+        return [`${date.substring(0, 21).slice(0, 10)}`, `${time} ${hours >= 12 ? "PM" : "AM"}`]; // Thu Jan 05, 1:00 PM
     }
     function assignmentSelectionChange(e) {
         const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
@@ -320,9 +319,9 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
             setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
         }
     }
-    function clearAssignmentSelection() {
+    function clearAssignmentSelection(panel = "courses") {
         // Deselect all selected assignments
-        document.querySelectorAll("article.courses input[type=checkbox]").forEach((el) => {
+        document.querySelectorAll(`article.${panel} input[type=checkbox]`).forEach((el) => {
             el.checked = false;
         });
         setAssignmentSelection([]);

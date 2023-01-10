@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -200,19 +199,18 @@ function AutoAssignment({ startDate, setStartDate, courses }) {
                     );
                 })}
             </select>
-            {/* Frequency select */}
-            <select
-                name="freq"
-                className={twMerge(CSSclasses.dropdown.base, "h-full w-full min-w-0")}
+            {/* Assignment auto name */}
+            <input
+                name="name"
+                type="text"
+                className={twMerge(CSSclasses.search.base, "col-span-2 p-2")}
                 style={{
-                    boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
-                }}>
-                <option value="1">Daily</option>
-                <option value="2">Weekly</option>
-                <option value="3">Monthly</option>
-            </select>
+                    boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
+                }}
+                placeholder="Auto Assignment Prefix"
+            />
             {/* CALENDAR */}
-            <div className="col-span-2 flex justify-center">
+            <div className="col-span-1 flex justify-center">
                 <MyDatePicker
                     className={twMerge(CSSclasses.search.base, "p-2 text-left")}
                     selected={startDate}
@@ -241,16 +239,17 @@ function AutoAssignment({ startDate, setStartDate, courses }) {
                     scrollbarWidth: "none",
                     boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
                 }}></textarea>
-            {/* Assignment auto name */}
-            <input
-                name="name"
-                type="text"
-                className={twMerge(CSSclasses.search.base, "col-span-2 p-2")}
+            {/* Frequency select */}
+            <select
+                name="freq"
+                className={twMerge(CSSclasses.dropdown.base, "h-full w-full min-w-0")}
                 style={{
-                    boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
-                }}
-                placeholder="Auto Assignment Prefix"
-            />
+                    boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
+                }}>
+                <option value="1">Daily</option>
+                <option value="2">Weekly</option>
+                <option value="3">Monthly</option>
+            </select>
         </>
     );
 }

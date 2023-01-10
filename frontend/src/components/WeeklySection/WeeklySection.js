@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
-import NewAssignment from "../CoursesSection/NewAssignment";
-import AssignmentSelection from "../CoursesSection/AssignmentSelection";
+import NewAssignment from "../Utilities/NewAssignment";
+import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
 import MyDatePicker from "../Utilities/MyDatePicker";
 
@@ -109,9 +109,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
             setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
         }
     }
-    function clearAssignmentSelection() {
+    function clearAssignmentSelection(panel = "courses") {
         // Deselect all selected assignments
-        document.querySelectorAll("article.weekly input[type=checkbox]").forEach((el) => {
+        document.querySelectorAll(`article.${panel} input[type=checkbox]`).forEach((el) => {
             el.checked = false;
         });
         setAssignmentSelection([]);
@@ -126,6 +126,8 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     <li
                         className={CSSclasses.courseButton.base}
                         onClick={(e) => {
+                            clearAssignmentSelection();
+                            setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
                                 child.className = CSSclasses.courseButton.base;
                             });
@@ -137,6 +139,8 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     <li
                         className={CSSclasses.courseButton.base}
                         onClick={(e) => {
+                            clearAssignmentSelection();
+                            setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
                                 child.className = CSSclasses.courseButton.base;
                             });
@@ -145,7 +149,12 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                         }}>
                         Next week
                     </li>
-                    <li className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}>
+                    <li
+                        className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}
+                        onClick={() => {
+                            clearAssignmentSelection();
+                            setAssignmentSelectionBox(false);
+                        }}>
                         <div className="w-full h-full flex items-center">
                             <MyDatePicker
                                 customInput={<button className="w-full h-14">Choose week</button>}
@@ -250,7 +259,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                             assignmentSelection={assignmentSelection}
                             setAssignments={setAssignments}
                             setAssignmentSelectionBox={setAssignmentSelectionBox}
-                            clearAssignmentSelection={clearAssignmentSelection}
+                            clearAssignmentSelection={() => {
+                                clearAssignmentSelection("weekly");
+                            }}
                         />
                     )}
                 </div>

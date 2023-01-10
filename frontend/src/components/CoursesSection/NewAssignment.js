@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import MyDatePicker from "../Utilities/MyDatePicker";
 
 export default function NewAssignment({ setCreateAssignment, courses, selectedCourse, setNewAssignments }) {
     const [auto, setAuto] = useState(false);
@@ -25,11 +26,15 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
     function submitAssignment(e) {
         e.preventDefault();
         const form = e.target.parentElement;
+        if (!form.name.value && !auto) {
+            form.name.placeholder = "Please enter a name!!";
+            return;
+        }
         const data = {
             // Select the first course if none is selected
             course: form.course.value || courses[0].id,
             due_date: startDate.toUTCString(),
-            name: form.name.value || "Assignment ",
+            name: form.name.value,
             desc: form.desc.value,
             auto_amount: auto ? form.auto_amount.value : 0,
             auto_freq: auto ? form.freq.value : 0,
@@ -52,7 +57,11 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                 return res.json();
             })
             .then((received) => {
-                if (selectedCourse.course_name === "all" || selectedCourse.id === received.assignment_course) {
+                let receivedAssignment;
+                if (Array.isArray(received) && received.length > 0) receivedAssignment = received[0];
+                else receivedAssignment = received;
+                if (selectedCourse.course_name === "all" || selectedCourse.id === receivedAssignment.assignment_course) {
+                    console.log("Updating assignments");
                     setNewAssignments(received);
                 }
             })
@@ -153,15 +162,11 @@ function ManualAssignment({ startDate, setStartDate, courses }) {
             />
             {/* CALENDAR */}
             <div>
-                <DatePicker
-                    className={twMerge(CSSclasses.search.base, "p-2 text-center")}
+                <MyDatePicker
+                    className={twMerge(CSSclasses.search.base, "p-2 text-left")}
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
                     showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    timeCaption="time"
-                    dateFormat="MMM d yyyy h:mm aa"
                 />
             </div>
             {/* Assignment desc */}
@@ -208,15 +213,11 @@ function AutoAssignment({ startDate, setStartDate, courses }) {
             </select>
             {/* CALENDAR */}
             <div className="col-span-2 flex justify-center">
-                <DatePicker
+                <MyDatePicker
                     className={twMerge(CSSclasses.search.base, "p-2 text-left")}
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
                     showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={30}
-                    timeCaption="time"
-                    dateFormat="MMM d yyyy h:mm aa"
                 />
             </div>
             {/* Assignment auto number */}

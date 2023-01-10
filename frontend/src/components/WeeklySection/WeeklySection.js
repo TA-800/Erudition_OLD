@@ -6,7 +6,7 @@ import { CSSclasses } from "../StudyHub";
 import NewAssignment from "../CoursesSection/NewAssignment";
 import AssignmentSelection from "../CoursesSection/AssignmentSelection";
 import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
-import DatePicker from "react-datepicker";
+import MyDatePicker from "../Utilities/MyDatePicker";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
     const [selectedWeek, setSelectedWeek] = useState(new Date());
@@ -146,9 +146,11 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                         Next week
                     </li>
                     <li className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}>
-                        <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
-                        <div>
-                            <DatePicker customInput={<button>Add week</button>} onChange={(date) => setSelectedWeek(date)} />
+                        <div className="w-full h-full flex items-center">
+                            <MyDatePicker
+                                customInput={<button className="w-full h-14">Choose week</button>}
+                                onChange={(date) => setSelectedWeek(date)}
+                            />
                         </div>
                     </li>
                 </ul>

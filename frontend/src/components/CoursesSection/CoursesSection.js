@@ -17,6 +17,12 @@ import NewAssignment from "../Utilities/NewAssignment";
 import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { CSSclasses } from "../StudyHub";
 import AssignmentUnit from "../Utilities/AssignmentUnit";
+import {
+    setNewAssignments,
+    splitDate,
+    assignmentSelectionChange,
+    clearAssignmentSelection,
+} from "../Utilities/AssignmentFunctions";
 
 export default function CoursesSection({ courses, setCourses, assignments, setAssignments }) {
     // First load to lock scrolls on overlay
@@ -57,6 +63,17 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
     const [createAssignment, setCreateAssignment] = useState(false);
     const [assignmentSelection, setAssignmentSelection] = useState([]);
     const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
+
+    // Group all the states and setState functions together into an object to pass it easily into
+    // imported assignment functions
+    const allAssignmentStates = {
+        assignments: assignments,
+        assignmentSelection: assignmentSelection,
+        assignmentSelectionBox: assignmentSelectionBox,
+        setAssignments: setAssignments,
+        setAssignmentSelection: setAssignmentSelection,
+        setAssignmentSelectionBox: setAssignmentSelectionBox,
+    };
 
     const [contact, setContact] = useState([]);
 
@@ -105,7 +122,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
     function fetchData(course_id, contentType) {
         // Unselect all assignments
-        clearAssignmentSelection();
+        clearAssignmentSelection("courses", { ...allAssignmentStates });
         // Hide the assignment selection box
         setAssignmentSelectionBox(false);
 
@@ -158,7 +175,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                 break;
             case "assignments":
                 // Save the assignments to state
-                setNewAssignments(data, true);
+                setNewAssignments(data, true, { ...allAssignmentStates });
                 break;
             case "contact":
                 break;
@@ -276,57 +293,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         }
     }
 
-    // ASSIGNMENTS' FUNCTIONS
-    function setNewAssignments(newAssignmentData, fetch = false) {
-        let newAssignments = [];
-        // Force array mapping
-        if (!Array.isArray(newAssignmentData)) newAssignments.push(newAssignmentData);
-        else {
-            newAssignments = newAssignmentData;
-        }
-        newAssignments = newAssignments.map((assignment) => {
-            // Convert date to local time string
-            assignment.assignment_due_date = new Date(assignment.assignment_due_date).toString();
-            return assignment;
-        });
-
-        // Replace all assignments with newAssignmentData when fetching from server
-        if (fetch) {
-            setAssignments(newAssignments);
-        }
-        // Else just append new assignments to assignments
-        else {
-            setAssignments([...assignments, ...newAssignments]);
-        }
-    }
-    function splitDate(date) {
-        let hours = parseInt(date.substring(0, 21).slice(16, 18));
-        let minutes = date.substring(0, 21).slice(19);
-        let time =
-            hours > 12
-                ? `${hours - 12}:${minutes}`
-                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes}`;
-        return [`${date.substring(0, 21).slice(0, 10)}`, `${time} ${hours >= 12 ? "PM" : "AM"}`]; // Thu Jan 05, 1:00 PM
-    }
-    function assignmentSelectionChange(e) {
-        const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
-        // If checked, add to assignmentSelection
-        if (e.target.checked) {
-            setAssignmentSelection([...assignmentSelection, assignmentID]);
-            setAssignmentSelectionBox(true);
-        }
-        // If unchecked, remove from assignmentSelection
-        else {
-            setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
-        }
-    }
-    function clearAssignmentSelection(panel = "courses") {
-        // Deselect all selected assignments
-        document.querySelectorAll(`article.${panel} input[type=checkbox]`).forEach((el) => {
-            el.checked = false;
-        });
-        setAssignmentSelection([]);
-    }
+    // // ASSIGNMENTS' FUNCTIONS
 
     // SEARCH UPDATE (for modules and assignments)
     useEffect(() => {
@@ -526,6 +493,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 courses={courses}
                                 selectedCourse={selectedCourse}
                                 setNewAssignments={setNewAssignments}
+                                allAssignmentStates={allAssignmentStates}
                             />
                         )}
                         {/* Assignments */}
@@ -545,6 +513,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                                 assignment={assignment}
                                                 splitDate={splitDate}
                                                 assignmentSelectionChange={assignmentSelectionChange}
+                                                allAssignmentStates={allAssignmentStates}
                                             />
                                         );
                                     })}
@@ -556,7 +525,9 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 assignmentSelection={assignmentSelection}
                                 setAssignments={setAssignments}
                                 setAssignmentSelectionBox={setAssignmentSelectionBox}
-                                clearAssignmentSelection={clearAssignmentSelection}
+                                clearAssignmentSelection={() => {
+                                    clearAssignmentSelection("courses", { ...allAssignmentStates });
+                                }}
                             />
                         )}
 

@@ -23,5 +23,14 @@ export default function MyDatePicker({ className, selected, customInput, onChang
             />
         );
     } else
-        return <DatePicker className={className} dateFormat="P" locale="en-GB" customInput={customInput} onChange={onChange} />;
+        return (
+            <DatePicker
+                className={className}
+                dateFormat="P"
+                locale="en-GB"
+                customInput={customInput}
+                onChange={onChange}
+                showWeekNumbers
+            />
+        );
 }

@@ -6,7 +6,7 @@ import WeeklySection from "./WeeklySection/WeeklySection";
 export const CSSclasses = {
     // className = "shadow"
     courseButton: {
-        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out overflow-hidden cursor-pointer",
+        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
     },
     search: {

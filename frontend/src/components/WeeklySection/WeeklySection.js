@@ -8,6 +8,12 @@ import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
 import MyDatePicker from "../Utilities/MyDatePicker";
 import AssignmentUnit from "../Utilities/AssignmentUnit";
+import {
+    setNewAssignments,
+    splitDate,
+    assignmentSelectionChange,
+    clearAssignmentSelection,
+} from "../Utilities/AssignmentFunctions";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
     const [selectedWeek, setSelectedWeek] = useState(new Date());
@@ -35,6 +41,17 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
     const [assignmentSelection, setAssignmentSelection] = useState([]);
     const [assignmentSelectionBox, setAssignmentSelectionBox] = useState(false);
 
+    // Group all the states and setState functions together into an object to pass it easily into
+    // imported assignment functions
+    const allAssignmentStates = {
+        assignments: assignments,
+        assignmentSelection: assignmentSelection,
+        assignmentSelectionBox: assignmentSelectionBox,
+        setAssignments: setAssignments,
+        setAssignmentSelection: setAssignmentSelection,
+        setAssignmentSelectionBox: setAssignmentSelectionBox,
+    };
+
     // Fetch this week assignments from server
     useEffect(() => {
         fetch("http://127.0.0.1:8000/backend/assignments/0", {
@@ -53,7 +70,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                 return res.json();
             })
             .then((data) => {
-                setNewAssignments(data, true);
+                setNewAssignments(data, true, { ...allAssignmentStates });
             })
             .catch((err) => alert(err.message));
     }, [selectedWeek]);
@@ -66,58 +83,6 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
     //     console.log(start, end);
     // }, []);
 
-    // ASSIGNMENTS' FUNCTIONS
-    function setNewAssignments(newAssignmentData, fetch = false) {
-        let newAssignments = [];
-        // Force array mapping
-        if (!Array.isArray(newAssignmentData)) newAssignments.push(newAssignmentData);
-        else {
-            newAssignments = newAssignmentData;
-        }
-        newAssignments = newAssignments.map((assignment) => {
-            // Convert date to local time string
-            assignment.assignment_due_date = new Date(assignment.assignment_due_date).toString();
-            return assignment;
-        });
-
-        // Replace all assignments with newAssignmentData when fetching from server
-        if (fetch) {
-            setAssignments(newAssignments);
-        }
-        // Else just append new assignments to assignments
-        else {
-            setAssignments([...assignments, ...newAssignments]);
-        }
-    }
-    function splitDate(date) {
-        let hours = parseInt(date.substring(0, 21).slice(16, 18));
-        let minutes = date.substring(0, 21).slice(19);
-        let time =
-            hours > 12
-                ? `${hours - 12}:${minutes}`
-                : `${hours.toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })}:${minutes}`;
-        return [`${date.substring(0, 21).slice(0, 10)}`, `${time} ${hours >= 12 ? "PM" : "AM"}`]; // Thu Jan 05, 1:00 PM
-    }
-    function assignmentSelectionChange(e) {
-        const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
-        // If checked, add to assignmentSelection
-        if (e.target.checked) {
-            setAssignmentSelection([...assignmentSelection, assignmentID]);
-            setAssignmentSelectionBox(true);
-        }
-        // If unchecked, remove from assignmentSelection
-        else {
-            setAssignmentSelection(assignmentSelection.filter((assignment) => assignment !== assignmentID));
-        }
-    }
-    function clearAssignmentSelection(panel = "courses") {
-        // Deselect all selected assignments
-        document.querySelectorAll(`article.${panel} input[type=checkbox]`).forEach((el) => {
-            el.checked = false;
-        });
-        setAssignmentSelection([]);
-    }
-
     return (
         <article className="weekly">
             {/* Left panel */}
@@ -127,7 +92,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     <li
                         className={CSSclasses.courseButton.base}
                         onClick={(e) => {
-                            clearAssignmentSelection();
+                            clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
                                 child.className = CSSclasses.courseButton.base;
@@ -140,7 +105,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     <li
                         className={CSSclasses.courseButton.base}
                         onClick={(e) => {
-                            clearAssignmentSelection();
+                            clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
                                 child.className = CSSclasses.courseButton.base;
@@ -152,11 +117,14 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     </li>
                     <li
                         className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}
-                        onClick={() => {
-                            clearAssignmentSelection();
+                        onClick={(e) => {
+                            clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
+                            e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                child.className = CSSclasses.courseButton.base;
+                            });
                         }}>
-                        <div className="w-full h-full flex items-center">
+                        <div className="w-full h-full flex items-center overflow-visible">
                             <MyDatePicker
                                 customInput={<button className="w-full h-14">Choose week</button>}
                                 onChange={(date) => setSelectedWeek(date)}
@@ -203,6 +171,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                             courses={courses}
                             selectedCourse={{ course_name: "all" }}
                             setNewAssignments={setNewAssignments}
+                            allAssignmentStates={allAssignmentStates}
                         />
                     )}
                     {/* Assignments */}
@@ -222,6 +191,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                                             assignment={assignment}
                                             splitDate={splitDate}
                                             assignmentSelectionChange={assignmentSelectionChange}
+                                            allAssignmentStates={allAssignmentStates}
                                         />
                                     );
                                 })}
@@ -234,7 +204,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                             setAssignments={setAssignments}
                             setAssignmentSelectionBox={setAssignmentSelectionBox}
                             clearAssignmentSelection={() => {
-                                clearAssignmentSelection("weekly");
+                                clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             }}
                         />
                     )}

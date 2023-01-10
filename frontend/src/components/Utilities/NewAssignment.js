@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import MyDatePicker from "../Utilities/MyDatePicker";
 
-export default function NewAssignment({ setCreateAssignment, courses, selectedCourse, setNewAssignments }) {
+export default function NewAssignment({ setCreateAssignment, courses, selectedCourse, setNewAssignments, allAssignmentStates }) {
     const [auto, setAuto] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const newAssignmentRef = useRef();
@@ -60,8 +60,7 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                 if (Array.isArray(received) && received.length > 0) receivedAssignment = received[0];
                 else receivedAssignment = received;
                 if (selectedCourse.course_name === "all" || selectedCourse.id === receivedAssignment.assignment_course) {
-                    console.log("Updating assignments");
-                    setNewAssignments(received);
+                    setNewAssignments(received, false, {...allAssignmentStates});
                 }
             })
             .catch((err) => {

@@ -2,7 +2,7 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 
-export default function AssignmentUnit({ assignment, splitDate, assignmentSelectionChange }) {
+export default function AssignmentUnit({ assignment, splitDate, assignmentSelectionChange, allAssignmentStates }) {
     return (
         <li
             data-akey={assignment.id}
@@ -17,7 +17,11 @@ export default function AssignmentUnit({ assignment, splitDate, assignmentSelect
             </span>
             {/* Selection checkbox */}
             <div className="text-right pr-2 sm:pr-1">
-                <input type="checkbox" className="h-4" onChange={(e) => assignmentSelectionChange(e)} />
+                <input
+                    type="checkbox"
+                    className="h-4"
+                    onChange={(e) => assignmentSelectionChange(e, { ...allAssignmentStates })}
+                />
             </div>
             {/* Name */}
             <div className="col-span-3 flex items-center border-r-2 border-cyan-600 h-full border-opacity-25">

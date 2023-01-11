@@ -147,9 +147,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     {/* Add button */}
                     <button
                         className={createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
-                        style={{
-                            boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
-                        }}
+                        // style={{
+                        //     boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
+                        // }}
                         onClick={() => setCreateAssignment(true)}>
                         <FontAwesomeIcon icon={faPlusCircle} />
                     </button>

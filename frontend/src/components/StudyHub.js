@@ -5,7 +5,7 @@ import WeeklySection from "./WeeklySection/WeeklySection";
 import DistractSection from "./DistractSection/DistractSection";
 
 export const CSSclasses = {
-    // className = "sm:row-"
+    // className = "pointer-events-none"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -24,8 +24,8 @@ export const CSSclasses = {
         active: "font-bold tracking-[0.2px]",
     },
     add: {
-        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[] transition-all duration-200",
-        disabled: "cursor-not-allowed opacity-50",
+        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[] shadow-[inset_0px_-2px_0px_rgba(0,0,0,0.25)] active:relative active:shadow-none active:top-[2px] transition-all duration-200",
+        disabled: "pointer-events-none opacity-50",
     },
     editButton: {
         base: "fixed top-2 right-5 btn-dark w-20 h-9 z-30 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",

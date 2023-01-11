@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
@@ -9,42 +10,34 @@ export default function DistractSection() {
             <div className="lp">
                 <p className="lp__title">Respite</p>
                 <ul className="lp__list">
-                    <li
-                        className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
-                        onClick={(e) => {
-                            e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
-                            });
-                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
-                        }}>
-                        Games
-                    </li>
-                    <li
-                        className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
-                        onClick={(e) => {
-                            e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
-                            });
-                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
-                        }}>
-                        Of the Day's
-                    </li>
-                    <li
-                        className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
-                        onClick={(e) => {
-                            e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
-                            });
-                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
-                        }}>
-                        Did you know?
-                    </li>
+                    {["Games", "Did You Know", "Of The Day"].map((element) => (
+                        <li
+                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
+                            onClick={(e) => {
+                                e.currentTarget.parentNode.childNodes.forEach((child) => {
+                                    child.className = CSSclasses.courseButton.base;
+                                });
+                                e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                            }}>
+                            {element}
+                        </li>
+                    ))}
                 </ul>
             </div>
 
             {/* Right panel */}
             <div className="rp">
                 <div className="rp__content">
+                    <div className="flex flex-row justify-around my-2">
+                        {["Hangman", "TicTacToe", "Snake"].map((game) => {
+                            return (
+                                <button
+                                    className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}>
+                                    {game}
+                                </button>
+                            );
+                        })}
+                    </div>
                     <Hangman />
                 </div>
             </div>
@@ -53,7 +46,7 @@ export default function DistractSection() {
 }
 
 function Hangman() {
-    const [word, setWord] = useState("hi");
+    const [word, setWord] = useState("quadrilateral");
     const [informed, setInformed] = useState(() => word.split("").map((letter) => "_"));
     const [guessed, setGuessed] = useState([]);
     const [wrong, setWrong] = useState(0);
@@ -82,22 +75,21 @@ function Hangman() {
     }
 
     return (
-        <div className="flex flex-col p-2 gap-y-2">
-            <div className="flex flex-row text-cyan-100 text-2xl">
+        <div className="flex flex-col p-2 gap-y-2 bg-cyan-800">
+            <div className="flex flex-row mdc:flex-col mdc:gap-y-1 text-cyan-100 text-2xl">
                 <strong>{informed.join(" ")}</strong>
-                <span className="ml-auto">
+                <span className="ml-auto mdc:ml-0">
                     {wrong}
                     {typeof wrong === "number" ? `\\${maxWrong}` : ""}
                 </span>
             </div>
-            <div className="grid gap-1 grid-rows-2 grid-flow-col">
+            <div className="grid gap-1 sm:gap-y-2 grid-cols-[repeat(13,minmax(0,1fr))]">
                 {"abcdefghijklmnopqrstuvwxyz".split("").map((letter) => {
                     return (
                         <button
                             key={letter}
                             className={
-                                "btn-dark flex justify-center items-center w-full h-full" +
-                                (guessed.includes(letter) ? " disabled" : "")
+                                "btn-dark flex justify-center items-center p-1" + (guessed.includes(letter) ? " disabled" : "")
                             }
                             onClick={(e) => onLetterClick(e)}
                             disabled={guessed.includes(letter)}>

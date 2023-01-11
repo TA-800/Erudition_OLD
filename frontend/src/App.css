@@ -8,8 +8,8 @@
 .btn-dark {
     @apply bg-[#032830] text-cyan-100 rounded-md;
 }
-.btn-dark.disabled {
-    @apply bg-gray-500 text-gray-200 cursor-not-allowed;
+.disabled {
+    @apply bg-gray-500 text-gray-200 pointer-events-none;
 }
 
 body {

@@ -75,14 +75,6 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
             .catch((err) => alert(err.message));
     }, [selectedWeek]);
 
-    // useEffect(() => {
-    //     const date = new Date();
-    //     console.log(date);
-    //     const start = startOfISOWeek(date);
-    //     const end = endOfISOWeek(date);
-    //     console.log(start, end);
-    // }, []);
-
     return (
         <article className="weekly">
             {/* Left panel */}

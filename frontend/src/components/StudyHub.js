@@ -2,6 +2,7 @@ import CoursesSection from "./CoursesSection/CoursesSection";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import WeeklySection from "./WeeklySection/WeeklySection";
+import DistractSection from "./DistractSection/DistractSection";
 
 export const CSSclasses = {
     // className = "sm:row-"
@@ -74,16 +75,19 @@ export default function StudyHub() {
             <hr />
 
             <br />
-            <WeeklySection courses={courses} assignments={assignments} setAssignments={setAssignments} />
-            <br />
-
-            <hr />
-
-            <br />
             <CoursesSection courses={courses} setCourses={setCourses} assignments={assignments} setAssignments={setAssignments} />
             <br />
 
             <hr />
+
+            <br />
+            <WeeklySection courses={courses} assignments={assignments} setAssignments={setAssignments} />
+            <br />
+
+            <hr />
+            <br />
+            <DistractSection />
+            <br />
         </>
     );
 }

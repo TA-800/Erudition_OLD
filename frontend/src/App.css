@@ -8,6 +8,9 @@
 .btn-dark {
     @apply bg-[#032830] text-cyan-100 rounded-md;
 }
+.btn-dark.disabled {
+    @apply bg-gray-500 text-gray-200 cursor-not-allowed;
+}
 
 body {
     font-family: "Open Sans", sans-serif;
@@ -215,7 +218,9 @@ hr {
 }
 
 /* Courses panel */
-.courses, .weekly {
+.courses,
+.weekly,
+.distract {
     display: grid;
     grid-template-columns: 1fr 3fr; /* 2 columns */
     gap: 10px;
@@ -268,7 +273,9 @@ hr {
         font-size: 2.25rem; /* 36px */
         letter-spacing: normal;
     }
-    .courses, .weekly {
+    .courses,
+    .weekly,
+    .distract {
         grid-template-columns: 1fr;
     }
     .navbar {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import randomWords from "random-words";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
@@ -139,7 +139,9 @@ function Games() {
             <div className="flex flex-row justify-around my-2">
                 {["Hangman", "TicTacToe", "Snake"].map((game) => {
                     return (
-                        <button className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}>
+                        <button
+                            key={game}
+                            className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}>
                             {game}
                         </button>
                     );
@@ -155,5 +157,62 @@ function DidYouKnow() {
 }
 
 function OfTheDay() {
-    return <div>OF THE DAY</div>;
+    const [option, setOption] = useState("Word");
+
+    function Quote() {
+        const [quote, setQuote] = useState("");
+
+        useEffect(() => {
+            fetch("https://quotes.rest/qod?language=en", {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                },
+            })
+                .then((res) => {
+                    if (res.status !== 200) throw new Error("Error, try refreshing");
+                    return res.json();
+                })
+                .then((data) => setQuote(data.contents.quotes[0].quote + "~" + data.contents.quotes[0].author))
+                .catch((err) => setQuote(err));
+        }, []);
+
+        return (
+            <div className="flex flex-col">
+                {quote === ""
+                    ? "Just a moment"
+                    : quote.split("~").map((text, index) => (
+                          <p key={index} className={index === 0 ? "text-2xl font-semibold" : "italic ml-auto"}>
+                              {text}
+                          </p>
+                      ))}
+            </div>
+        );
+    }
+    function Word() {
+        return <>Word OF THE DAY</>;
+    }
+    function Joke() {
+        return <>Joke OF THE DAY</>;
+    }
+
+    return (
+        <>
+            <div className="flex flex-row justify-around my-2">
+                {["Word", "Quote", "Joke"].map((element) => {
+                    return (
+                        <button
+                            key={element}
+                            className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}
+                            onClick={() => setOption(element)}>
+                            {element}
+                        </button>
+                    );
+                })}
+            </div>
+            <div className="bg-cyan-800 text-cyan-100 p-2">
+                {option === "Word" ? <Word /> : option === "Quote" ? <Quote /> : <Joke />}
+            </div>
+        </>
+    );
 }

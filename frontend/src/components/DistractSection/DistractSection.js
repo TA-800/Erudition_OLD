@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import randomWords from "random-words";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGamepad } from "@fortawesome/free-solid-svg-icons";
 
 export default function DistractSection() {
-    const [content, setContent] = useState("Games");
+    const [content, setContent] = useState("");
 
     return (
         <article className="distract">
@@ -31,10 +33,27 @@ export default function DistractSection() {
             {/* Right panel */}
             <div className="rp">
                 <div className="rp__content">
-                    {content === "Games" ? <Games /> : content === "Did You Know" ? <DidYouKnow /> : <OfTheDay />}
+                    {content === "Games" ? (
+                        <Games />
+                    ) : content === "Did You Know" ? (
+                        <DidYouKnow />
+                    ) : content === "Of The Day" ? (
+                        <OfTheDay />
+                    ) : (
+                        <Stateless />
+                    )}
                 </div>
             </div>
         </article>
+    );
+}
+
+function Stateless() {
+    return (
+        <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-32">
+            <FontAwesomeIcon icon={faGamepad} size="2xl" />
+            <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">Select a section to see content</p>
+        </div>
     );
 }
 

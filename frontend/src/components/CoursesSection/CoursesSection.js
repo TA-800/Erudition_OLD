@@ -2,7 +2,16 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen, faPlusCircle, faSearch, faTrash, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBook,
+    faBookOpen,
+    faGamepad,
+    faPencil,
+    faPlusCircle,
+    faSearch,
+    faTrash,
+    faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../../context/AuthContext";
 // Components
@@ -293,6 +302,15 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         }
     }
 
+    function Stateless({ contents }) {
+        return (
+            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-32">
+                <FontAwesomeIcon icon={contents.includes("assignments") ? faPencil : faBook} size="2xl" />
+                <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">{contents}</p>
+            </div>
+        );
+    }
+
     // // ASSIGNMENTS' FUNCTIONS
 
     // SEARCH UPDATE (for modules and assignments)
@@ -410,10 +428,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         <button
                             className={
                                 createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base
-                            } //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
-                            // style={{
-                            //     boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
-                            // }}
+                            }
                             onClick={() => {
                                 if (selectedCourse.course_name === undefined) return;
                                 if (contentSelector.current.value === "modules") setModuleModal(true);
@@ -428,7 +443,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 fetchData(selectedCourse.id, contentSelector.current.value);
                             }}
                             ref={contentSelector}
-                            className={CSSclasses.dropdown.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center"
+                            className={CSSclasses.dropdown.base}
                             style={{
                                 boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
                             }}>
@@ -441,38 +456,44 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                     {/* Content panel */}
                     <div className="rp__content">
                         {/* Module List */}
-                        <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
-                            {searchedModules.map((module, index) => (
-                                <div
-                                    className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
-                                    data-mkey={module.id}
-                                    key={module.id}>
-                                    <span
-                                        className={CSSclasses.moduleButton.base}
-                                        onClick={(e) => {
-                                            e.currentTarget.parentNode.parentNode.childNodes.forEach((child) => {
-                                                child.childNodes[0].className = CSSclasses.moduleButton.base;
-                                            });
-                                            e.currentTarget.className = twMerge(
-                                                CSSclasses.moduleButton.base,
-                                                CSSclasses.moduleButton.active
-                                            );
-                                            setSelectedModule(module);
-                                        }}>
-                                        {index + 1}. {module.module_name}
-                                    </span>
-                                    <p className="ml-auto" onClick={() => deleteModule(module.id)}>
-                                        <FontAwesomeIcon
-                                            className="text-xs cursor-pointer w-4 opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
-                                            icon={faTrash}
-                                        />
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
+                        {selectedCourse.course_name !== undefined && (
+                            <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
+                                {searchedModules.map((module, index) => (
+                                    <div
+                                        className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
+                                        data-mkey={module.id}
+                                        key={module.id}>
+                                        <span
+                                            className={CSSclasses.moduleButton.base}
+                                            onClick={(e) => {
+                                                e.currentTarget.parentNode.parentNode.childNodes.forEach((child) => {
+                                                    child.childNodes[0].className = CSSclasses.moduleButton.base;
+                                                });
+                                                e.currentTarget.className = twMerge(
+                                                    CSSclasses.moduleButton.base,
+                                                    CSSclasses.moduleButton.active
+                                                );
+                                                setSelectedModule(module);
+                                            }}>
+                                            {index + 1}. {module.module_name}
+                                        </span>
+                                        <p className="ml-auto" onClick={() => deleteModule(module.id)}>
+                                            <FontAwesomeIcon
+                                                className="text-xs cursor-pointer w-4 opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"
+                                                icon={faTrash}
+                                            />
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         {/* Module notes */}
                         <div className="modules-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
-                            <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-hidden" />
+                            {selectedCourse.course_name !== undefined ? (
+                                <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-hidden" />
+                            ) : (
+                                <Stateless contents="Select a course to see its contents" />
+                            )}
 
                             {/* Read button */}
                             <button
@@ -499,24 +520,26 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         {/* Assignments */}
                         <div className="assignments-wrapper hidden max-h-96 overflow-auto">
                             <ul className="flex flex-col w-full gap-y-3">
-                                {searchedAssignments
-                                    .sort(
-                                        (a, b) =>
-                                            // Sort by completed, then by time
-                                            (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
-                                            new Date(a.assignment_due_date) - new Date(b.assignment_due_date)
-                                    )
-                                    .map((assignment) => {
-                                        return (
-                                            <AssignmentUnit
-                                                key={assignment.id}
-                                                assignment={assignment}
-                                                splitDate={splitDate}
-                                                assignmentSelectionChange={assignmentSelectionChange}
-                                                allAssignmentStates={allAssignmentStates}
-                                            />
-                                        );
-                                    })}
+                                {searchedAssignments.length > 0 &&
+                                    searchedAssignments
+                                        .sort(
+                                            (a, b) =>
+                                                // Sort by completed, then by time
+                                                (a.assignment_completed ? 1 : 0) - (b.assignment_completed ? 1 : 0) ||
+                                                new Date(a.assignment_due_date) - new Date(b.assignment_due_date)
+                                        )
+                                        .map((assignment) => {
+                                            return (
+                                                <AssignmentUnit
+                                                    key={assignment.id}
+                                                    assignment={assignment}
+                                                    splitDate={splitDate}
+                                                    assignmentSelectionChange={assignmentSelectionChange}
+                                                    allAssignmentStates={allAssignmentStates}
+                                                />
+                                            );
+                                        })}
+                                {searchedAssignments.length === 0 && <Stateless contents="No assignments to find" />}
                             </ul>
                         </div>
                         {assignmentSelectionBox && (

@@ -3,7 +3,7 @@ import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import StudyHub from "./StudyHub";
 import Login, { Logout } from "./Login";
-import Discussions from "./Discussions";
+import Discussions from "./Discussions/Discussions";
 
 export default function Main() {
     return (

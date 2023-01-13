@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarWeek, faPencil, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import NewAssignment from "../Utilities/NewAssignment";
@@ -16,7 +16,7 @@ import {
 } from "../Utilities/AssignmentFunctions";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
-    const [selectedWeek, setSelectedWeek] = useState(new Date());
+    const [selectedWeek, setSelectedWeek] = useState(null);
 
     const [search, setSearch] = useState("");
     const searchedAssignments = useMemo(() => {
@@ -51,6 +51,15 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
         setAssignmentSelection: setAssignmentSelection,
         setAssignmentSelectionBox: setAssignmentSelectionBox,
     };
+
+    function Stateless({ contents }) {
+        return (
+            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-48">
+                <FontAwesomeIcon icon={contents.includes("assignments") ? faPencil : faCalendarWeek} size="2xl" />
+                <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">{contents}</p>
+            </div>
+        );
+    }
 
     // Fetch this week assignments from server
     useEffect(() => {
@@ -184,6 +193,10 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                                         />
                                     );
                                 })}
+                            {selectedWeek === null && <Stateless contents="Select a week to see work" />}
+                            {selectedWeek !== null && searchedAssignments.length === 0 && (
+                                <Stateless contents="No assignments to find" />
+                            )}
                         </ul>
                     </div>
                     {assignmentSelectionBox && (

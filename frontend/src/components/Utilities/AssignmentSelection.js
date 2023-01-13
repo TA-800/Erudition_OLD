@@ -74,6 +74,7 @@ export default function AssignmentSelection({
                         return assignment;
                     })
                 );
+
                 clearAssignmentSelection();
             })
             .catch((err) => {
@@ -106,17 +107,17 @@ export default function AssignmentSelection({
             ref={wrapperRef}
             className={
                 mountAnimation
-                    ? twMerge(CSSclasses.assignmentSelect.base, CSSclasses.assignmentSelect.active, "rounded-none text-[1.075rem] justify-around")
-                    : twMerge(CSSclasses.assignmentSelect.base, "rounded-none text-[1.075rem] justify-around")
+                    ? twMerge(CSSclasses.assignmentSelect.base, CSSclasses.assignmentSelect.active)
+                    : twMerge(CSSclasses.assignmentSelect.base, "")
             }>
             <button
-                className="bg-slate-800 p-2 rounded-md flex flex-row gap-1 items-center shadow-[0px_2px_0px_0px_rgba(255,255,255,0.1)] active:relative active:top-[2px] active:shadow-none"
+                className="bg-[#032830] col-span-4 sm:col-span-5 h-full p-2 rounded-md flex flex-row gap-1 items-center justify-center"
                 onClick={markAssignmentsComplete}>
                 <span>Mark as complete</span>
                 <FontAwesomeIcon icon={faCheckCircle} />
             </button>
             <button
-                className="bg-slate-800 p-2 rounded-md flex flex-row gap-1 items-center shadow-[0px_2px_0px_0px_rgba(255,255,255,0.1)] active:relative active:top-[2px] active:shadow-none"
+                className="bg-[#032830] col-span-3 sm:col-span-2 h-full p-2 rounded-md flex flex-row gap-1 items-center justify-center"
                 onClick={deleteAssignments}>
                 <span>Delete</span>
                 <FontAwesomeIcon icon={faTrashAlt} />

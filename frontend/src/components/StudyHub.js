@@ -5,7 +5,7 @@ import WeeklySection from "./WeeklySection/WeeklySection";
 import DistractSection from "./DistractSection/DistractSection";
 
 export const CSSclasses = {
-    // className = "pointer-events-none"
+    // className = "h-16"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -28,11 +28,11 @@ export const CSSclasses = {
         disabled: "pointer-events-none opacity-50",
     },
     editButton: {
-        base: "fixed top-2 right-5 btn-dark w-20 h-9 z-30 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
+        base: "fixed top-2 right-5 bg-[#032830] text-cyan-100 rounded-md w-20 h-9 z-30 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] mdc:after:content-[]",
         active: "shadow-none after:content-['Save'] mdc:after:content-[]",
     },
     readButton: {
-        base: "absolute bottom-2 right-5 btn-dark w-20 h-9  flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
+        base: "absolute bottom-2 right-5 bg-[#032830] text-cyan-100 rounded-md w-20 h-9 flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]",
         active: "fixed shadow-none border-2 border-white z-30 border-opacity-25 after:content-['Close'] mdc:after:content-[]",
     },
     assignment: {
@@ -44,8 +44,8 @@ export const CSSclasses = {
         active: "bg-cyan-900 p-1 pb-3 mb-3 h-44",
     },
     assignmentSelect: {
-        base: "bg-cyan-900 text-cyan-100 h-0 w-full flex flex-row justify-around items-center px-3 py-0 mt-0 rounded-lg overflow-hidden transition-all duration-300",
-        active: "h-14 mt-3 py-3",
+        base: "bg-cyan-900 text-cyan-100 h-0 w-full grid grid-cols-7 items-center px-2 py-0 mt-0 gap-2 overflow-hidden transition-all duration-300",
+        active: "h-16 mt-3 py-3",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",

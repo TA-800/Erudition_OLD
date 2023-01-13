@@ -2,7 +2,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import StudyHub from "./StudyHub";
-import Login, { Logout } from "./Login";
+import Login, { Logout } from "./Settings/Login";
 import Discussions from "./Discussions/Discussions";
 
 export default function Main() {
@@ -25,8 +25,6 @@ export default function Main() {
 
 function ProtectedRoutes() {
     const { user } = useContext(AuthContext);
-    // checkLoginStatus() returns true if user is null/not logged in or
-    // if the access token has expired, else false.
 
     return user !== null ? <Outlet /> : <Navigate to="/login" />;
 }

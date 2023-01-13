@@ -1,5 +1,8 @@
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext } from "react";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../../context/AuthContext";
+import Settings from "./Settings";
 
 export default function Login() {
     const { login } = useContext(AuthContext);
@@ -25,9 +28,25 @@ export function Logout() {
 
     return (
         <>
-            <h1>Logout</h1>
-            <p>Are you sure you would like to logout?</p>
-            <button onClick={() => logout()}>Logout</button>
+            <Settings />
+            <br />
+            <br />
+            <header className="font-bold">
+                <div className="flex flex-row gap-x-2 items-center">
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                    Logout
+                </div>
+            </header>
+            <p
+                className="m-0 text-cyan-800 max-w-2xl
+                    mdc:text-sm mdc:max-w-sm">
+                Are you sure you would like to logout?
+            </p>
+            <hr />
+            <br />
+            <button className="btn-darker" onClick={logout}>
+                Logout
+            </button>
         </>
     );
 }
@@ -45,8 +64,6 @@ export function Register() {
                 <input type="email" name="email" id="email" />
                 <label htmlFor="password">Password</label>
                 <input type="password" name="password" id="password" />
-                {/* <label htmlFor="password2">Confirm Password</label> */}
-                {/* <input type="password" name="password2" id="password2" /> */}
                 <button type="submit">Register</button>
             </form>
         </>

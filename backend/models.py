@@ -12,14 +12,17 @@ class User(AbstractUser):
 
 # blank = True -> optional, blank = False -> required.
 
-# class University(models.Model):
-#     # User can be in multiple universities (double degree, etc.)
-#     university_user = models.ManyToManyField(User, blank=True, related_name="universities")
-#     university_name = models.CharField(max_length=82, blank=False)
+class University(models.Model):
+    # User can be in multiple universities (double degree, etc.)
+    university_user = models.ManyToManyField(User, blank=True, related_name="universities")
+    university_name = models.CharField(max_length=82, blank=False)
+
+    def __str__(self):
+        return f"{self.university_name}"
 
 class Course(models.Model):
     # A course can only belong to one university. Courses with same name can exist in different universities.
-    #course_university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="courses")
+    course_university = models.ForeignKey(University, default=1, null=False, on_delete=models.CASCADE, related_name="courses")
     course_user = models.ManyToManyField(User, blank=True, related_name="courses")
     course_code = models.CharField(max_length=8, unique=True) # COMP101
     course_name = models.CharField(max_length=64, blank=False) # Data Structures in Python
@@ -52,3 +55,23 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.assignment_course}: {self.assignment_name}"
 
+# class Discussion(models.Model):
+#     # discussion_university = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="discussions")
+#     discussion_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="discussions")
+#     discussion_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="discussions")
+#     discussion_users = models.ManyToManyField(User, blank=True, related_name="discussions")
+#     discussion_title = models.CharField(max_length=64, blank=False)
+#     discussion_desc = models.TextField(blank=True)
+#     discussion_date = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.discussion_course}: {self.discussion_title}"
+
+# class Comment(models.Model):
+#     comment_discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE, related_name="comments")
+#     comment_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+#     comment_text = models.TextField(blank=False)
+#     comment_date = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.comment_discussion}: {self.comment_text}"

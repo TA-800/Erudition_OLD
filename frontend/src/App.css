@@ -6,10 +6,14 @@
 @tailwind utilities;
 
 .btn-dark {
-    @apply bg-[#032830] text-cyan-100 rounded-md;
+    @apply bg-cyan-900 text-cyan-100 rounded-md p-2 active:relative active:top-[2px] active:shadow-none;
+}
+
+.btn-darker {
+    @apply bg-[#032830] text-cyan-100 rounded-md p-2 active:relative active:top-[2px] active:shadow-none;
 }
 .disabled {
-    @apply bg-gray-500 text-gray-200 pointer-events-none;
+    @apply bg-gray-500 text-gray-200 rounded-md p-2 pointer-events-none;
 }
 
 body {

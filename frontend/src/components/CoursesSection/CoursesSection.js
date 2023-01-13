@@ -2,16 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faBook,
-    faBookOpen,
-    faGamepad,
-    faPencil,
-    faPlusCircle,
-    faSearch,
-    faTrash,
-    faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBookOpen, faPlusCircle, faSearch, faTrash, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../../context/AuthContext";
 // Components
@@ -26,6 +17,7 @@ import NewAssignment from "../Utilities/NewAssignment";
 import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { CSSclasses } from "../StudyHub";
 import AssignmentUnit from "../Utilities/AssignmentUnit";
+import Stateless from "../Utilities/Stateless";
 import {
     setNewAssignments,
     splitDate,
@@ -36,6 +28,10 @@ import {
 export default function CoursesSection({ courses, setCourses, assignments, setAssignments }) {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
+
+    // University info
+    const [universities, setUniversities] = useState([]);
+
     // Content selection
     const contentSelector = useRef(null);
     // Search
@@ -115,6 +111,24 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                 // Sign the user out
                 logout();
             });
+
+        // Fetch university info
+        fetch("http://127.0.0.1:8000/backend/university/", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (!res.ok)
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail}`);
+                    });
+                return res.json();
+            })
+            .then((data) => setUniversities([...data]))
+            .catch((err) => console.log(err));
     }, []);
 
     // SCROLL LOCK UPDATES
@@ -302,15 +316,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         }
     }
 
-    function Stateless({ contents }) {
-        return (
-            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-48">
-                <FontAwesomeIcon icon={contents.includes("assignments") ? faPencil : faBook} size="2xl" />
-                <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">{contents}</p>
-            </div>
-        );
-    }
-
     // // ASSIGNMENTS' FUNCTIONS
 
     // SEARCH UPDATE (for modules and assignments)
@@ -346,7 +351,14 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                 />
             )}
             {/* Overlay panel for adding courses */}
-            {courseModal && <NewCourseModal className="absolute" setCourseModal={setCourseModal} setCourses={setCourses} />}
+            {courseModal && (
+                <NewCourseModal
+                    className="absolute"
+                    setCourseModal={setCourseModal}
+                    setCourses={setCourses}
+                    universities={universities}
+                />
+            )}
 
             {/* Overlay panel for reading and editing text */}
             {readingPanel && (
@@ -430,10 +442,10 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base
                             }
                             onClick={() => {
-                                if (selectedCourse.course_name === undefined) return;
                                 if (contentSelector.current.value === "modules") setModuleModal(true);
                                 else if (contentSelector.current.value === "assignments") setCreateAssignment(true);
-                            }}>
+                            }}
+                            disabled={selectedCourse.course_name === undefined}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                         {/* Content selector drop-down */}
@@ -488,7 +500,11 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                             </div>
                         )}
                         {/* Module notes */}
-                        <div className="modules-notes-wrapper relative text-cyan-100 bg-cyan-800 p-2 rounded-md">
+                        <div
+                            className={
+                                "modules-notes-wrapper relative text-cyan-100 bg-cyan-800 rounded-md" +
+                                (selectedCourse.course_name !== undefined ? " p-2" : " bg-opacity-0")
+                            }>
                             {selectedCourse.course_name !== undefined ? (
                                 <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-hidden" />
                             ) : (

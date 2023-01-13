@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import randomWords from "random-words";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGamepad } from "@fortawesome/free-solid-svg-icons";
+import Stateless from "../Utilities/Stateless";
 
 export default function DistractSection() {
     const [content, setContent] = useState("");
@@ -16,6 +15,7 @@ export default function DistractSection() {
                 <ul className="lp__list">
                     {["Games", "Did You Know", "Of The Day"].map((element) => (
                         <li
+                            key={element}
                             className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
                             onClick={(e) => {
                                 e.currentTarget.parentNode.childNodes.forEach((child) => {
@@ -40,20 +40,11 @@ export default function DistractSection() {
                     ) : content === "Of The Day" ? (
                         <OfTheDay />
                     ) : (
-                        <Stateless />
+                        <Stateless contents="Select a section to check out" />
                     )}
                 </div>
             </div>
         </article>
-    );
-}
-
-function Stateless() {
-    return (
-        <div className="bg-cyan-800 text-cyan-100 mt-4 px-2 gap-2 flex flex-row justify-center items-center h-48">
-            <FontAwesomeIcon icon={faGamepad} size="2xl" />
-            <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">Select a section to see content</p>
-        </div>
     );
 }
 
@@ -117,13 +108,13 @@ function Games() {
                         {typeof wrong === "number" ? `\\${maxWrong}` : ""}
                     </span>
                 </div>
-                <div className="grid gap-1 sm:gap-y-2 grid-cols-[repeat(13,minmax(0,1fr))]">
+                <div className="grid gap-1 sm:gap-y-2 grid-cols-[repeat(13,minmax(0,1fr))] sm:grid-cols-10">
                     {"abcdefghijklmnopqrstuvwxyz".split("").map((letter) => {
                         return (
                             <button
                                 key={letter}
                                 className={
-                                    "btn-dark flex justify-center items-center p-1" +
+                                    "btn-dark flex justify-center items-center" +
                                     (guessed.includes(letter) ? " disabled" : "")
                                 }
                                 onClick={(e) => onLetterClick(e)}
@@ -134,16 +125,11 @@ function Games() {
                     })}
                 </div>
                 <div className="grid grid-cols-2 gap-x-2">
-                    <button
-                        className="btn-dark mt-2 h-8 tracking-wider font-bold active:relative active:top-[2px]"
-                        onClick={reset}>
+                    <button className="btn-darker" onClick={reset}>
                         NEW
                     </button>
                     <button
-                        className={
-                            "btn-dark mt-2 h-8 tracking-wider font-bold active:relative active:top-[2px]" +
-                            (typeof wrong !== "number" ? " disabled" : "")
-                        }
+                        className={"btn-darker" + (typeof wrong !== "number" ? " disabled" : "")}
                         onClick={reveal}
                         disabled={typeof wrong !== "number"}>
                         REVEAL

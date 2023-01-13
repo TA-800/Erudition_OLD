@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function NewCourseModal({ setCourseModal, setCourses }) {
+export default function NewCourseModal({ setCourseModal, setCourses, universities }) {
     const overlayRef = useRef();
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
@@ -76,6 +76,7 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
                     saveCourse({
                         course_code: document.querySelector("input[name='code']").value.toUpperCase(),
                         course_name: document.querySelector("input[name='name']").value,
+                        course_university: document.querySelector("input[name='university']").value,
                         course_description: document.querySelector("textarea[name='desc']").value,
                         course_instructor: document.querySelector("input[name='instructor']").value,
                         course_instructor_contact: document.querySelector("input[name='contact']").value,
@@ -109,6 +110,21 @@ export default function NewCourseModal({ setCourseModal, setCourses }) {
                                 name="name"
                             />
                         </div>
+                    </div>
+                    <div>
+                        University
+                        <select
+                            className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                            name="university">
+                            <option value="" disabled>
+                                Select university course belongs to
+                            </option>
+                            {universities.map((uni) => (
+                                <option key={uni.id} value={uni.id}>
+                                    {uni.university_name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     Course Description
                     <textarea

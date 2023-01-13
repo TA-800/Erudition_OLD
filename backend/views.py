@@ -35,6 +35,19 @@ def apiOverview(request):
     }
     return Response(api_urls)
 
+@api_view(['GET', 'POST', 'DELETE'])
+def university(request):
+    print(f"\t>>> Running function")
+    if request.method == "GET":
+        try:
+            # Get a list of all universities that the user is enrolled in
+            universities = University.objects.filter(university_user=request.user)
+            # Serialize the data
+            serializer = UniversitySerializer(universities, many=True)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+
 @api_view(['POST'])
 def register(request):
     data = json.loads(request.body)
@@ -92,6 +105,7 @@ def courseList(request, course_id):
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)
 
+
 @api_view(['GET', 'PUT', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def moduleList(request, course_id):
@@ -144,7 +158,6 @@ def moduleList(request, course_id):
             return Response({"detail": "Module deleted"}, status=200)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)
-
 
 
 @api_view(['GET', "POST", "PUT", "DELETE"])
@@ -223,3 +236,15 @@ def assignmentList(request, course_id):
             return Response({"detail": "Assignments deleted"}, status=200)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)
+
+# DISCUSSIONS
+
+@api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def discussions(request, id):
+    # GET DISCUSSIONS FROM THE SAME UNIVERSITY
+    if request.method == "GET":
+        try:
+            pass
+        except:
+            pass

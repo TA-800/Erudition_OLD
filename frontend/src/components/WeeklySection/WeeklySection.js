@@ -8,6 +8,7 @@ import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
 import MyDatePicker from "../Utilities/MyDatePicker";
 import AssignmentUnit from "../Utilities/AssignmentUnit";
+import Stateless from "../Utilities/Stateless";
 import {
     setNewAssignments,
     splitDate,
@@ -51,15 +52,6 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
         setAssignmentSelection: setAssignmentSelection,
         setAssignmentSelectionBox: setAssignmentSelectionBox,
     };
-
-    function Stateless({ contents }) {
-        return (
-            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-48">
-                <FontAwesomeIcon icon={contents.includes("assignments") ? faPencil : faCalendarWeek} size="2xl" />
-                <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">{contents}</p>
-            </div>
-        );
-    }
 
     // Fetch this week assignments from server
     useEffect(() => {
@@ -140,11 +132,11 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                 {/* Utility bar */}
                 <div className="p-2 w-full h-fit flex flex-row gap-6 mdc:gap-1 mdc:text-sm">
                     {/* Search bar with icon */}
-                    <div className="w-4/6 mdc:w-2/4 h-12 mdc:h-10 relative">
+                    <div className="w-2/3 h-12 mdc:h-10 relative">
                         <input
                             type="text"
-                            placeholder="Search notes"
-                            className={CSSclasses.search.base}
+                            placeholder="Search assignments"
+                            className={twMerge(CSSclasses.search.base)}
                             style={{
                                 boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
                             }}
@@ -155,8 +147,9 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     </div>
                     {/* Add button */}
                     <button
-                        className={createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base} //"bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[]"
-                        onClick={() => setCreateAssignment(true)}>
+                        className={createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base}
+                        onClick={() => setCreateAssignment(true)}
+                        disabled={selectedWeek === null}>
                         <FontAwesomeIcon icon={faPlusCircle} />
                     </button>
                 </div>

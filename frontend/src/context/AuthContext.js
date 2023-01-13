@@ -7,13 +7,24 @@ export default AuthContext;
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(() =>
-        localStorage.getItem("access")
-            ? jwt_decode(localStorage.getItem("access")).username
-            : null
+        localStorage.getItem("access") ? jwt_decode(localStorage.getItem("access")).username : null
+    );
+    const [userID, setUserID] = useState(() =>
+        localStorage.getItem("access") ? jwt_decode(localStorage.getItem("access")).user_id : null
     );
 
     const [firstLoad, setFirstLoad] = useState(true);
     const navigate = useNavigate();
+
+    function updateUser(token) {
+        if (token === null) {
+            setUser(null);
+            setUserID(null);
+            return;
+        }
+        setUser(jwt_decode(token).username);
+        setUserID(jwt_decode(token).user_id);
+    }
 
     function login(e, u, p) {
         if (e === null) {
@@ -38,11 +49,7 @@ export function AuthProvider({ children }) {
                 // If response is not 200 OK, throw an error
                 if (res.status !== 200) {
                     return res.json().then((json) => {
-                        throw new Error(
-                            `${res.status} ${res.statusText}: ${
-                                json.detail || json.username || json.password
-                            }`
-                        );
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail || json.username || json.password}`);
                     });
                 }
                 return res.json();
@@ -51,7 +58,8 @@ export function AuthProvider({ children }) {
                 // Store the access and refresh tokens in localStorage
                 localStorage.setItem("access", data.access);
                 localStorage.setItem("refresh", data.refresh);
-                setUser(jwt_decode(data.access).username);
+                // setUser(jwt_decode(data.access).username);
+                updateUser(data.access);
                 // Navigate to the home page
                 navigate("/studyhub");
             })
@@ -65,7 +73,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
         // Set the user to null
-        setUser(null);
+        updateUser(null);
         // Navigate to the login page
         navigate("/login");
     }
@@ -90,11 +98,7 @@ export function AuthProvider({ children }) {
                 // If response is not 201 CREATED, throw an error
                 if (res.status !== 201) {
                     return res.json().then((json) => {
-                        throw new Error(
-                            `${res.status} ${res.statusText}: ${
-                                json.detail || json.username || json.password
-                            }`
-                        );
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail || json.username || json.password}`);
                     });
                 }
                 // Else, log the user in
@@ -119,9 +123,7 @@ export function AuthProvider({ children }) {
                 // If response is not 200 OK, throw an error
                 if (res.status !== 200) {
                     return res.json().then((json) => {
-                        throw new Error(
-                            `${res.status} ${res.statusText}\n${json.detail}`
-                        );
+                        throw new Error(`${res.status} ${res.statusText}\n${json.detail}`);
                     });
                 }
                 return res.json();
@@ -130,7 +132,7 @@ export function AuthProvider({ children }) {
                 // Store the new access token in localStorage
                 localStorage.setItem("access", data.access);
                 localStorage.setItem("refresh", data.refresh);
-                setUser(jwt_decode(data.access).username);
+                updateUser(data.access);
                 console.log("Token updated");
             })
             .catch((errMessage) => {
@@ -170,9 +172,5 @@ export function AuthProvider({ children }) {
         logout: logout,
     };
 
-    return (
-        <AuthContext.Provider value={context}>
-            {firstLoad ? <Loading /> : children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={context}>{firstLoad ? <Loading /> : children}</AuthContext.Provider>;
 }

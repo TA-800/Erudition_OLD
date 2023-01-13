@@ -304,7 +304,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
     function Stateless({ contents }) {
         return (
-            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-32">
+            <div className="bg-cyan-800 text-cyan-100 my-4 px-2 gap-2 flex flex-row justify-center items-center h-48">
                 <FontAwesomeIcon icon={contents.includes("assignments") ? faPencil : faBook} size="2xl" />
                 <p className="text-4xl mdc:text-3xl sm:text-2xl font-bold">{contents}</p>
             </div>

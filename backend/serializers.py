@@ -42,6 +42,19 @@ class AssignmentSerializer(serializers.ModelSerializer):
         days_left = (due_date - today).days
         return days_left
 
-    
+class DiscussionSerializer(serializers.ModelSerializer):
+    comment_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Discussion
+        fields = '__all__'
+
+    def get_comment_count(self, obj):
+        return obj.comments.count()
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
 
         

@@ -43,6 +43,7 @@ class Module(models.Model):
 
     def __str__(self):
         return f"{self.module_course.course_code}: {self.module_name}"
+    
 
 class Assignment(models.Model):
     assignment_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments") # COMP101
@@ -55,23 +56,27 @@ class Assignment(models.Model):
     def __str__(self):
         return f"{self.assignment_course}: {self.assignment_name}"
 
-# class Discussion(models.Model):
-#     # discussion_university = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="discussions")
-#     discussion_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="discussions")
-#     discussion_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="discussions")
-#     discussion_users = models.ManyToManyField(User, blank=True, related_name="discussions")
-#     discussion_title = models.CharField(max_length=64, blank=False)
-#     discussion_desc = models.TextField(blank=True)
-#     discussion_date = models.DateTimeField(auto_now_add=True)
+class Discussion(models.Model):
+    # A discussion can only belong to one university. Discussions with same name can exist in different universities.
+    # A discussion can span multiple courses.
+    discussion_university = models.ForeignKey(University, blank=False, on_delete=models.CASCADE, related_name="university_discussions")
+    discussion_courses = models.ManyToManyField(Course, blank=True, related_name="course_discussions")
+    discussion_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="as_author_discussions")
+    discussion_users = models.ManyToManyField(User, blank=True, related_name="user_discussions")
+    discussion_title = models.CharField(max_length=64, blank=False)
+    discussion_desc = models.TextField(blank=True)
+    discussion_date = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"{self.discussion_course}: {self.discussion_title}"
+    def __str__(self):
+        return f"{self.discussion_title}: " + ", ".join([course.course_code for course in self.discussion_courses.all()])
 
-# class Comment(models.Model):
-#     comment_discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE, related_name="comments")
-#     comment_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-#     comment_text = models.TextField(blank=False)
-#     comment_date = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"{self.comment_discussion}: {self.comment_text}"
+class Comment(models.Model):
+    # A comment can only belong to one discussion. Comments with same text can exist in different discussions.
+    comment_discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE, related_name="comments")
+    comment_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    comment_text = models.TextField(blank=False)
+    comment_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.comment_discussion}: {self.comment_text}"

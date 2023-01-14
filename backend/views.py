@@ -245,6 +245,13 @@ def discussions(request, id):
     # GET DISCUSSIONS FROM THE SAME UNIVERSITY
     if request.method == "GET":
         try:
-            pass
-        except:
-            pass
+            # Get all of the discussions from the same university as the user
+            discussions = Discussion.objects.filter(
+                discussion_university__in=University.objects.filter(
+                    university_user=User.objects.get(username=request.user)
+                )
+            )
+            serializer = DiscussionSerializer(discussions, many=True)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)

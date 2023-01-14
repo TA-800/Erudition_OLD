@@ -43,7 +43,10 @@ class AssignmentSerializer(serializers.ModelSerializer):
         return days_left
 
 class DiscussionSerializer(serializers.ModelSerializer):
+    # Add a field to the serializer that is not in the model
     comment_count = serializers.SerializerMethodField()
+    author_name = serializers.SerializerMethodField()
+    courses = serializers.SerializerMethodField()
 
     class Meta:
         model = Discussion
@@ -51,6 +54,12 @@ class DiscussionSerializer(serializers.ModelSerializer):
 
     def get_comment_count(self, obj):
         return obj.comments.count()
+
+    def get_author_name(self, obj):
+        return obj.discussion_author.username
+    
+    def get_courses(self, obj):
+        return obj.discussion_courses.all().values_list('course_code', flat=True)
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

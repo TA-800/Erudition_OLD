@@ -245,13 +245,25 @@ def discussions(request, id):
     # GET DISCUSSIONS FROM THE SAME UNIVERSITY
     if request.method == "GET":
         try:
-            # Get all of the discussions from the same university as the user
-            discussions = Discussion.objects.filter(
-                discussion_university__in=University.objects.filter(
-                    university_user=User.objects.get(username=request.user)
+            if id == 0:
+                # Get all of the discussions from the same university as the user
+                discussions = Discussion.objects.filter(
+                    discussion_university__in=University.objects.filter(
+                        university_user=User.objects.get(username=request.user)
+                    )
                 )
-            )
-            serializer = DiscussionSerializer(discussions, many=True)
-            return Response(serializer.data, status=200)
+                serializer = DiscussionSerializer(discussions, many=True)
+                return Response(serializer.data, status=200)
+            else:
+                discussion = Discussion.objects.get(id=id)
+                comments = Comment.objects.filter(comment_discussion=discussion)
+                # Create a object to be serialized that contains the discussion and the comments
+                thread = {
+                    "discussion": DiscussionSerializer(discussion, many=False).data,
+                    "comments": CommentSerializer(comments, many=True).data
+                }
+                print("\tTHREAD: ", thread)
+                return Response(thread, status=200)
+
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)

@@ -32,11 +32,10 @@ export default function Discussions() {
             })
             .then((data) => {
                 console.log(data);
+                setSelectedDiscussion(data);
+                setCompleteThread(!completeThread);
             })
             .catch((err) => console.log(err));
-
-        setSelectedDiscussion(discussions.find((discussion) => discussion.id === id));
-        setCompleteThread(!completeThread);
     }
 
     useEffect(() => {
@@ -83,13 +82,11 @@ export default function Discussions() {
                         const allProps = { ...discussion, hoverable: true, retrieveThread: retrieveThread };
                         return (
                             // <div key={discussion.id} onClick={() => retrieveThread(discussion.id)}>
-                            <MiniThread {...allProps} />
+                            <MiniThread key={discussion.id} {...allProps} />
                             // </div>
                         );
                     })}
-                {completeThread && (
-                    <MegaThread selectedDiscussion={selectedDiscussion} retrieveThread={retrieveThread} />
-                )}
+                {completeThread && <MegaThread selectedDiscussion={selectedDiscussion} retrieveThread={retrieveThread} />}
             </div>
         </>
     );

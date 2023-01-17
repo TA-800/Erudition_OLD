@@ -243,8 +243,8 @@ def assignmentList(request, course_id):
 @permission_classes([IsAuthenticated])
 def discussions(request, id):
     # GET DISCUSSIONS FROM THE SAME UNIVERSITY
-    if request.method == "GET":
-        try:
+    try:
+        if request.method == "GET":
             if id == 0:
                 # Get all of the discussions from the same university as the user
                 discussions = Discussion.objects.filter(
@@ -262,8 +262,20 @@ def discussions(request, id):
                     "discussion": DiscussionSerializer(discussion, many=False).data,
                     "comments": CommentSerializer(comments, many=True).data
                 }
-                print("\tTHREAD: ", thread)
                 return Response(thread, status=200)
+        # UPDATE DISCUSSION (comments only)
+        elif request.method == "PUT":
+            data = json.loads(request.body)
+            comment = Comment(
+                # ID in this case is the discussion id
+                comment_discussion=Discussion.objects.get(id=id),
+                comment_author=User.objects.get(username=request.user),
+                comment_text=data["content"]
+            )
+            comment.save()
+            print("\t>COMMENT: ", comment)
+            serializer = CommentSerializer(comment, many=False)
+            return Response(serializer.data, status=201)
 
-        except Exception as e:
-            return Response({"detail": f"{e.args[0]}"}, status=400)
+    except Exception as e:
+        return Response({"detail": f"{e.args[0]}"}, status=400)

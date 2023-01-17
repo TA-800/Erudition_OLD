@@ -167,6 +167,7 @@ export function AuthProvider({ children }) {
 
     let context = {
         user: user,
+        userID: userID,
         register: register,
         login: login,
         logout: logout,

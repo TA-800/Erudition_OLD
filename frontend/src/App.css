@@ -8,7 +8,6 @@
 .btn-dark {
     @apply bg-cyan-900 text-cyan-100 rounded-md p-2 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.25)] active:relative active:top-[2px] active:shadow-none;
 }
-
 .btn-darker {
     @apply bg-[#032830] text-cyan-100 rounded-md p-2 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.25)] active:relative active:top-[2px] active:shadow-none;
 }

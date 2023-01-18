@@ -76,7 +76,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
                     saveCourse({
                         course_code: document.querySelector("input[name='code']").value.toUpperCase(),
                         course_name: document.querySelector("input[name='name']").value,
-                        course_university: document.querySelector("input[name='university']").value,
+                        course_university: document.querySelector("select[name='university']").value,
                         course_description: document.querySelector("textarea[name='desc']").value,
                         course_instructor: document.querySelector("input[name='instructor']").value,
                         course_instructor_contact: document.querySelector("input[name='contact']").value,

@@ -266,17 +266,30 @@ def discussions(request, id):
         # UPDATE DISCUSSION (comments only)
         elif request.method == "PUT":
             data = json.loads(request.body)
+            discussion = Discussion.objects.get(id=id)
+            user = User.objects.get(username=request.user)
             comment = Comment(
                 # ID in this case is the discussion id
-                comment_discussion=Discussion.objects.get(id=id),
-                comment_author=User.objects.get(username=request.user),
+                comment_discussion=discussion,
+                comment_author=user,
                 comment_text=data["content"]
             )
             comment.save()
-            print("\t>COMMENT: ", comment)
+            # Add the user to the discussion's list of users
+            discussion.discussion_users.add(user)
             serializer = CommentSerializer(comment, many=False)
             return Response(serializer.data, status=201)
-
+        elif request.method == "POST":
+            data = json.loads(request.body)
+            discussion = Discussion(
+                discussion_university=University.objects.get(id=data["university_id"]),
+                discussion_author=User.objects.get(username=request.user),
+                discussion_title=data["title"],
+                discussion_desc=data["desc"]
+            )
+            discussion.save()
+            serializer = DiscussionSerializer(discussion, many=False)
+            return Response(serializer.data, status=201)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 

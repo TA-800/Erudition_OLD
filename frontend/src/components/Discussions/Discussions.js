@@ -1,14 +1,16 @@
 import { faComments, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
 import MiniThread from "./MiniThread";
 import Multiselect from "multiselect-react-dropdown";
 import CreateNewThread from "./CreateNewThread";
+import AuthContext from "../../context/AuthContext";
 
 export default function Discussions() {
+    const [courses, setCourses] = useState([]);
     const [discussions, setDiscussions] = useState([]);
     const [selectedDiscussion, setSelectedDiscussion] = useState({});
     const [search, setSearch] = useState("");
@@ -17,13 +19,13 @@ export default function Discussions() {
     }, [search, discussions]);
     const [completeThread, setCompleteThread] = useState(false);
     const [createThread, setCreateThread] = useState(false);
+    const { logout } = useContext(AuthContext);
 
     function activateFullThread() {
         setCreateThread(false);
         setCompleteThread(!completeThread);
         setSearch("");
     }
-
     function retrieveThread(id) {
         console.log(id);
         fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
@@ -49,7 +51,7 @@ export default function Discussions() {
             .catch((err) => console.log(err));
     }
 
-    useEffect(() => {
+    function fetchDiscussionData() {
         fetch("http://127.0.0.1:8000/backend/discussions/0", {
             method: "GET",
             headers: {
@@ -70,6 +72,37 @@ export default function Discussions() {
                 setDiscussions([...data]);
             })
             .catch((err) => console.log(err));
+    }
+    function fetchCourses() {
+        fetch("http://127.0.0.1:8000/backend/courses/0", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                // If response is not 200 OK, throw an error
+                if (res.status !== 200) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail || json.username || json.password}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setCourses(data);
+            })
+            .catch((errMessage) => {
+                alert(errMessage);
+                // Sign the user out
+                logout();
+            });
+    }
+
+    useEffect(() => {
+        fetchDiscussionData();
+        fetchCourses();
     }, []);
 
     return (
@@ -92,7 +125,7 @@ export default function Discussions() {
             {!completeThread && (
                 <Utility search={search} setSearch={setSearch} setCreateThread={setCreateThread} createThread={createThread} />
             )}
-            {createThread && <CreateNewThread setCreateThread={setCreateThread} />}
+            {createThread && <CreateNewThread setCreateThread={setCreateThread} courses={courses} />}
 
             <div>
                 {!completeThread &&
@@ -138,15 +171,6 @@ function Utility({ search, setSearch, setCreateThread, createThread }) {
                     onClick={() => setCreateThread((prev) => !prev)}>
                     <FontAwesomeIcon icon={faPlusCircle} />
                 </button>
-                {/* <Multiselect
-                    style={{
-                        searchBox: {
-                            backgroundColor: "rgb(21, 94, 117)",
-                            border: "none",
-                            "border-radius": "8px",
-                        },
-                    }}
-                /> */}
             </div>
         </>
     );

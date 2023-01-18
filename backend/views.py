@@ -279,3 +279,15 @@ def discussions(request, id):
 
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def comments(request, id):
+    try:
+        if request.method == "DELETE":
+            comment = Comment.objects.get(id=id)
+            comment.delete()
+            return Response({"detail": "Comment deleted"}, status=200)
+    except Exception as e:
+        return Response({"detail": f"{e.args[0]}"}, status=400)

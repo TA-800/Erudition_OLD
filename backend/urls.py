@@ -16,4 +16,5 @@ urlpatterns = [
     path('assignments/<int:course_id>', views.assignmentList, name='assignment-list'),
 
     path('discussions/<int:id>', views.discussions, name='discussions'),
+    path('comments/<int:id>', views.comments, name='comments'),
 ]

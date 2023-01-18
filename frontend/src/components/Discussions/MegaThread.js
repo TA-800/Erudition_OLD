@@ -10,7 +10,25 @@ export default function MegaThread({ selectedDiscussion, retrieveThread }) {
     const [comments, setComments] = useState(selectedDiscussion.comments);
 
     function deleteComment(id) {
-        setComments(comments.filter((comment) => comment.id !== id));
+        fetch(`http://127.0.0.1:8000/backend/comments/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                setComments(comments.filter((comment) => comment.id !== id));
+            })
+            .catch((err) => console.log(err));
     }
 
     return (

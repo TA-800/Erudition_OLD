@@ -5,7 +5,7 @@ import WeeklySection from "./WeeklySection/WeeklySection";
 import DistractSection from "./DistractSection/DistractSection";
 
 export const CSSclasses = {
-    // className = "h-16"
+    // className = "h-16 duration-500"
     courseButton: {
         base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
         active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
@@ -46,6 +46,10 @@ export const CSSclasses = {
     assignmentSelect: {
         base: "bg-cyan-900 text-cyan-100 h-0 w-full grid grid-cols-7 items-center px-2 py-0 mt-0 gap-2 overflow-hidden transition-all duration-300",
         active: "h-16 mt-3 py-3",
+    },
+    newThread: {
+        base: "bg-cyan-800 bg-opacity-90 rounded-lg overflow-hidden h-0 mt-0 duration-500",
+        active: "h-56 mt-2",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",

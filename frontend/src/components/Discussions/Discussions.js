@@ -1,17 +1,28 @@
-import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { faComments, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
 import MiniThread from "./MiniThread";
+import Multiselect from "multiselect-react-dropdown";
+import CreateNewThread from "./CreateNewThread";
 
 export default function Discussions() {
     const [discussions, setDiscussions] = useState([]);
     const [selectedDiscussion, setSelectedDiscussion] = useState({});
     const [search, setSearch] = useState("");
-    const [searchedDiscussions, setSearchedDiscussions] = useMemo(() => {
-        return discussions.filter((discussion) => discussion.discussion_title.includes(search));
+    const searchedDiscussions = useMemo(() => {
+        return discussions.filter((discussion) => discussion.discussion_title.toLowerCase().includes(search.toLowerCase()));
     }, [search, discussions]);
     const [completeThread, setCompleteThread] = useState(false);
+    const [createThread, setCreateThread] = useState(false);
+
+    function activateFullThread() {
+        setCreateThread(false);
+        setCompleteThread(!completeThread);
+        setSearch("");
+    }
 
     function retrieveThread(id) {
         console.log(id);
@@ -33,7 +44,7 @@ export default function Discussions() {
             .then((data) => {
                 console.log(data);
                 setSelectedDiscussion(data);
-                setCompleteThread(!completeThread);
+                activateFullThread();
             })
             .catch((err) => console.log(err));
     }
@@ -75,18 +86,67 @@ export default function Discussions() {
                 Discuss, debate, and develop with your peers.
             </p>
             <hr />
+            <br />
             {/* Threads container */}
+
+            {!completeThread && (
+                <Utility search={search} setSearch={setSearch} setCreateThread={setCreateThread} createThread={createThread} />
+            )}
+            {createThread && <CreateNewThread setCreateThread={setCreateThread} />}
+
             <div>
                 {!completeThread &&
-                    discussions.map((discussion) => {
+                    searchedDiscussions.map((discussion) => {
                         const allProps = { ...discussion, hoverable: true, retrieveThread: retrieveThread };
-                        return (
-                            // <div key={discussion.id} onClick={() => retrieveThread(discussion.id)}>
-                            <MiniThread key={discussion.id} {...allProps} />
-                            // </div>
-                        );
+                        return <MiniThread key={discussion.id} {...allProps} />;
                     })}
                 {completeThread && <MegaThread selectedDiscussion={selectedDiscussion} retrieveThread={retrieveThread} />}
+            </div>
+        </>
+    );
+}
+
+function Utility({ search, setSearch, setCreateThread, createThread }) {
+    return (
+        <>
+            {/* Utility bar */}
+            <div className="bg-cyan-700 rounded-lg p-2 w-full h-fit flex flex-row items-center gap-2 mdc:text-sm">
+                {/* Search bar with icon */}
+                <div className="w-2/3 h-12 mdc:h-10 relative">
+                    <input
+                        type="text"
+                        placeholder="Search discussions"
+                        className={twMerge(CSSclasses.search.base)}
+                        style={{
+                            boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
+                        }}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
+                </div>
+                {/* Create button */}
+                <button
+                    className={
+                        createThread
+                            ? twMerge(
+                                  CSSclasses.add.base,
+                                  "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto disabled"
+                              )
+                            : twMerge(CSSclasses.add.base, "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto")
+                    }
+                    onClick={() => setCreateThread((prev) => !prev)}>
+                    <FontAwesomeIcon icon={faPlusCircle} />
+                </button>
+                {/* <Multiselect
+                    style={{
+                        searchBox: {
+                            backgroundColor: "rgb(21, 94, 117)",
+                            border: "none",
+                            "border-radius": "8px",
+                        },
+                    }}
+                /> */}
             </div>
         </>
     );

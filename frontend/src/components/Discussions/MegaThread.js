@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import MiniThread from "./MiniThread";
@@ -43,7 +43,12 @@ export default function MegaThread({ selectedDiscussion, retrieveThread, setDisc
                     const commentProps = { ...comment, deleteComment: () => deleteComment(comment.id) };
                     return <Comment key={comment.id} {...commentProps} />;
                 })}
-                <NewComment discussionID={selectedDiscussion.discussion.id} comments={comments} setComments={setComments} />
+                <NewComment
+                    selectedDiscussion={selectedDiscussion}
+                    setDiscussions={setDiscussions}
+                    comments={comments}
+                    setComments={setComments}
+                />
             </div>
         </>
     );
@@ -66,7 +71,7 @@ function Comment({ comment_author, commentor_name, time_elapsed, comment_text, d
     );
 }
 
-function NewComment({ discussionID, comments, setComments }) {
+function NewComment({ selectedDiscussion, setDiscussions, comments, setComments }) {
     const [newComment, setNewComment] = useState("");
 
     function handleOnChange(value) {
@@ -74,7 +79,7 @@ function NewComment({ discussionID, comments, setComments }) {
     }
 
     function submitComment() {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${discussionID}`, {
+        fetch(`http://127.0.0.1:8000/backend/discussions/${selectedDiscussion.discussion.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -97,6 +102,15 @@ function NewComment({ discussionID, comments, setComments }) {
                 setNewComment("");
                 document.querySelector("textarea").value = "";
                 setComments([...comments, data]);
+                // Update discussion's comment count
+                setDiscussions((prev) => {
+                    return prev.map((discussion) => {
+                        if (discussion.id === selectedDiscussion.discussion.id) {
+                            return { ...discussion, comment_count: discussion.comment_count + 1 };
+                        }
+                        return discussion;
+                    });
+                });
             })
             .catch((err) => console.log(err));
     }

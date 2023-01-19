@@ -239,7 +239,7 @@ def assignmentList(request, course_id):
 
 # DISCUSSIONS
 
-@api_view(["GET", "POST", "PUT", "DELETE"])
+@api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])
 @permission_classes([IsAuthenticated])
 def discussions(request, id):
     # GET DISCUSSIONS FROM THE SAME UNIVERSITY
@@ -269,7 +269,6 @@ def discussions(request, id):
             discussion = Discussion.objects.get(id=id)
             user = User.objects.get(username=request.user)
             comment = Comment(
-                # ID in this case is the discussion id
                 comment_discussion=discussion,
                 comment_author=user,
                 comment_text=data["content"]
@@ -279,10 +278,23 @@ def discussions(request, id):
             discussion.discussion_users.add(user)
             serializer = CommentSerializer(comment, many=False)
             return Response(serializer.data, status=201)
+        # LIKE DISCUSSION
+        elif request.method == "PATCH":
+            discussion = Discussion.objects.get(id=id)
+            user = User.objects.get(username=request.user)
+            # If the user is already in the discussion's list of users, remove them
+            if user in discussion.discussion_liked_users.all():
+                discussion.discussion_liked_users.remove(user)
+            # Otherwise, add them
+            else:
+                discussion.discussion_liked_users.add(user)
+            discussion.save()
+            serializer = DiscussionSerializer(discussion, many=False)
+            return Response(serializer.data, status=200)
         # CREATE DISCUSSION
         elif request.method == "POST":
             data = json.loads(request.body)
-            # In this case, the id is the university id
+            # In this case, the id is the university id to which the discussion belongs
             discussion = Discussion(
                 discussion_university=University.objects.get(id=id),
                 discussion_author=User.objects.get(username=request.user),
@@ -294,6 +306,11 @@ def discussions(request, id):
                 discussion.discussion_courses.add(Course.objects.get(id=course_id))
             serializer = DiscussionSerializer(discussion, many=False)
             return Response(serializer.data, status=201)
+        # DELETE DISCUSSION
+        elif request.method == "DELETE":
+            discussion = Discussion.objects.get(id=id)
+            discussion.delete()
+            return Response({"detail": "Discussion deleted"}, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 

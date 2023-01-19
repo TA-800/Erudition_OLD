@@ -4,8 +4,13 @@ import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import MiniThread from "./MiniThread";
 import AuthContext from "../../context/AuthContext";
 
-export default function MegaThread({ selectedDiscussion, retrieveThread }) {
-    const allProps = { ...selectedDiscussion.discussion, hoverable: false, retrieveThread: retrieveThread };
+export default function MegaThread({ selectedDiscussion, retrieveThread, setDiscussions }) {
+    const allProps = {
+        ...selectedDiscussion.discussion,
+        hoverable: false,
+        retrieveThread: retrieveThread,
+        setDiscussions: setDiscussions,
+    };
 
     const [comments, setComments] = useState(selectedDiscussion.comments);
 
@@ -25,7 +30,6 @@ export default function MegaThread({ selectedDiscussion, retrieveThread }) {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
                 setComments(comments.filter((comment) => comment.id !== id));
             })
             .catch((err) => console.log(err));
@@ -70,9 +74,6 @@ function NewComment({ discussionID, comments, setComments }) {
     }
 
     function submitComment() {
-        console.log("Submitting comment");
-        console.log("Comment body: " + newComment);
-
         fetch(`http://127.0.0.1:8000/backend/discussions/${discussionID}`, {
             method: "PUT",
             headers: {
@@ -92,7 +93,9 @@ function NewComment({ discussionID, comments, setComments }) {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                // Clear the comment box
+                setNewComment("");
+                document.querySelector("textarea").value = "";
                 setComments([...comments, data]);
             })
             .catch((err) => console.log(err));

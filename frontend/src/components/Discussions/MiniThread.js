@@ -1,17 +1,76 @@
-import { faCommentAlt, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faCommentAlt, faThumbsUp, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AuthContext from "../../context/AuthContext";
 
 export default function MiniThread({
     id,
     author_name,
     discussion_title,
     discussion_desc,
+    discussion_author,
     courses,
     comment_count,
+    all_users_liked,
     hoverable,
     retrieveThread,
+    setDiscussions,
 }) {
+    const { user, userID } = useContext(AuthContext);
+    const [liked, setLiked] = useState(all_users_liked.includes(user));
+
+    function deleteDiscussion(id) {
+        fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${json.detail}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                window.location.reload();
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function likeComment(id) {
+        fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${json.detail}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setLiked(!liked);
+                setDiscussions((prev) => {
+                    return prev.map((discussion) => {
+                        if (discussion.id === id) {
+                            return data;
+                        }
+                        return discussion;
+                    });
+                });
+            })
+            .catch((err) => console.log(err));
+    }
+
     return (
         <div
             className={
@@ -39,16 +98,38 @@ export default function MiniThread({
             <p className="max-h-12 w-full overflow-hidden whitespace-pre-wrap">{discussion_desc}</p>
             {/* Comment data */}
             <div className="flex flex-row items-center gap-x-10">
+                {/* Comment count */}
                 <IconWithData icon={faCommentAlt} data={comment_count} />
-                <IconWithData icon={faThumbsUp} data={0} />
+                <div
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        likeComment(id);
+                    }}>
+                    <IconWithData icon={faThumbsUp} data={all_users_liked.length} liked={liked} />
+                    {/* Likes count */}
+                </div>
+                {discussion_author === userID && (
+                    <button
+                        className="btn-dark flex flex-row gap-1 items-center text-sm ml-auto"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            // First, confirm deletion, if confirmed, delete by calling deleteDiscussion
+                            if (window.confirm("Are you sure you want to delete this discussion?")) {
+                                deleteDiscussion(id);
+                            }
+                        }}>
+                        DELETE
+                        <FontAwesomeIcon icon={faTrashAlt} className="opacity-80" />
+                    </button>
+                )}
             </div>
         </div>
     );
 }
 
-function IconWithData({ icon, data }) {
+function IconWithData({ icon, data, liked }) {
     return (
-        <div className="flex flex-row items-center text-xl gap-2 opacity-70">
+        <div className={"flex flex-row items-center text-xl gap-2 opacity-70 " + (liked ? "text-red-800 font-bold" : "")}>
             <FontAwesomeIcon icon={icon} />
             <p>{data}</p>
         </div>

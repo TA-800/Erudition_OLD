@@ -63,6 +63,7 @@ class Discussion(models.Model):
     discussion_courses = models.ManyToManyField(Course, blank=True, related_name="course_discussions")
     discussion_author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="as_author_discussions")
     discussion_users = models.ManyToManyField(User, blank=True, related_name="user_discussions")
+    discussion_liked_users = models.ManyToManyField(User, blank=True, related_name="liked_discussions")
     discussion_title = models.CharField(max_length=64, blank=False)
     discussion_desc = models.TextField(blank=True)
     discussion_date = models.DateTimeField(auto_now_add=True)

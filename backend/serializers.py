@@ -47,6 +47,7 @@ class DiscussionSerializer(serializers.ModelSerializer):
     comment_count = serializers.SerializerMethodField()
     author_name = serializers.SerializerMethodField()
     courses = serializers.SerializerMethodField()
+    all_users_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Discussion
@@ -60,6 +61,11 @@ class DiscussionSerializer(serializers.ModelSerializer):
     
     def get_courses(self, obj):
         return obj.discussion_courses.all().values_list('course_code', flat=True)
+
+    def get_all_users_liked(self, obj): 
+        # Get the usernames of all users in the discussion's discussion_liked_users many-to-many field
+        return obj.discussion_liked_users.all().values_list('username', flat=True)
+
 
 class CommentSerializer(serializers.ModelSerializer):
     commentor_name = serializers.SerializerMethodField()

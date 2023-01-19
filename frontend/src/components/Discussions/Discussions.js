@@ -5,7 +5,6 @@ import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
 import MiniThread from "./MiniThread";
-import Multiselect from "multiselect-react-dropdown";
 import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
 
@@ -28,7 +27,6 @@ export default function Discussions() {
         setSearch("");
     }
     function retrieveThread(id) {
-        console.log(id);
         fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
             method: "GET",
             headers: {
@@ -45,7 +43,6 @@ export default function Discussions() {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
                 setSelectedDiscussion(data);
                 activateFullThread();
             })
@@ -69,7 +66,6 @@ export default function Discussions() {
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
                 setDiscussions([...data]);
             })
             .catch((err) => console.log(err));
@@ -157,11 +153,26 @@ export default function Discussions() {
 
             <div>
                 {!completeThread &&
-                    searchedDiscussions.map((discussion) => {
-                        const allProps = { ...discussion, hoverable: true, retrieveThread: retrieveThread };
-                        return <MiniThread key={discussion.id} {...allProps} />;
-                    })}
-                {completeThread && <MegaThread selectedDiscussion={selectedDiscussion} retrieveThread={retrieveThread} />}
+                    searchedDiscussions
+                        .sort((a, b) => {
+                            return new Date(b.discussion_date) - new Date(a.discussion_date);
+                        })
+                        .map((discussion) => {
+                            const allProps = {
+                                ...discussion,
+                                setDiscussions: setDiscussions,
+                                hoverable: true,
+                                retrieveThread: retrieveThread,
+                            };
+                            return <MiniThread key={discussion.id} {...allProps} />;
+                        })}
+                {completeThread && (
+                    <MegaThread
+                        selectedDiscussion={selectedDiscussion}
+                        setDiscussions={setDiscussions}
+                        retrieveThread={retrieveThread}
+                    />
+                )}
             </div>
         </>
     );

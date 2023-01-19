@@ -279,15 +279,19 @@ def discussions(request, id):
             discussion.discussion_users.add(user)
             serializer = CommentSerializer(comment, many=False)
             return Response(serializer.data, status=201)
+        # CREATE DISCUSSION
         elif request.method == "POST":
             data = json.loads(request.body)
+            # In this case, the id is the university id
             discussion = Discussion(
-                discussion_university=University.objects.get(id=data["university_id"]),
+                discussion_university=University.objects.get(id=id),
                 discussion_author=User.objects.get(username=request.user),
                 discussion_title=data["title"],
                 discussion_desc=data["desc"]
             )
             discussion.save()
+            for course_id in data["courses"]:
+                discussion.discussion_courses.add(Course.objects.get(id=course_id))
             serializer = DiscussionSerializer(discussion, many=False)
             return Response(serializer.data, status=201)
     except Exception as e:

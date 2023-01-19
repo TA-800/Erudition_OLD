@@ -49,7 +49,7 @@ export const CSSclasses = {
     },
     newThread: {
         base: "bg-cyan-800 bg-opacity-90 rounded-lg h-0 mt-0 overflow-hidden duration-500",
-        active: "overflow-visible h-56 mt-2",
+        active: "overflow-visible h-60 mt-2",
     },
     readOverlay: {
         base: "bg-black bg-opacity-0 text-cyan-100 opacity-0 backdrop-blur-0 fixed top-0 left-0 w-screen h-screen z-[13] py-[6.25rem] px-[8vw] pointer-events-none transition-all duration-200",
@@ -61,7 +61,7 @@ export const CSSclasses = {
     },
 };
 
-// <div className="bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100"
+// <div className="bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100 h-60"
 
 export default function StudyHub() {
     const { user } = useContext(AuthContext);

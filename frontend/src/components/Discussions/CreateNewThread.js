@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 
-export default function CreateNewThread({ courses, setCreateThread }) {
+export default function CreateNewThread({ courses, setCreateThread, universities, setDiscussions }) {
     const newThreadRef = useRef();
     const coursesTagged = useRef(null);
     // For (un)mount animation
@@ -26,8 +26,36 @@ export default function CreateNewThread({ courses, setCreateThread }) {
         e.preventDefault();
         console.log(e.target.name.value);
         console.log(e.target.content.value);
-        console.log(coursesTagged.current.getSelectedItems());
-        closeNewThread();
+        // console.log(coursesTagged.current.getSelectedItems());
+        console.table(coursesTagged.current.getSelectedItems());
+
+        fetch(`http://127.0.0.1:8000/backend/discussions/${e.target.university.value}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+            body: JSON.stringify({
+                title: e.target.name.value,
+                desc: e.target.content.value,
+                courses: coursesTagged.current.getSelectedItems().map((course) => course.id),
+            }),
+        })
+            .then((res) => {
+                if (res.status !== 201) {
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status}${json.detail}`);
+                    });
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setDiscussions((prev) => [...prev, data]);
+                closeNewThread();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     useEffect(() => {
@@ -56,22 +84,36 @@ export default function CreateNewThread({ courses, setCreateThread }) {
                     }}
                     placeholder="Title"
                 />
-                <Multiselect
-                    ref={coursesTagged}
-                    displayValue="name"
-                    isObject={true}
-                    onKeyPressFn={function noRefCheck() {}}
-                    onRemove={function noRefCheck() {}}
-                    onSearch={function noRefCheck() {}}
-                    onSelect={function noRefCheck() {}}
-                    options={courseList}
-                    selectionLimit={3}
-                    showCheckbox={true}
-                    showArrow
-                    avoidHighlightFirstOption
-                    placeholder="Tag courses"
-                    closeIcon="cancel"
-                />
+                <div className="grid grid-cols-2 gap-2 items-center">
+                    <Multiselect
+                        ref={coursesTagged}
+                        displayValue="name"
+                        isObject={true}
+                        onKeyPressFn={function noRefCheck() {}}
+                        onRemove={function noRefCheck() {}}
+                        onSearch={function noRefCheck() {}}
+                        onSelect={function noRefCheck() {}}
+                        options={courseList}
+                        selectionLimit={3}
+                        showCheckbox={true}
+                        showArrow
+                        avoidHighlightFirstOption
+                        placeholder="Tag courses"
+                        closeIcon="cancel"
+                    />
+                    <select
+                        className={twMerge(CSSclasses.dropdown.base, "w-full border-2 border-black border-opacity-10")}
+                        name="university">
+                        <option value="" disabled>
+                            Select university discussion belongs to
+                        </option>
+                        {universities.map((uni) => (
+                            <option key={uni.id} value={uni.id}>
+                                {uni.university_name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <textarea
                     name="content"
                     className={twMerge(CSSclasses.search.base, "p-2 col-span-3 resize-none")}

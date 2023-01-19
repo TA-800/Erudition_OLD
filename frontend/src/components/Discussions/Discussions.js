@@ -10,6 +10,7 @@ import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
 
 export default function Discussions() {
+    const [universities, setUniversities] = useState([]);
     const [courses, setCourses] = useState([]);
     const [discussions, setDiscussions] = useState([]);
     const [selectedDiscussion, setSelectedDiscussion] = useState({});
@@ -99,10 +100,30 @@ export default function Discussions() {
                 logout();
             });
     }
+    function fetchUniversities() {
+        // Fetch university info
+        fetch("http://127.0.0.1:8000/backend/university/", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (!res.ok)
+                    return res.json().then((json) => {
+                        throw new Error(`${res.status} ${res.statusText}: ${json.detail}`);
+                    });
+                return res.json();
+            })
+            .then((data) => setUniversities([...data]))
+            .catch((err) => console.log(err));
+    }
 
     useEffect(() => {
         fetchDiscussionData();
         fetchCourses();
+        fetchUniversities();
     }, []);
 
     return (
@@ -125,7 +146,14 @@ export default function Discussions() {
             {!completeThread && (
                 <Utility search={search} setSearch={setSearch} setCreateThread={setCreateThread} createThread={createThread} />
             )}
-            {createThread && <CreateNewThread setCreateThread={setCreateThread} courses={courses} />}
+            {createThread && (
+                <CreateNewThread
+                    setCreateThread={setCreateThread}
+                    courses={courses}
+                    universities={universities}
+                    setDiscussions={setDiscussions}
+                />
+            )}
 
             <div>
                 {!completeThread &&

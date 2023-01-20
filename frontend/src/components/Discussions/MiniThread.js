@@ -6,6 +6,7 @@ import AuthContext from "../../context/AuthContext";
 export default function MiniThread({ hoverable, discussion, discussionState, setDiscussionState }) {
     const { user, userID } = useContext(AuthContext);
     const [liked, setLiked] = useState(discussion.all_users_liked.includes(user));
+    const [likes, setLikes] = useState(discussion.all_users_liked.length);
 
     function deleteDiscussion(id) {
         fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
@@ -46,15 +47,9 @@ export default function MiniThread({ hoverable, discussion, discussionState, set
                 return res.json();
             })
             .then((data) => {
+                // Data in this case is a single discussion object
                 setLiked(!liked);
-                // setDiscussions((prev) => {
-                //     return prev.map((discussion) => {
-                //         if (discussion.id === id) {
-                //             return data;
-                //         }
-                //         return discussion;
-                //     });
-                // });
+                setLikes(data.all_users_liked.length);
                 setDiscussionState({ type: "updateDiscussion", payload: data });
             })
             .catch((err) => console.log(err));
@@ -99,13 +94,13 @@ export default function MiniThread({ hoverable, discussion, discussionState, set
             <div className="flex flex-row items-center gap-x-10">
                 {/* Comment count */}
                 <IconWithData icon={faCommentAlt} data={discussion.comment_count} />
+                {/* Likes count */}
                 <div
                     onClick={(e) => {
                         e.stopPropagation();
                         likeDiscussion(discussion.id);
                     }}>
-                    <IconWithData icon={faThumbsUp} data={discussion.all_users_liked.length} liked={liked} />
-                    {/* Likes count */}
+                    <IconWithData icon={faThumbsUp} data={likes} liked={liked} />
                 </div>
                 {discussion.discussion_author === userID && (
                     <button
@@ -127,6 +122,7 @@ export default function MiniThread({ hoverable, discussion, discussionState, set
 }
 
 function IconWithData({ icon, data, liked }) {
+    console.log("Iconwithdata:", data, liked);
     return (
         <div className={"flex flex-row items-center text-xl gap-2 opacity-70 " + (liked ? "text-red-800 font-bold" : "")}>
             <FontAwesomeIcon icon={icon} />

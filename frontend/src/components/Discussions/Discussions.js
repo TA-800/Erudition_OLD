@@ -1,6 +1,6 @@
 import { faComments, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useMemo, useReducer, useState } from "react";
+import { useContext, useEffect, useMemo, useReducer } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
@@ -9,14 +9,6 @@ import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
 
 export default function Discussions() {
-    // const [universities, setUniversities] = useState([]);
-    // const [courses, setCourses] = useState([]);
-    // const [discussions, setDiscussions] = useState([]);
-    // const [selectedDiscussion, setSelectedDiscussion] = useState({});
-    // const [search, setSearch] = useState("");
-
-    // const [completeThread, setCompleteThread] = useState(false);
-    // const [createThread, setCreateThread] = useState(false);
     const { user, logout } = useContext(AuthContext);
 
     const initialDiscussionState = () => {
@@ -49,6 +41,7 @@ export default function Discussions() {
                 // Payload in this case is the updated discussion object
                 const updatedDiscussions = state.discussions.map((discussion) => {
                     if (discussion.id === action.payload.id) {
+                        // Manually update all_users_liked
                         return action.payload;
                     }
                     return discussion;
@@ -64,12 +57,11 @@ export default function Discussions() {
                 // Update all_users_liked in discussions
                 const updatedDiscussions = state.discussions.map((discussion) => {
                     if (discussion.id === action.payload) {
-                        // This should increase the length of all_users_liked by 1
-                        // Thus, all_users_liked.length should also be updated
-                        discussion.all_users_liked = [...discussion.all_users_liked, user];
+                        discussion.comment_count += 1;
                     }
                     return discussion;
                 });
+                return { ...state, discussions: updatedDiscussions };
             }
             if (action.type === "setSelectedDiscussion") {
                 // If the payload is null, we want to clear the selected discussion and go back to the list of discussions

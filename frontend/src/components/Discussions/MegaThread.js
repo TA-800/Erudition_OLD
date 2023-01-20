@@ -5,13 +5,6 @@ import MiniThread from "./MiniThread";
 import AuthContext from "../../context/AuthContext";
 
 export default function MegaThread({ discussionState, setDiscussionState }) {
-    // const allProps = {
-    //     ...selectedDiscussion.discussion,
-    //     hoverable: false,
-    //     retrieveThread: retrieveThread,
-    //     setDiscussions: setDiscussions,
-    // };
-
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [localSelectedDiscussion, setLocalSelectedDiscussion] = useState({});
@@ -21,6 +14,11 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
         // set localSelectedDiscussion to the data retrieved and setLoading to false
         retrieveThread(discussionState.selectedDiscussion, setLocalSelectedDiscussion, setLoading, setComments);
     }, []);
+
+    useEffect(() => {
+        console.log("discussionState changed");
+        console.log(discussionState);
+    }, [discussionState]);
 
     function deleteComment(id) {
         fetch(`http://127.0.0.1:8000/backend/comments/${id}`, {
@@ -106,7 +104,7 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
     }
 
     function submitComment() {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${discussionState.selectedDiscussion.discussion.id}`, {
+        fetch(`http://127.0.0.1:8000/backend/discussions/${discussionState.selectedDiscussion}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -130,15 +128,6 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
                 document.querySelector("textarea").value = "";
                 // Add the new comment to the list of comments
                 setComments([...comments, data]);
-                // Update discussion's comment count
-                // setDiscussions((prev) => {
-                //     return prev.map((discussion) => {
-                //         if (discussion.id === selectedDiscussion.discussion.id) {
-                //             return { ...discussion, comment_count: discussion.comment_count + 1 };
-                //         }
-                //         return discussion;
-                //     });
-                // });
                 setDiscussionState({ type: "addComment", payload: discussionState.selectedDiscussion });
             })
             .catch((err) => console.log(err));

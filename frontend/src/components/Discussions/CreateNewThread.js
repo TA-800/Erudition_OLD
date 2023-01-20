@@ -3,20 +3,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 
-export default function CreateNewThread({ courses, setCreateThread, universities, setDiscussions }) {
+export default function CreateNewThread({ discussionState, setDiscussionState }) {
     const newThreadRef = useRef();
     const coursesTagged = useRef(null);
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
     // let courseList = courses.map((course) => course.course_code);
-    let courseList = courses.map((course) => {
+    let courseList = discussionState.courses.map((course) => {
         return { name: course.course_code, id: course.id };
     });
 
     function closeNewThread() {
         newThreadRef.current.ontransitionend = (e) => {
             if (e.propertyName === "height") {
-                setCreateThread(false);
+                // setCreateThread(false);
+                setDiscussionState({ type: "setCreateThread", payload: false });
             }
         };
         setMountAnimation(false);
@@ -24,9 +25,6 @@ export default function CreateNewThread({ courses, setCreateThread, universities
 
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(e.target.name.value);
-        console.log(e.target.content.value);
-        // console.log(coursesTagged.current.getSelectedItems());
         console.table(coursesTagged.current.getSelectedItems());
 
         fetch(`http://127.0.0.1:8000/backend/discussions/${e.target.university.value}`, {
@@ -50,7 +48,8 @@ export default function CreateNewThread({ courses, setCreateThread, universities
                 return res.json();
             })
             .then((data) => {
-                setDiscussions((prev) => [...prev, data]);
+                // setDiscussions((prev) => [...prev, data]);
+                setDiscussionState({ type: "addDiscussion", payload: data });
                 closeNewThread();
             })
             .catch((err) => {
@@ -107,7 +106,7 @@ export default function CreateNewThread({ courses, setCreateThread, universities
                         <option value="" disabled>
                             Select university discussion belongs to
                         </option>
-                        {universities.map((uni) => (
+                        {discussionState.universities.map((uni) => (
                             <option key={uni.id} value={uni.id}>
                                 {uni.university_name}
                             </option>

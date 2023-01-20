@@ -1,23 +1,11 @@
 import { faCommentAlt, faThumbsUp, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import AuthContext from "../../context/AuthContext";
 
-export default function MiniThread({
-    id,
-    author_name,
-    discussion_title,
-    discussion_desc,
-    discussion_author,
-    courses,
-    comment_count,
-    all_users_liked,
-    hoverable,
-    retrieveThread,
-    setDiscussions,
-}) {
+export default function MiniThread({ hoverable, discussion, discussionState, setDiscussionState }) {
     const { user, userID } = useContext(AuthContext);
-    const [liked, setLiked] = useState(all_users_liked.includes(user));
+    const [liked, setLiked] = useState(discussion.all_users_liked.includes(user));
 
     function deleteDiscussion(id) {
         fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
@@ -41,7 +29,7 @@ export default function MiniThread({
             .catch((err) => console.log(err));
     }
 
-    function likeComment(id) {
+    function likeDiscussion(id) {
         fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
             method: "PATCH",
             headers: {
@@ -59,14 +47,15 @@ export default function MiniThread({
             })
             .then((data) => {
                 setLiked(!liked);
-                setDiscussions((prev) => {
-                    return prev.map((discussion) => {
-                        if (discussion.id === id) {
-                            return data;
-                        }
-                        return discussion;
-                    });
-                });
+                // setDiscussions((prev) => {
+                //     return prev.map((discussion) => {
+                //         if (discussion.id === id) {
+                //             return data;
+                //         }
+                //         return discussion;
+                //     });
+                // });
+                setDiscussionState({ type: "updateDiscussion", payload: data });
             })
             .catch((err) => console.log(err));
     }
@@ -77,15 +66,25 @@ export default function MiniThread({
                 "bg-cyan-700 text-cyan-100 rounded-md p-2 my-2 border-2 border-cyan-600 flex flex-col gap-3 relative transition-all top-0 shadow-sm hover:border-cyan-900 " +
                 (hoverable ? "hover:-top-1 hover:shadow-lg" : "")
             }
-            onClick={() => retrieveThread(id)}>
-            {/* Comment header */}
+            // onClick={() => retrieveThread(id)}>
+            onClick={() => {
+                // First, check if we are in mega thread mode
+                if (discussionState.completeThread) {
+                    // If we are, then we need to clear the mega thread state
+                    setDiscussionState({ type: "setSelectedDiscussion", payload: null });
+                } else {
+                    // If we are not, then we need to set the mega thread state
+                    setDiscussionState({ type: "setSelectedDiscussion", payload: discussion.id });
+                }
+            }}>
+            {/* Discussion header */}
             <div className="flex flex-col gap-1">
                 <p className="text-2xl">
-                    <strong>{discussion_title}</strong>
+                    <strong>{discussion.discussion_title}</strong>
                 </p>
-                <p className="opacity-70 text-sm">{author_name}</p>
+                <p className="opacity-70 text-sm">{discussion.author_name}</p>
                 <span className="opacity-70 text-sm flex flex-row gap-x-1">
-                    {courses.map((course) => (
+                    {discussion.courses.map((course) => (
                         <div
                             key={course}
                             className="bg-cyan-800 flex justify-center items-center py-1 px-2 rounded-full h-fit w-fit">
@@ -94,28 +93,28 @@ export default function MiniThread({
                     ))}
                 </span>
             </div>
-            {/* Comment body */}
-            <p className="max-h-12 w-full overflow-hidden whitespace-pre-wrap">{discussion_desc}</p>
-            {/* Comment data */}
+            {/* Discussion body */}
+            <p className="max-h-12 w-full overflow-hidden whitespace-pre-wrap">{discussion.discussion_desc}</p>
+            {/* Discussion data */}
             <div className="flex flex-row items-center gap-x-10">
                 {/* Comment count */}
-                <IconWithData icon={faCommentAlt} data={comment_count} />
+                <IconWithData icon={faCommentAlt} data={discussion.comment_count} />
                 <div
                     onClick={(e) => {
                         e.stopPropagation();
-                        likeComment(id);
+                        likeDiscussion(discussion.id);
                     }}>
-                    <IconWithData icon={faThumbsUp} data={all_users_liked.length} liked={liked} />
+                    <IconWithData icon={faThumbsUp} data={discussion.all_users_liked.length} liked={liked} />
                     {/* Likes count */}
                 </div>
-                {discussion_author === userID && (
+                {discussion.discussion_author === userID && (
                     <button
                         className="btn-dark flex flex-row gap-1 items-center text-sm ml-auto"
                         onClick={(e) => {
                             e.stopPropagation();
                             // First, confirm deletion, if confirmed, delete by calling deleteDiscussion
                             if (window.confirm("Are you sure you want to delete this discussion?")) {
-                                deleteDiscussion(id);
+                                deleteDiscussion(discussion.id);
                             }
                         }}>
                         DELETE

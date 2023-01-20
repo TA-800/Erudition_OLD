@@ -1,6 +1,6 @@
 import { faComments, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useReducer, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
@@ -9,46 +9,108 @@ import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
 
 export default function Discussions() {
-    const [universities, setUniversities] = useState([]);
-    const [courses, setCourses] = useState([]);
-    const [discussions, setDiscussions] = useState([]);
-    const [selectedDiscussion, setSelectedDiscussion] = useState({});
-    const [search, setSearch] = useState("");
-    const searchedDiscussions = useMemo(() => {
-        return discussions.filter((discussion) => discussion.discussion_title.toLowerCase().includes(search.toLowerCase()));
-    }, [search, discussions]);
-    const [completeThread, setCompleteThread] = useState(false);
-    const [createThread, setCreateThread] = useState(false);
-    const { logout } = useContext(AuthContext);
+    // const [universities, setUniversities] = useState([]);
+    // const [courses, setCourses] = useState([]);
+    // const [discussions, setDiscussions] = useState([]);
+    // const [selectedDiscussion, setSelectedDiscussion] = useState({});
+    // const [search, setSearch] = useState("");
 
-    function activateFullThread() {
-        setCreateThread(false);
-        setCompleteThread(!completeThread);
-        setSearch("");
-    }
-    function retrieveThread(id) {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("access"),
-            },
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    return res.json().then((json) => {
-                        throw new Error(`${res.status} ${json.detail}`);
-                    });
+    // const [completeThread, setCompleteThread] = useState(false);
+    // const [createThread, setCreateThread] = useState(false);
+    const { user, logout } = useContext(AuthContext);
+
+    const initialDiscussionState = () => {
+        return {
+            universities: [],
+            courses: [],
+            discussions: [],
+            selectedDiscussion: null, // This is discussion id
+            search: "",
+            completeThread: false,
+            createThread: false,
+        };
+    };
+
+    const [discussionState, setDiscussionState] = useReducer(
+        (state, action) => {
+            // In this function, we can do some logic to determine what the new state should be
+            if (action.type === "setUniversities") {
+                return { ...state, universities: action.payload };
+            }
+            if (action.type === "setCourses") {
+                return { ...state, courses: action.payload };
+            }
+            // For fetching all discussions (first time page load)
+            if (action.type === "setDiscussions") {
+                return { ...state, discussions: action.payload };
+            }
+            // For updating a discussion (like/unlike)
+            if (action.type === "updateDiscussion") {
+                // Payload in this case is the updated discussion object
+                const updatedDiscussions = state.discussions.map((discussion) => {
+                    if (discussion.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return discussion;
+                });
+                return { ...state, discussions: updatedDiscussions };
+            }
+            // For adding a new discussion (after creating a new thread)
+            if (action.type === "addDiscussion") {
+                return { ...state, discussions: [...state.discussions, action.payload] };
+            }
+            // For adding a new comment (after creating a new comment in mega thread)
+            if (action.type === "addComment") {
+                // Update all_users_liked in discussions
+                const updatedDiscussions = state.discussions.map((discussion) => {
+                    if (discussion.id === action.payload) {
+                        // This should increase the length of all_users_liked by 1
+                        // Thus, all_users_liked.length should also be updated
+                        discussion.all_users_liked = [...discussion.all_users_liked, user];
+                    }
+                    return discussion;
+                });
+            }
+            if (action.type === "setSelectedDiscussion") {
+                // If the payload is null, we want to clear the selected discussion and go back to the list of discussions
+                if (action.payload === null) {
+                    return { ...state, selectedDiscussion: null, completeThread: false };
                 }
-                return res.json();
-            })
-            .then((data) => {
-                setSelectedDiscussion(data);
-                activateFullThread();
-            })
-            .catch((err) => console.log(err));
-    }
+                // Otherwise, we want to set the selected discussion and show the full thread
+                return { ...state, selectedDiscussion: action.payload, completeThread: true };
+            }
+            if (action.type === "setSearch") {
+                return { ...state, search: action.payload };
+            }
+            if (action.type === "setCreateThread") {
+                return { ...state, createThread: action.payload };
+            }
+            if (action.type === "reset") {
+                return initialDiscussionState();
+            }
+            return state;
+        },
+        // Initial state
+        {
+            universities: [],
+            courses: [],
+            discussions: [],
+            selectedDiscussion: {},
+            search: "",
+            completeThread: false,
+            createThread: false,
+        },
+        initialDiscussionState
+    );
 
+    // Searched discussions
+    const searchedDiscussions = useMemo(() => {
+        return discussionState.discussions.filter((discussion) => {
+            return discussion.discussion_title.toLowerCase().includes(discussionState.search.toLowerCase());
+        });
+    }, [discussionState.discussions, discussionState.search]);
+
+    // Fetch all discussions
     function fetchDiscussionData() {
         fetch("http://127.0.0.1:8000/backend/discussions/0", {
             method: "GET",
@@ -66,7 +128,7 @@ export default function Discussions() {
                 return res.json();
             })
             .then((data) => {
-                setDiscussions([...data]);
+                setDiscussionState({ type: "setDiscussions", payload: data });
             })
             .catch((err) => console.log(err));
     }
@@ -88,7 +150,8 @@ export default function Discussions() {
                 return res.json();
             })
             .then((data) => {
-                setCourses(data);
+                // setCourses(data);
+                setDiscussionState({ type: "setCourses", payload: data });
             })
             .catch((errMessage) => {
                 alert(errMessage);
@@ -112,13 +175,19 @@ export default function Discussions() {
                     });
                 return res.json();
             })
-            .then((data) => setUniversities([...data]))
+            .then((data) =>
+                // setUniversities(data);
+                setDiscussionState({ type: "setUniversities", payload: data })
+            )
             .catch((err) => console.log(err));
     }
 
     useEffect(() => {
+        // Fetch all discussions for the user
         fetchDiscussionData();
+        // Fetch all courses of the user
         fetchCourses();
+        // Fetch all universities of the user
         fetchUniversities();
     }, []);
 
@@ -139,46 +208,43 @@ export default function Discussions() {
             <br />
             {/* Threads container */}
 
-            {!completeThread && (
-                <Utility search={search} setSearch={setSearch} setCreateThread={setCreateThread} createThread={createThread} />
+            {/* Utility bar */}
+            {!discussionState.completeThread && (
+                <Utility discussionState={discussionState} setDiscussionState={setDiscussionState} />
             )}
-            {createThread && (
-                <CreateNewThread
-                    setCreateThread={setCreateThread}
-                    courses={courses}
-                    universities={universities}
-                    setDiscussions={setDiscussions}
-                />
+            {/* Create new thread component */}
+            {discussionState.createThread && (
+                <CreateNewThread discussionState={discussionState} setDiscussionState={setDiscussionState} />
             )}
 
             <div>
-                {!completeThread &&
+                {/* Show all threads/discussions if no thread has been clicked on */}
+                {!discussionState.completeThread &&
                     searchedDiscussions
                         .sort((a, b) => {
                             return new Date(b.discussion_date) - new Date(a.discussion_date);
                         })
                         .map((discussion) => {
-                            const allProps = {
-                                ...discussion,
-                                setDiscussions: setDiscussions,
-                                hoverable: true,
-                                retrieveThread: retrieveThread,
-                            };
-                            return <MiniThread key={discussion.id} {...allProps} />;
+                            return (
+                                <MiniThread
+                                    key={discussion.id}
+                                    hoverable={true}
+                                    discussion={discussion}
+                                    discussionState={discussionState}
+                                    setDiscussionState={setDiscussionState}
+                                />
+                            );
                         })}
-                {completeThread && (
-                    <MegaThread
-                        selectedDiscussion={selectedDiscussion}
-                        setDiscussions={setDiscussions}
-                        retrieveThread={retrieveThread}
-                    />
+                {/* Show a complete thread/discussion hath it been clicked on */}
+                {discussionState.completeThread && (
+                    <MegaThread discussionState={discussionState} setDiscussionState={setDiscussionState} />
                 )}
             </div>
         </>
     );
 }
 
-function Utility({ search, setSearch, setCreateThread, createThread }) {
+function Utility({ discussionState, setDiscussionState }) {
     return (
         <>
             {/* Utility bar */}
@@ -192,22 +258,22 @@ function Utility({ search, setSearch, setCreateThread, createThread }) {
                         style={{
                             boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
                         }}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={discussionState.search}
+                        onChange={(e) => setDiscussionState({ type: "setSearch", payload: e.target.value })}
                     />
                     <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
                 </div>
                 {/* Create button */}
                 <button
                     className={
-                        createThread
+                        discussionState.createThread
                             ? twMerge(
                                   CSSclasses.add.base,
                                   "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto disabled"
                               )
                             : twMerge(CSSclasses.add.base, "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto")
                     }
-                    onClick={() => setCreateThread((prev) => !prev)}>
+                    onClick={() => setDiscussionState({ type: "setCreateThread", payload: !discussionState.createThread })}>
                     <FontAwesomeIcon icon={faPlusCircle} />
                 </button>
             </div>

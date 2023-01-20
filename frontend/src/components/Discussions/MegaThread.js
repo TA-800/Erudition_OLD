@@ -1,18 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCropSimple, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import MiniThread from "./MiniThread";
 import AuthContext from "../../context/AuthContext";
 
-export default function MegaThread({ selectedDiscussion, retrieveThread, setDiscussions }) {
-    const allProps = {
-        ...selectedDiscussion.discussion,
-        hoverable: false,
-        retrieveThread: retrieveThread,
-        setDiscussions: setDiscussions,
-    };
+export default function MegaThread({ discussionState, setDiscussionState }) {
+    // const allProps = {
+    //     ...selectedDiscussion.discussion,
+    //     hoverable: false,
+    //     retrieveThread: retrieveThread,
+    //     setDiscussions: setDiscussions,
+    // };
 
-    const [comments, setComments] = useState(selectedDiscussion.comments);
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [localSelectedDiscussion, setLocalSelectedDiscussion] = useState({});
+
+    useEffect(() => {
+        // This function will retrieve thread data (comments) from backend and also
+        // set localSelectedDiscussion to the data retrieved and setLoading to false
+        retrieveThread(discussionState.selectedDiscussion, setLocalSelectedDiscussion, setLoading, setComments);
+    }, []);
 
     function deleteComment(id) {
         fetch(`http://127.0.0.1:8000/backend/comments/${id}`, {
@@ -35,21 +43,40 @@ export default function MegaThread({ selectedDiscussion, retrieveThread, setDisc
             .catch((err) => console.log(err));
     }
 
+    function Loading() {
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-900"></div>
+                <div>Loading all those comments!</div>
+            </div>
+        );
+    }
+
     return (
         <>
-            <MiniThread {...allProps} />
-            <div className=" bg-cyan-800 bg-opacity-90 text-cyan-100 rounded-md flex flex-col gap-2 p-2">
-                {comments.map((comment) => {
-                    const commentProps = { ...comment, deleteComment: () => deleteComment(comment.id) };
-                    return <Comment key={comment.id} {...commentProps} />;
-                })}
-                <NewComment
-                    selectedDiscussion={selectedDiscussion}
-                    setDiscussions={setDiscussions}
-                    comments={comments}
-                    setComments={setComments}
-                />
-            </div>
+            {loading && <Loading />}
+            {!loading && (
+                <>
+                    <MiniThread
+                        hoverable={false}
+                        discussion={localSelectedDiscussion.discussion}
+                        discussionState={discussionState}
+                        setDiscussionState={setDiscussionState}
+                    />
+                    <div className=" bg-cyan-800 bg-opacity-90 text-cyan-100 rounded-md flex flex-col gap-2 p-2">
+                        {comments.map((comment) => {
+                            const commentProps = { ...comment, deleteComment: () => deleteComment(comment.id) };
+                            return <Comment key={comment.id} {...commentProps} />;
+                        })}
+                        <NewComment
+                            discussionState={discussionState}
+                            comments={comments}
+                            setDiscussionState={setDiscussionState}
+                            setComments={setComments}
+                        />
+                    </div>
+                </>
+            )}
         </>
     );
 }
@@ -71,7 +98,7 @@ function Comment({ comment_author, commentor_name, time_elapsed, comment_text, d
     );
 }
 
-function NewComment({ selectedDiscussion, setDiscussions, comments, setComments }) {
+function NewComment({ discussionState, comments, setDiscussionState, setComments }) {
     const [newComment, setNewComment] = useState("");
 
     function handleOnChange(value) {
@@ -79,7 +106,7 @@ function NewComment({ selectedDiscussion, setDiscussions, comments, setComments 
     }
 
     function submitComment() {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${selectedDiscussion.discussion.id}`, {
+        fetch(`http://127.0.0.1:8000/backend/discussions/${discussionState.selectedDiscussion.discussion.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -101,16 +128,18 @@ function NewComment({ selectedDiscussion, setDiscussions, comments, setComments 
                 // Clear the comment box
                 setNewComment("");
                 document.querySelector("textarea").value = "";
+                // Add the new comment to the list of comments
                 setComments([...comments, data]);
                 // Update discussion's comment count
-                setDiscussions((prev) => {
-                    return prev.map((discussion) => {
-                        if (discussion.id === selectedDiscussion.discussion.id) {
-                            return { ...discussion, comment_count: discussion.comment_count + 1 };
-                        }
-                        return discussion;
-                    });
-                });
+                // setDiscussions((prev) => {
+                //     return prev.map((discussion) => {
+                //         if (discussion.id === selectedDiscussion.discussion.id) {
+                //             return { ...discussion, comment_count: discussion.comment_count + 1 };
+                //         }
+                //         return discussion;
+                //     });
+                // });
+                setDiscussionState({ type: "addComment", payload: discussionState.selectedDiscussion });
             })
             .catch((err) => console.log(err));
     }
@@ -133,4 +162,29 @@ function NewComment({ selectedDiscussion, setDiscussions, comments, setComments 
             </button>
         </div>
     );
+}
+
+// Fetch discussion comments data of clicked discussion
+function retrieveThread(id, setLocalSelectedDiscussion, setLoading, setComments) {
+    fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("access"),
+        },
+    })
+        .then((res) => {
+            if (!res.ok) {
+                return res.json().then((json) => {
+                    throw new Error(`${res.status} ${json.detail}`);
+                });
+            }
+            return res.json();
+        })
+        .then((data) => {
+            setLocalSelectedDiscussion(data);
+            setComments(data.comments);
+            setLoading(false);
+        })
+        .catch((err) => console.log(err));
 }

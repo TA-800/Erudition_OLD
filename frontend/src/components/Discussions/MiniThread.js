@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useState } from "react";
 import AuthContext from "../../context/AuthContext";
 
-export default function MiniThread({ hoverable, discussion, discussionState, setDiscussionState }) {
+export default function MiniThread({ hoverable, hideOverflow, discussion, discussionState, setDiscussionState }) {
     const { user, userID } = useContext(AuthContext);
     const [liked, setLiked] = useState(discussion.all_users_liked.includes(user));
     const [likes, setLikes] = useState(discussion.all_users_liked.length);
@@ -61,7 +61,6 @@ export default function MiniThread({ hoverable, discussion, discussionState, set
                 "bg-cyan-700 text-cyan-100 rounded-md p-2 my-2 border-2 border-cyan-600 flex flex-col gap-3 relative transition-all top-0 shadow-sm hover:border-cyan-900 " +
                 (hoverable ? "hover:-top-1 hover:shadow-lg" : "")
             }
-            // onClick={() => retrieveThread(id)}>
             onClick={() => {
                 // First, check if we are in mega thread mode
                 if (discussionState.completeThread) {
@@ -89,7 +88,9 @@ export default function MiniThread({ hoverable, discussion, discussionState, set
                 </span>
             </div>
             {/* Discussion body */}
-            <p className="max-h-12 w-full overflow-hidden whitespace-pre-wrap">{discussion.discussion_desc}</p>
+            <p className={"w-full whitespace-pre-wrap " + (hideOverflow ? "max-h-12 overflow-hidden" : "")}>
+                {discussion.discussion_desc}
+            </p>
             {/* Discussion data */}
             <div className="flex flex-row items-center gap-x-10">
                 {/* Comment count */}

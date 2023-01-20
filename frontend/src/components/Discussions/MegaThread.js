@@ -57,6 +57,7 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
                 <>
                     <MiniThread
                         hoverable={false}
+                        hideOverflow={false}
                         discussion={localSelectedDiscussion.discussion}
                         discussionState={discussionState}
                         setDiscussionState={setDiscussionState}

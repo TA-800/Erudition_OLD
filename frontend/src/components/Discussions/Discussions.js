@@ -221,6 +221,7 @@ export default function Discussions() {
                                 <MiniThread
                                     key={discussion.id}
                                     hoverable={true}
+                                    hideOverflow={true}
                                     discussion={discussion}
                                     discussionState={discussionState}
                                     setDiscussionState={setDiscussionState}

@@ -14,8 +14,9 @@ export default function Settings() {
     useEffect(() => {
         fetchUserUniversities();
         fetchAllUniversities();
-        document.querySelector("#year").value = 2;
-    }, []);
+
+        if (!loading) document.getElementById("year").value = 2;
+    }, [loading]);
 
     function fetchUserUniversities() {
         fetch("http://127.0.0.1:8000/backend/university/", {

@@ -11,6 +11,7 @@ export default function Main() {
             <Routes>
                 {/* Protected Routes */}
                 <Route path="/" element={<ProtectedRoutes />}>
+                    <Route path="/" element={<Navigate to="/studyhub" />} />
                     <Route path="/studyhub" element={<StudyHub />} />
                     <Route path="/discussions" element={<Discussions />} />
                     <Route path="/settings" element={<Logout />} />

@@ -35,13 +35,52 @@ def apiOverview(request):
     }
     return Response(api_urls)
 
+@api_view(['GET', 'PUT', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def userProfile(request, id):
+    try:
+        if request.method == "GET":
+            # Get the user profile
+            user = User.objects.get(id=id)
+            # Serialize the data
+            serializer = UserSerializer(user, many=False)
+            return Response(serializer.data, status=200)
+        elif request.method == "PUT":
+            # # Get the user profile
+            # user = User.objects.get(id=id)
+            # # Update the user profile
+            # user.username = request.data["username"]
+            # user.email = request.data["email"]
+            # user.save()
+            # # Serialize the data
+            # serializer = UserSerializer(user, many=False)
+            # return Response(serializer.data, status=200)
+            pass
+    except Exception as e:
+        return Response({"detail": f"{e.args[0]}"}, status=400)
+
 @api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def university(request):
     print(f"\t>>> Running function")
     if request.method == "GET":
         try:
             # Get a list of all universities that the user is enrolled in
             universities = University.objects.filter(university_user=request.user)
+            # Serialize the data
+            serializer = UniversitySerializer(universities, many=True)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def allUniversities(request):
+    if request.method == "GET":
+        try:
+            # Get a list of all universities
+            universities = University.objects.all()
             # Serialize the data
             serializer = UniversitySerializer(universities, many=True)
             return Response(serializer.data, status=200)

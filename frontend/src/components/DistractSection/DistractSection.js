@@ -13,7 +13,7 @@ export default function DistractSection() {
             <div className="lp">
                 <p className="lp__title">Respite</p>
                 <ul className="lp__list">
-                    {["Games", "Did You Know", "Of The Day"].map((element) => (
+                    {["Games", "Trivia", "Of The Day"].map((element) => (
                         <li
                             key={element}
                             className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
@@ -35,8 +35,8 @@ export default function DistractSection() {
                 <div className="rp__content">
                     {content === "Games" ? (
                         <Games />
-                    ) : content === "Did You Know" ? (
-                        <DidYouKnow />
+                    ) : content === "Trivia" ? (
+                        <Trivia />
                     ) : content === "Of The Day" ? (
                         <OfTheDay />
                     ) : (
@@ -114,8 +114,7 @@ function Games() {
                             <button
                                 key={letter}
                                 className={
-                                    "btn-dark flex justify-center items-center" +
-                                    (guessed.includes(letter) ? " disabled" : "")
+                                    "btn-dark flex justify-center items-center" + (guessed.includes(letter) ? " disabled" : "")
                                 }
                                 onClick={(e) => onLetterClick(e)}
                                 disabled={guessed.includes(letter) || typeof wrong !== "number"}>
@@ -157,7 +156,7 @@ function Games() {
     );
 }
 
-function DidYouKnow() {
+function Trivia() {
     return <div>DID YOU KNOW THAT??</div>;
 }
 

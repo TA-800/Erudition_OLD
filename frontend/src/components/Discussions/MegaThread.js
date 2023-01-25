@@ -15,11 +15,6 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
         retrieveThread(discussionState.selectedDiscussion, setLocalSelectedDiscussion, setLoading, setComments);
     }, []);
 
-    useEffect(() => {
-        console.log("discussionState changed");
-        console.log(discussionState);
-    }, [discussionState]);
-
     function deleteComment(id) {
         fetch(`http://127.0.0.1:8000/backend/comments/${id}`, {
             method: "DELETE",
@@ -80,17 +75,24 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
     );
 }
 
-function Comment({ comment_author, commentor_name, time_elapsed, comment_text, deleteComment }) {
+function Comment({ comment_author, commentor_name, commentor_avatar, time_elapsed, comment_text, deleteComment }) {
     const { userID } = useContext(AuthContext);
 
     return (
-        <div className="bg-cyan-900 flex flex-col rounded-md p-2">
+        <div className="bg-cyan-900 flex flex-col rounded-md p-2 gap-2">
             <span className="flex flex-row gap-2">
-                <strong>{commentor_name}</strong>
-                <i className="opacity-50">{time_elapsed}</i>
-                {comment_author === userID && (
-                    <FontAwesomeIcon icon={faTrash} className="ml-auto opacity-30 hover:opacity-90" onClick={deleteComment} />
-                )}
+                <div className="flex flex-row gap-2 items-center">
+                    {/* Image */}
+                    <img src={`http://127.0.0.1:8000${commentor_avatar}`} className="h-[50px] avatar" alt="User avatar" />
+                    {/* User name */}
+                    <strong>{commentor_name}</strong>
+                    {/* Time */}
+                    <i className="opacity-50">{time_elapsed}</i>
+                    {/* Delete button */}
+                    {comment_author === userID && (
+                        <FontAwesomeIcon icon={faTrash} className="opacity-30 hover:opacity-90" onClick={deleteComment} />
+                    )}
+                </div>
             </span>
             <span> {comment_text}</span>
         </div>

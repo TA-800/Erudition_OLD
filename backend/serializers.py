@@ -1,11 +1,21 @@
 from rest_framework import serializers
 from .models import *
 from datetime import datetime
+from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = [
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'avatar',
+            'field',
+            'year',
+        ]
 
 class UniversitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,6 +79,7 @@ class DiscussionSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     commentor_name = serializers.SerializerMethodField()
+    commentor_avatar = serializers.SerializerMethodField()
     time_elapsed = serializers.SerializerMethodField()
 
     class Meta:
@@ -77,6 +88,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_commentor_name(self, obj):
         return obj.comment_author.username
+    
+    def get_commentor_avatar(self, obj):
+        return obj.comment_author.avatar.url
     
     def get_time_elapsed(self, obj):
         '''Returns the time elapsed (in minutes if less than 60, hours if less than 24, else day) since the comment was posted'''

@@ -123,7 +123,6 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
 }
 
 function IconWithData({ icon, data, liked }) {
-    console.log("Iconwithdata:", data, liked);
     return (
         <div className={"flex flex-row items-center text-xl gap-2 opacity-70 " + (liked ? "text-red-800 font-bold" : "")}>
             <FontAwesomeIcon icon={icon} />

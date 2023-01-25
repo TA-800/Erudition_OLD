@@ -9,7 +9,7 @@ import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
 
 export default function Discussions() {
-    const { user, logout } = useContext(AuthContext);
+    const { logout } = useContext(AuthContext);
 
     const initialDiscussionState = () => {
         return {

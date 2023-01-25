@@ -1,16 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from django.utils import timezone
+# blank = True -> optional, blank = False -> required.
+
+
+def upload_path(instance, filename):
+    # Purpose: To upload the avatar image to the correct folder.
+    return f"avatars/{instance.username}/{filename}"
 
 # Create your models here.
 class User(AbstractUser):
     #username, first_name, last_name ...
-    # avatar = models.ImageField(upload_to='avatars', blank=True)
-    is_public = models.BooleanField(default=True)
-
-
-# blank = True -> optional, blank = False -> required.
+    avatar = models.ImageField(upload_to=upload_path, default="avatars/default/default.png", blank=False, null=False)   
+    field = models.CharField(max_length=64, blank=True) # "Computer Science"
+    year = models.IntegerField(default=1)
 
 class University(models.Model):
     # User can be in multiple universities (double degree, etc.)

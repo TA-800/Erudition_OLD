@@ -46,16 +46,48 @@ def userProfile(request, id):
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data, status=200)
         elif request.method == "PUT":
-            # # Get the user profile
-            # user = User.objects.get(id=id)
-            # # Update the user profile
-            # user.username = request.data["username"]
-            # user.email = request.data["email"]
-            # user.save()
-            # # Serialize the data
-            # serializer = UserSerializer(user, many=False)
-            # return Response(serializer.data, status=200)
-            pass
+            # Get the user
+            user = User.objects.get(id=id)
+            # Get the data from the request
+            data = json.loads(request.body)
+            # Update the user
+            user.first_name = data['first'] or user.first_name
+            user.last_name = data['last'] or user.last_name
+            # user.avatar = data['avatar'] or user.avatar
+            user.field = data['field'] or user.field
+            user.year = data['year']
+            user.save()
+
+            # Update university of the user
+            # If data['university'] is an array, then the user is enrolled in already existing universities,
+            # otherwise, the user is enrolled in a new university, which should be created
+            print(f"\t>>> Updating university")
+            if not isinstance(data['unis'], list):
+                print(f"\t>>> 1st case")
+                # Remove the user from all universities
+                universities = University.objects.filter(university_user=user)
+                for university in universities:
+                    university.university_user.remove(user)
+                # Add the new university
+                new_university = University(university_name=data['university'])
+                # Add the user to the new university
+                new_university.university_user.add(user)
+                # Save the new university
+                new_university.save()
+                print(f"\t>>> New university created")
+            else:
+                # Remove the user from all universities
+                universities = University.objects.filter(university_user=user)
+                for university in universities:
+                    university.university_user.remove(user)
+                # Add the user to the existing universities
+                for university in data['unis']:
+                    university = University.objects.get(id=university['id'])
+                    university.university_user.add(user)
+            print(f"\t>>> All updated")
+            serializer = UserSerializer(user, many=False)
+            print(f"\t>>> Serialized and will return")
+            return Response(serializer.data, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 

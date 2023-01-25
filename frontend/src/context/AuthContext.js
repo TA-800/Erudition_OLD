@@ -12,9 +12,30 @@ export function AuthProvider({ children }) {
     const [userID, setUserID] = useState(() =>
         localStorage.getItem("access") ? jwt_decode(localStorage.getItem("access")).user_id : null
     );
+    const [imageURL, setImageURL] = useState(null);
 
     const [firstLoad, setFirstLoad] = useState(true);
     const navigate = useNavigate();
+
+    function getUserImage() {
+        fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("access"),
+            },
+        })
+            .then((res) => {
+                if (res.status !== 200) throw new Error("Error fetching user image");
+                return res.json();
+            })
+            .then((data) => {
+                setImageURL(data.avatar);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
     function updateUser(token) {
         if (token === null) {
@@ -155,6 +176,11 @@ export function AuthProvider({ children }) {
             updateToken();
         }
 
+        // If the user is not null, get the user image
+        if (user !== null) {
+            getUserImage();
+        }
+
         // Call the updateToken function every 4 minutes
         let interval = setInterval(() => {
             if (user !== null) {
@@ -168,6 +194,8 @@ export function AuthProvider({ children }) {
     let context = {
         user: user,
         userID: userID,
+        imageURL: imageURL,
+        setImageURL: setImageURL,
         register: register,
         login: login,
         logout: logout,

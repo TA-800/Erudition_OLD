@@ -2,7 +2,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import StudyHub from "./StudyHub";
-import Login, { Logout } from "./Settings/Login";
+import LoginPage, { Logout } from "./Settings/LoginPage";
 import Discussions from "./Discussions/Discussions";
 
 export default function Main() {
@@ -18,7 +18,7 @@ export default function Main() {
                 </Route>
 
                 {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<LoginPage />} />
             </Routes>
         </main>
     );

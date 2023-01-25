@@ -83,8 +83,6 @@ export default function Settings() {
                         return { name: u.university_name, id: u.id };
                     })
                 );
-                // Add "Choose other" option
-                setAllUnis((prev) => [...prev, { name: "Choose other", id: 0 }]);
             })
             .catch((errMessage) => alert(errMessage));
     }

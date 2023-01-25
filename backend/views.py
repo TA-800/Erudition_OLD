@@ -57,36 +57,26 @@ def userProfile(request, id):
             user.field = data['field'] or user.field
             user.year = data['year']
             user.save()
-
             # Update university of the user
             # If data['university'] is an array, then the user is enrolled in already existing universities,
             # otherwise, the user is enrolled in a new university, which should be created
-            print(f"\t>>> Updating university")
+
+            # Remove the user from all universities
+            universities = University.objects.filter(university_user=user)
+            for university in universities:
+                university.university_user.remove(user)
             if not isinstance(data['unis'], list):
-                print(f"\t>>> 1st case")
-                # Remove the user from all universities
-                universities = University.objects.filter(university_user=user)
-                for university in universities:
-                    university.university_user.remove(user)
                 # Add the new university
-                new_university = University(university_name=data['university'])
+                new_university = University(university_name=data['unis'])
+                new_university.save()
                 # Add the user to the new university
                 new_university.university_user.add(user)
-                # Save the new university
-                new_university.save()
-                print(f"\t>>> New university created")
             else:
-                # Remove the user from all universities
-                universities = University.objects.filter(university_user=user)
-                for university in universities:
-                    university.university_user.remove(user)
                 # Add the user to the existing universities
                 for university in data['unis']:
                     university = University.objects.get(id=university['id'])
                     university.university_user.add(user)
-            print(f"\t>>> All updated")
             serializer = UserSerializer(user, many=False)
-            print(f"\t>>> Serialized and will return")
             return Response(serializer.data, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)

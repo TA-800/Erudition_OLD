@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCropSimple, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import MiniThread from "./MiniThread";
 import AuthContext from "../../context/AuthContext";
 
@@ -57,7 +57,7 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
                         discussionState={discussionState}
                         setDiscussionState={setDiscussionState}
                     />
-                    <div className=" bg-cyan-800 bg-opacity-90 text-cyan-100 flex flex-col gap-2 p-2">
+                    <div className=" bg-zinc-700 flex flex-col gap-2 p-2">
                         {comments.map((comment) => {
                             const commentProps = { ...comment, deleteComment: () => deleteComment(comment.id) };
                             return <Comment key={comment.id} {...commentProps} />;
@@ -79,7 +79,7 @@ function Comment({ comment_author, commentor_name, commentor_avatar, time_elapse
     const { userID } = useContext(AuthContext);
 
     return (
-        <div className="bg-cyan-900 flex flex-col rounded-md p-2 gap-2">
+        <div className="bg-zinc-800 flex flex-col rounded-md p-2 gap-2">
             <span className="flex flex-row gap-2">
                 <div className="flex flex-row gap-2 items-center">
                     {/* Image */}
@@ -138,10 +138,10 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
 
     // Function that returns JSX which allows the user to create a new comment
     return (
-        <div className="bg-slate-800 p-2 rounded-lg sticky -bottom-24 flex flex-row gap-2">
+        <div className="bg-zinc-800 border-2 border-white border-opacity-25 p-2 sticky -bottom-24 flex flex-row gap-2">
             <textarea
                 onChange={(e) => handleOnChange(e.target.value)}
-                className="bg-cyan-900 text-cyan-100 w-full h-full resize-none rounded-md p-2"
+                className="input-text resize-none"
                 placeholder="Write a comment..."
             />
             <button

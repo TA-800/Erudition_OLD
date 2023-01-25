@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { faCheck, faClose, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CSSclasses } from "../StudyHub";
-import { twMerge } from "tailwind-merge";
 
 export default function ReadingPanel({
     selectedModule,
@@ -48,9 +46,7 @@ export default function ReadingPanel({
         <>
             {/* Edit button */}
             <button
-                className={
-                    editable ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : CSSclasses.editButton.base
-                }
+                className={editable ? "edit edit-active" : "edit"}
                 onClick={() => {
                     setEditable(!editable);
                     if (editable) {
@@ -87,13 +83,7 @@ export default function ReadingPanel({
             </button>
 
             {/* Main overlay */}
-            <div
-                ref={overlayRef}
-                className={
-                    mountAnimation
-                        ? twMerge(CSSclasses.readOverlay.base, CSSclasses.readOverlay.active)
-                        : CSSclasses.readOverlay.base
-                }>
+            <div ref={overlayRef} className={mountAnimation ? "read-overlay read-overlay-active" : "read-overlay"}>
                 {/* Reading or editing */}
                 {!editable ? (
                     <FormattedNotes delta={selectedModule.module_notesDelta} hide=" overflow-visible" />
@@ -103,7 +93,7 @@ export default function ReadingPanel({
             </div>
 
             {/* Read button */}
-            <button className={twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active)} onClick={closeModal}>
+            <button className="read-button read-button-active" onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

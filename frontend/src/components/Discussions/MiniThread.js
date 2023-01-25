@@ -58,7 +58,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     return (
         <div
             className={
-                "bg-cyan-700 text-cyan-100 p-2 my-2 border-2 border-cyan-600 flex flex-col gap-3 relative transition-all top-0 shadow-sm hover:border-cyan-900 " +
+                "bg-zinc-700 p-2 my-2 border-0 border-white border-opacity-25 flex flex-col gap-3 relative transition-all top-0 shadow-none hover:border-2 " +
                 (hoverable ? "hover:-top-1 hover:shadow-lg" : "")
             }
             onClick={() => {
@@ -81,7 +81,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
                     {discussion.courses.map((course) => (
                         <div
                             key={course}
-                            className="bg-cyan-800 flex justify-center items-center py-1 px-2 rounded-full h-fit w-fit">
+                            className="bg-zinc-800 flex justify-center items-center py-1 px-2 rounded-full h-fit w-fit">
                             {course}
                         </div>
                     ))}
@@ -124,7 +124,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
 
 function IconWithData({ icon, data, liked }) {
     return (
-        <div className={"flex flex-row items-center text-xl gap-2 opacity-70 " + (liked ? "text-red-800 font-bold" : "")}>
+        <div className={"flex flex-row items-center text-xl gap-2 opacity-70 " + (liked ? "text-blue-500 font-bold" : "")}>
             <FontAwesomeIcon icon={icon} />
             <p>{data}</p>
         </div>

@@ -1,13 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
-import { CSSclasses } from "../StudyHub";
-import { twMerge } from "tailwind-merge";
 import AuthContext from "../../context/AuthContext";
 
 export default function Settings() {
-    const { userID, imageURL, setImageURL } = useContext(AuthContext);
+    const { userID, imageURL } = useContext(AuthContext);
     const [userState, setUserState] = useState({
         first: "",
         last: "",
@@ -165,11 +163,7 @@ export default function Settings() {
                             Settings
                         </div>
                     </header>
-                    <p
-                        className="m-0 text-cyan-800 max-w-2xl
-        mdc:text-sm mdc:max-w-sm">
-                        Customize personal information or Erudition to your liking.
-                    </p>
+                    <p className="info-text">Customize personal information or Erudition to your liking.</p>
                     <hr />
                     <br />
 
@@ -182,7 +176,7 @@ export default function Settings() {
                             />
                             <h2>Display Image</h2>
                             <input
-                                className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                className="input-text"
                                 type="file"
                                 name="avatar"
                                 placeholder="Select your display picture"
@@ -193,7 +187,7 @@ export default function Settings() {
                             <div className="flex flex-col gap-2">
                                 <h2>First Name</h2>
                                 <input
-                                    className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                    className="input-text"
                                     type="text"
                                     name="first"
                                     placeholder="Type in your first name"
@@ -203,7 +197,7 @@ export default function Settings() {
                             <div className="flex flex-col gap-2">
                                 <h2>Last Name</h2>
                                 <input
-                                    className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                    className="input-text"
                                     type="text"
                                     name="last"
                                     placeholder="Type in your first name"
@@ -216,7 +210,7 @@ export default function Settings() {
                             {!chooseOther ? (
                                 <Multiselect
                                     ref={universitiesSelect}
-                                    className="bg-cyan-700 rounded-lg"
+                                    className="bg-zinc-900"
                                     displayValue="name"
                                     isObject={true}
                                     onKeyPressFn={function noRefCheck() {}}
@@ -235,7 +229,7 @@ export default function Settings() {
                                 />
                             ) : (
                                 <input
-                                    className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                    className="input-text"
                                     type="text"
                                     name="other"
                                     placeholder="Type in your university name"
@@ -243,16 +237,18 @@ export default function Settings() {
                                 />
                             )}
 
-                            <a onClick={() => setChooseOther(!chooseOther)} className="text-cyan-900 cursor-pointer ml-auto">
+                            <a onClick={() => setChooseOther(!chooseOther)} className="link ml-auto">
                                 {!chooseOther ? "Select a different university" : "Select university from list"}
                             </a>
                         </div>
                         {userState.unis.length === 0 && <p>Enroll in a university now to get started</p>}
                         {userState.unis.length > 0 && (
-                            <p>
-                                You are currently enrolled in{" "}
+                            <p className="info-text">
+                                You can see courses and discussions for{" "}
                                 {userState.unis.map((univ, index) => (
-                                    <li key={index}>{univ.university_name}</li>
+                                    <li key={index} className="ml-8">
+                                        {univ.university_name}
+                                    </li>
                                 ))}
                             </p>
                         )}
@@ -261,7 +257,7 @@ export default function Settings() {
                             <div className="flex flex-col gap-2">
                                 <h2>Field of Specialization</h2>
                                 <input
-                                    className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                    className="input-text"
                                     type="text"
                                     name="field"
                                     placeholder="Type in your major"
@@ -271,7 +267,7 @@ export default function Settings() {
                             <div className="flex flex-col gap-2">
                                 <h2>Year of Study</h2>
                                 <input
-                                    className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
+                                    className="input-text"
                                     type="number"
                                     name="year"
                                     placeholder="Choose current year of your study"
@@ -280,7 +276,7 @@ export default function Settings() {
                                     max={10}
                                 />
                             </div>
-                            <button className="btn-dark w-fit ml-auto">Save Profile</button>
+                            <button className="btn-light ml-auto">Save Profile</button>
                         </div>
                     </form>
                 </>

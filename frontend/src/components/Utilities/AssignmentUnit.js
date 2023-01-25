@@ -1,16 +1,10 @@
 import React from "react";
-import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "../StudyHub";
 
 export default function AssignmentUnit({ assignment, splitDate, assignmentSelectionChange, allAssignmentStates }) {
     return (
         <li
             data-akey={assignment.id}
-            className={
-                assignment.assignment_completed
-                    ? twMerge(CSSclasses.assignment.base, CSSclasses.assignment.completed)
-                    : CSSclasses.assignment.base
-            }>
+            className={assignment.assignment_completed ? "assignment assignment-complete" : "assignment"}>
             {/* Course of assignment */}
             <span className="sm:text-lg sm:col-start-1 sm:col-span-4 sm:py-1 sm:border-r-2 border-cyan-600 border-opacity-25">
                 <strong>{assignment.course_code}</strong>

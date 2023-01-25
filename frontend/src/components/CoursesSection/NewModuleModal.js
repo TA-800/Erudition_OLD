@@ -1,7 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import Texteditor from "./Texteditor";
-import { CSSclasses } from "../StudyHub";
-import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 
@@ -75,16 +73,11 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
     return (
         <>
             {/* Save new module button */}
-            <button
-                className={mountAnimation ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
-                onClick={saveModule}>
+            <button className={mountAnimation ? "edit edit-active" : "hidden"} onClick={saveModule}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
 
-            <div
-                className={
-                    mountAnimation ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base
-                }>
+            <div className={mountAnimation ? "overlay-b overlay-b-active" : "overlay-b"}>
                 <p className="text-5xl font-extrabold uppercase mdc:text-2xl">Add a new module</p>
 
                 {/* Module title input */}
@@ -98,9 +91,7 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
                 <Texteditor initial={null} qref={quillRef} />
             </div>
             {/* Cancel new module button */}
-            <button
-                className={mountAnimation ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
-                onClick={closeModal}>
+            <button className={mountAnimation ? "read-button read-button-active" : "hidden"} onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

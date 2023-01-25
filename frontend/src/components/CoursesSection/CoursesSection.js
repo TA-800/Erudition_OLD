@@ -15,7 +15,6 @@ import NewModuleModal from "./NewModuleModal";
 import ReadingPanel from "./ReadingPanel";
 import NewAssignment from "../Utilities/NewAssignment";
 import AssignmentSelection from "../Utilities/AssignmentSelection";
-import { CSSclasses } from "../StudyHub";
 import AssignmentUnit from "../Utilities/AssignmentUnit";
 import Stateless from "../Utilities/Stateless";
 import {
@@ -381,17 +380,14 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                     <ul className="lp__list">
                         {courses.map((course) => (
                             <li
-                                className={CSSclasses.courseButton.base}
+                                className="course-button"
                                 data-ckey={course.id}
                                 key={course.id}
                                 onClick={(e) => {
                                     e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                        child.className = CSSclasses.courseButton.base;
+                                        child.className = "course-button";
                                     });
-                                    e.currentTarget.className = twMerge(
-                                        CSSclasses.courseButton.base,
-                                        CSSclasses.courseButton.active
-                                    );
+                                    e.currentTarget.className = "course-button course-button-active";
                                     // Also fetch data for clicked course for selected content
                                     fetchData(course.id, contentSelector.current.value);
                                     setSelectedCourse(course);
@@ -409,9 +405,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 </div>
                             </li>
                         ))}
-                        <li
-                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
-                            onClick={() => setCourseModal(true)}>
+                        <li className="course-button gap-1" onClick={() => setCourseModal(true)}>
                             <FontAwesomeIcon icon={faPlusCircle} className="opacity-90" />
                             Add course
                         </li>
@@ -427,25 +421,19 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                             <input
                                 type="text"
                                 placeholder="Search notes"
-                                className={CSSclasses.search.base}
-                                style={{
-                                    boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
-                                }}
+                                className="input-text pl-8"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
-                            <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 text-cyan-100 opacity-50" />
+                            <FontAwesomeIcon icon={faSearch} className="absolute top-1/3 left-2 opacity-50" />
                         </div>
                         {/* Add button */}
                         <button
-                            className={
-                                createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base
-                            }
+                            className={createAssignment ? "add disabled" : "add"}
                             onClick={() => {
                                 if (contentSelector.current.value === "modules") setModuleModal(true);
                                 else if (contentSelector.current.value === "assignments") setCreateAssignment(true);
-                            }}
-                            disabled={selectedCourse.course_name === undefined}>
+                            }}>
                             <FontAwesomeIcon icon={faPlusCircle} />
                         </button>
                         {/* Content selector drop-down */}
@@ -455,10 +443,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                 fetchData(selectedCourse.id, contentSelector.current.value);
                             }}
                             ref={contentSelector}
-                            className={CSSclasses.dropdown.base}
-                            style={{
-                                boxShadow: "inset 0px -2px 0px rgba(0,0,0,0.25)",
-                            }}>
+                            className="dropdown">
                             <option value="modules">Modules</option>
                             <option value="assignments">Assign/Todo</option>
                             <option value="contact">Contact</option>
@@ -469,22 +454,19 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                     <div className="rp__content">
                         {/* Module List */}
                         {selectedCourse.course_name !== undefined && (
-                            <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2">
+                            <div className="modules flex flex-col bg-zinc-600 p-2">
                                 {searchedModules.map((module, index) => (
                                     <div
                                         className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
                                         data-mkey={module.id}
                                         key={module.id}>
                                         <span
-                                            className={CSSclasses.moduleButton.base}
+                                            className="module-button"
                                             onClick={(e) => {
                                                 e.currentTarget.parentNode.parentNode.childNodes.forEach((child) => {
-                                                    child.childNodes[0].className = CSSclasses.moduleButton.base;
+                                                    child.childNodes[0].className = "module-button";
                                                 });
-                                                e.currentTarget.className = twMerge(
-                                                    CSSclasses.moduleButton.base,
-                                                    CSSclasses.moduleButton.active
-                                                );
+                                                e.currentTarget.className = "module-button module-button-active";
                                                 setSelectedModule(module);
                                             }}>
                                             {index + 1}. {module.module_name}
@@ -502,7 +484,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         {/* Module notes */}
                         <div
                             className={
-                                "modules-notes-wrapper relative text-cyan-100 bg-cyan-800" +
+                                "modules-notes-wrapper relative bg-zinc-600" +
                                 (selectedCourse.course_name !== undefined ? " p-2" : " bg-opacity-0")
                             }>
                             {selectedCourse.course_name !== undefined ? (
@@ -513,7 +495,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
                             {/* Read button */}
                             <button
-                                className={CSSclasses.readButton.base}
+                                className="read-button"
                                 style={{
                                     display: selectedModule.module_name === undefined || readingPanel ? "none" : "flex",
                                 }}

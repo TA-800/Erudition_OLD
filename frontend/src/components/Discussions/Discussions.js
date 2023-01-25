@@ -1,8 +1,6 @@
 import { faComments, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useMemo, useReducer } from "react";
-import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "../StudyHub";
 import MegaThread from "./MegaThread";
 import MiniThread from "./MiniThread";
 import CreateNewThread from "./CreateNewThread";
@@ -192,8 +190,7 @@ export default function Discussions() {
                 </div>
             </header>
             <p
-                className="m-0 text-cyan-800 max-w-2xl
-                    mdc:text-sm mdc:max-w-sm">
+                className="info-text">
                 Discuss, debate, and develop with your peers.
             </p>
             <hr />
@@ -241,16 +238,13 @@ function Utility({ discussionState, setDiscussionState }) {
     return (
         <>
             {/* Utility bar */}
-            <div className="bg-cyan-700 p-2 w-full h-fit flex flex-row items-center gap-2 mdc:text-sm">
+            <div className="bg-zinc-700 p-2 w-full h-fit flex flex-row items-center gap-2 mdc:text-sm">
                 {/* Search bar with icon */}
                 <div className="w-2/3 h-12 mdc:h-10 relative">
                     <input
                         type="text"
                         placeholder="Search discussions"
-                        className={twMerge(CSSclasses.search.base)}
-                        style={{
-                            boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
-                        }}
+                        className="input-text pl-8"
                         value={discussionState.search}
                         onChange={(e) => setDiscussionState({ type: "setSearch", payload: e.target.value })}
                     />
@@ -260,11 +254,8 @@ function Utility({ discussionState, setDiscussionState }) {
                 <button
                     className={
                         discussionState.createThread
-                            ? twMerge(
-                                  CSSclasses.add.base,
-                                  "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto disabled"
-                              )
-                            : twMerge(CSSclasses.add.base, "after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto")
+                            ? "add after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto disabled"
+                            : "add after:content-['Create'] mdc:after:content-['Create'] mdc:w-auto"
                     }
                     onClick={() => setDiscussionState({ type: "setCreateThread", payload: !discussionState.createThread })}>
                     <FontAwesomeIcon icon={faPlusCircle} />

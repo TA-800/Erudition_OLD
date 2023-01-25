@@ -1,7 +1,5 @@
 import Multiselect from "multiselect-react-dropdown";
 import React, { useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "../StudyHub";
 
 export default function CreateNewThread({ discussionState, setDiscussionState }) {
     const newThreadRef = useRef();
@@ -68,21 +66,9 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
     }, []);
 
     return (
-        <div
-            ref={newThreadRef}
-            className={
-                mountAnimation ? twMerge(CSSclasses.newThread.base, CSSclasses.newThread.active) : CSSclasses.newThread.base
-            }>
+        <div ref={newThreadRef} className={mountAnimation ? "new-thread new-thread-active" : "new-thread"}>
             <form className="flex flex-col p-2 gap-2" onSubmit={(e) => handleSubmit(e)}>
-                <input
-                    name="name"
-                    type="text"
-                    className={twMerge(CSSclasses.search.base, "col-span-2 p-2")}
-                    style={{
-                        boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
-                    }}
-                    placeholder="Title"
-                />
+                <input name="name" type="text" className="input-text col-span-2" placeholder="Title" />
                 <div className="grid grid-cols-2 gap-2 items-center">
                     <Multiselect
                         ref={coursesTagged}
@@ -100,9 +86,7 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
                         placeholder="Tag courses"
                         closeIcon="cancel"
                     />
-                    <select
-                        className={twMerge(CSSclasses.dropdown.base, "w-full border-2 border-black border-opacity-10")}
-                        name="university">
+                    <select className="dropdown" name="university">
                         <option value="" disabled>
                             Select university discussion belongs to
                         </option>
@@ -115,17 +99,16 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
                 </div>
                 <textarea
                     name="content"
-                    className={twMerge(CSSclasses.search.base, "p-2 col-span-3 resize-none")}
+                    className="input-text col-span-3 resize-none"
                     placeholder="Discussion Content"
                     style={{
                         scrollbarWidth: "none",
-                        boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -1px 0px rgb(10,164,194,0.65)",
                     }}></textarea>
                 <div className="grid grid-cols-2 gap-2">
                     {/* Create/Submit new thread button */}
-                    <button className="btn-darker">Create</button>
+                    <button className="btn-dark">Create</button>
                     {/* Cancel button */}
-                    <button type="button" className="btn-darker" onClick={closeNewThread}>
+                    <button type="button" className="btn-dark" onClick={closeNewThread}>
                         Cancel
                     </button>
                 </div>

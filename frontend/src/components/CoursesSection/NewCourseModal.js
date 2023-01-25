@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CSSclasses } from "../StudyHub";
-import { twMerge } from "tailwind-merge";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -71,7 +69,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
         <>
             {/* Save new course button */}
             <button
-                className={mountAnimation ? twMerge(CSSclasses.editButton.base, CSSclasses.editButton.active) : "hidden"}
+                className={mountAnimation ? "edit edit-active" : "hidden"}
                 onClick={() => {
                     saveCourse({
                         course_code: document.querySelector("input[name='code']").value.toUpperCase(),
@@ -85,11 +83,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
                 }}>
                 <FontAwesomeIcon icon={faCheck} />
             </button>
-            <div
-                ref={overlayRef}
-                className={
-                    mountAnimation ? twMerge(CSSclasses.overlay.base, CSSclasses.overlay.active) : CSSclasses.overlay.base
-                }>
+            <div ref={overlayRef} className={mountAnimation ? "overlay-b overlay-b-active" : "overlay-b"}>
                 <p className="text-6xl font-extrabold uppercase mdc:text-3xl">Add a new course</p>
 
                 <form className="new-course-form flex flex-col gap-y-2">
@@ -151,9 +145,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
                     />
                 </form>
             </div>
-            <button
-                className={mountAnimation ? twMerge(CSSclasses.readButton.base, CSSclasses.readButton.active) : "hidden"}
-                onClick={closeModal}>
+            <button className={mountAnimation ? "read-button read-button-active" : "hidden"} onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarWeek, faPencil, faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "../StudyHub";
+import { faPlusCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import NewAssignment from "../Utilities/NewAssignment";
 import AssignmentSelection from "../Utilities/AssignmentSelection";
 import { addWeeks, endOfISOWeek, startOfISOWeek } from "date-fns";
@@ -83,38 +81,38 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                 <p className="lp__title">WEEK</p>
                 <ul className="lp__list">
                     <li
-                        className={CSSclasses.courseButton.base}
+                        className="course-button"
                         onClick={(e) => {
                             clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
+                                child.className = "course-button";
                             });
-                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                            e.currentTarget.className = "course-button course-button-active";
                             setSelectedWeek(new Date()); // Get today's date
                         }}>
                         This week
                     </li>
                     <li
-                        className={CSSclasses.courseButton.base}
+                        className="course-button"
                         onClick={(e) => {
                             clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
+                                child.className = "course-button";
                             });
-                            e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                            e.currentTarget.className = "course-button course-button-active";
                             setSelectedWeek(addWeeks(new Date(), 1));
                         }}>
                         Next week
                     </li>
                     <li
-                        className={twMerge(CSSclasses.courseButton.base, "overflow-visible")}
+                        className="course-button overflow-visible"
                         onClick={(e) => {
                             clearAssignmentSelection("weekly", { ...allAssignmentStates });
                             setAssignmentSelectionBox(false);
                             e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                child.className = CSSclasses.courseButton.base;
+                                child.className = "course-button";
                             });
                         }}>
                         <div className="w-full h-full flex items-center overflow-visible">
@@ -136,10 +134,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                         <input
                             type="text"
                             placeholder="Search assignments"
-                            className={twMerge(CSSclasses.search.base)}
-                            style={{
-                                boxShadow: "inset 0px 2px 0px rgba(0,0,0,0.25), inset 0px -2px 0px #0AA4C2",
-                            }}
+                            className="input-text pl-8"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -147,7 +142,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     </div>
                     {/* Add button */}
                     <button
-                        className={createAssignment ? twMerge(CSSclasses.add.base, CSSclasses.add.disabled) : CSSclasses.add.base}
+                        className={createAssignment ? "add disabled" : "add"}
                         onClick={() => setCreateAssignment(true)}
                         disabled={selectedWeek === null}>
                         <FontAwesomeIcon icon={faPlusCircle} />

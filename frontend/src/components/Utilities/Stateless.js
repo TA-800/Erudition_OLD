@@ -4,7 +4,7 @@ import React from "react";
 
 export default function Stateless({ contents }) {
     return (
-        <div className="bg-cyan-800 text-cyan-100 opacity-50 my-4 gap-2 flex flex-col justify-center items-center p-9">
+        <div className="bg-zinc-600 opacity-50 my-4 gap-2 flex flex-col justify-center items-center p-9">
             <FontAwesomeIcon
                 icon={
                     contents.includes("assignments")

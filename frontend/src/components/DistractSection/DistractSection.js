@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import randomWords from "random-words";
-import { twMerge } from "tailwind-merge";
-import { CSSclasses } from "../StudyHub";
 import Stateless from "../Utilities/Stateless";
 
 export default function DistractSection() {
@@ -16,12 +14,12 @@ export default function DistractSection() {
                     {["Games", "Trivia", "Of The Day"].map((element) => (
                         <li
                             key={element}
-                            className={twMerge(CSSclasses.courseButton.base, "flex flex-row justify-center items-center gap-3")}
+                            className="course-button"
                             onClick={(e) => {
                                 e.currentTarget.parentNode.childNodes.forEach((child) => {
-                                    child.className = CSSclasses.courseButton.base;
+                                    child.className = "course-button";
                                 });
-                                e.currentTarget.className = twMerge(CSSclasses.courseButton.base, CSSclasses.courseButton.active);
+                                e.currentTarget.className = "course-button course-button-active";
                                 setContent(element);
                             }}>
                             {element}
@@ -100,8 +98,8 @@ function Games() {
         }
 
         return (
-            <div className="flex flex-col p-2 gap-y-2 bg-cyan-800">
-                <div className="flex flex-row mdc:flex-col mdc:gap-y-1 text-cyan-100 text-2xl">
+            <div className="flex flex-col p-2 gap-y-2 bg-zinc-600">
+                <div className="flex flex-row mdc:flex-col mdc:gap-y-1 text-2xl">
                     <strong>{informed.join(" ")}</strong>
                     <span className="ml-auto mdc:ml-0">
                         {wrong}
@@ -124,11 +122,11 @@ function Games() {
                     })}
                 </div>
                 <div className="grid grid-cols-2 gap-x-2">
-                    <button className="btn-darker" onClick={reset}>
+                    <button className="btn-dark" onClick={reset}>
                         NEW
                     </button>
                     <button
-                        className={"btn-darker" + (typeof wrong !== "number" ? " disabled" : "")}
+                        className={"btn-dark" + (typeof wrong !== "number" ? " disabled" : "")}
                         onClick={reveal}
                         disabled={typeof wrong !== "number"}>
                         REVEAL
@@ -140,12 +138,10 @@ function Games() {
 
     return (
         <>
-            <div className="flex flex-row justify-around my-2">
+            <div className="flex flex-row justify-around my-2 p-2 gap-1">
                 {["Hangman", "TicTacToe", "Snake"].map((game) => {
                     return (
-                        <button
-                            key={game}
-                            className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}>
+                        <button key={game} className="btn-dark w-full">
                             {game}
                         </button>
                     );
@@ -202,21 +198,16 @@ function OfTheDay() {
 
     return (
         <>
-            <div className="flex flex-row justify-around my-2">
+            <div className="flex flex-row justify-around my-2 p-2 gap-1">
                 {["Word", "Quote", "Joke"].map((element) => {
                     return (
-                        <button
-                            key={element}
-                            className={twMerge(CSSclasses.add.base, "min-w-fit py-2 px-4 sm:px-2 after:content-['']")}
-                            onClick={() => setOption(element)}>
+                        <button key={element} className="btn-dark w-full" onClick={() => setOption(element)}>
                             {element}
                         </button>
                     );
                 })}
             </div>
-            <div className="bg-cyan-800 text-cyan-100 p-2">
-                {option === "Word" ? <Word /> : option === "Quote" ? <Quote /> : <Joke />}
-            </div>
+            <div className="bg-zinc-600 p-2">{option === "Word" ? <Word /> : option === "Quote" ? <Quote /> : <Joke />}</div>
         </>
     );
 }

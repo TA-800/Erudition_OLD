@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CSSclasses } from "../StudyHub";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { twMerge } from "tailwind-merge";
 
 export default function AssignmentSelection({
     assignments,
@@ -103,22 +101,12 @@ export default function AssignmentSelection({
     }, [assignmentSelection]);
 
     return (
-        <div
-            ref={wrapperRef}
-            className={
-                mountAnimation
-                    ? twMerge(CSSclasses.assignmentSelect.base, CSSclasses.assignmentSelect.active)
-                    : twMerge(CSSclasses.assignmentSelect.base, "")
-            }>
-            <button
-                className="btn-darker col-span-4 sm:col-span-5"
-                onClick={markAssignmentsComplete}>
+        <div ref={wrapperRef} className={mountAnimation ? "assignment-select assignment-select-active" : "assignment-select"}>
+            <button className="btn-dark col-span-4 sm:col-span-5" onClick={markAssignmentsComplete}>
                 <span>Mark as complete</span>
                 <FontAwesomeIcon icon={faCheckCircle} />
             </button>
-            <button
-                className="btn-darker col-span-3 sm:col-span-2"
-                onClick={deleteAssignments}>
+            <button className="btn-dark col-span-3 sm:col-span-2" onClick={deleteAssignments}>
                 <span>Delete</span>
                 <FontAwesomeIcon icon={faTrashAlt} />
             </button>

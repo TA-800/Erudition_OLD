@@ -469,7 +469,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                     <div className="rp__content">
                         {/* Module List */}
                         {selectedCourse.course_name !== undefined && (
-                            <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2 rounded-md">
+                            <div className="modules flex flex-col text-cyan-100 bg-cyan-800 p-2">
                                 {searchedModules.map((module, index) => (
                                     <div
                                         className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
@@ -502,7 +502,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         {/* Module notes */}
                         <div
                             className={
-                                "modules-notes-wrapper relative text-cyan-100 bg-cyan-800 rounded-md" +
+                                "modules-notes-wrapper relative text-cyan-100 bg-cyan-800" +
                                 (selectedCourse.course_name !== undefined ? " p-2" : " bg-opacity-0")
                             }>
                             {selectedCourse.course_name !== undefined ? (

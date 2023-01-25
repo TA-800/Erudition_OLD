@@ -123,9 +123,9 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
                     }}></textarea>
                 <div className="grid grid-cols-2 gap-2">
                     {/* Create/Submit new thread button */}
-                    <button className="btn-dark">Create</button>
+                    <button className="btn-darker">Create</button>
                     {/* Cancel button */}
-                    <button type="button" className="btn-dark" onClick={closeNewThread}>
+                    <button type="button" className="btn-darker" onClick={closeNewThread}>
                         Cancel
                     </button>
                 </div>

@@ -241,7 +241,7 @@ function Utility({ discussionState, setDiscussionState }) {
     return (
         <>
             {/* Utility bar */}
-            <div className="bg-cyan-700 rounded-lg p-2 w-full h-fit flex flex-row items-center gap-2 mdc:text-sm">
+            <div className="bg-cyan-700 p-2 w-full h-fit flex flex-row items-center gap-2 mdc:text-sm">
                 {/* Search bar with icon */}
                 <div className="w-2/3 h-12 mdc:h-10 relative">
                     <input

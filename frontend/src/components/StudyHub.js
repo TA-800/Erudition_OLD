@@ -7,15 +7,15 @@ import DistractSection from "./DistractSection/DistractSection";
 export const CSSclasses = {
     // className = "h-16 duration-500 overflow-visible"
     courseButton: {
-        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] rounded-lg transition-all duration-300 ease-out cursor-pointer",
-        active: "bg-[#49cee9] border-2 border-black border-opacity-10 shadow-none font-extrabold text-xl tracking-wide",
+        base: "relative flex justify-center items-center h-[3.5rem] w-full bg-cyan-400 shadow-md transition-all duration-300 ease-out cursor-pointer",
+        active: "bg-cyan-500 border-4 border-black border-opacity-30 shadow-none font-extrabold text-xl tracking-wide",
     },
     search: {
-        base: "bg-cyan-800 rounded-lg p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none",
+        base: "bg-cyan-800 p-2 pl-8 text-cyan-100 w-full h-full focus:outline-none",
         // active: ""
     },
     dropdown: {
-        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center",
+        base: "bg-cyan-800 text-cyan-100 w-1/6 h-12 mdc:h-10 p-2 mdc:ml-auto min-w-fit text-center",
         // active: "",
     },
     // On the span/module-text inside the div
@@ -24,7 +24,7 @@ export const CSSclasses = {
         active: "font-bold tracking-[0.2px]",
     },
     add: {
-        base: "bg-cyan-800 text-cyan-100 rounded-lg w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[] shadow-[inset_0px_-2px_0px_rgba(0,0,0,0.25)] active:relative active:shadow-none active:top-[2px] transition-all duration-200",
+        base: "bg-cyan-800 text-cyan-100 w-1/6 mdc:w-10 h-12 mdc:h-10 p-2 flex flex-row justify-center items-center gap-1 after:content-['Add'] mdc:after:content-[] shadow-[inset_0px_-2px_0px_rgba(0,0,0,0.25)] active:relative active:shadow-none active:top-[2px] transition-all duration-200",
         disabled: "pointer-events-none opacity-50",
     },
     editButton: {
@@ -40,7 +40,7 @@ export const CSSclasses = {
         completed: "bg-opacity-0 opacity-50 border-2 border-opacity-50 border-cyan-100",
     },
     newassignment: {
-        base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 rounded-lg items-center overflow-x-hidden overflow-y-hidden transition-all duration-500",
+        base: "bg-cyan-900 text-cyan-100 w-full h-0 grid grid-cols-4 gap-y-2 gap-x-2 p-0 items-center overflow-x-hidden overflow-y-hidden transition-all duration-500",
         active: "bg-cyan-900 p-1 pb-3 mb-3 h-44",
     },
     assignmentSelect: {
@@ -48,7 +48,7 @@ export const CSSclasses = {
         active: "h-16 mt-3 py-3",
     },
     newThread: {
-        base: "bg-cyan-800 bg-opacity-90 rounded-lg h-0 mt-0 overflow-hidden duration-500",
+        base: "bg-cyan-800 bg-opacity-90 h-0 mt-0 overflow-hidden duration-500",
         active: "overflow-visible h-60 mt-2",
     },
     readOverlay: {

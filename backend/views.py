@@ -24,6 +24,7 @@ from .serializers import *
 from dateutil.relativedelta import relativedelta
 import json
 import pytz
+from django.http import QueryDict
 
 
 # Create your views here.
@@ -78,6 +79,13 @@ def userProfile(request, id):
                     university.university_user.add(user)
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data, status=200)
+            # data = QueryDict(request.body).dict()
+            # print("\t>>> Data: ", data.get('first'))
+            # print("\t>>> Data: ", data.get('last'))
+            # print("\t>>> Data: ", data.get('avatar'))
+            # print("\t>>> Data: ", data.get('field'))
+            # print("\t>>> Data: ", data.get('year'))
+            # return Response({"detail": "Function ended successfully"}, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 

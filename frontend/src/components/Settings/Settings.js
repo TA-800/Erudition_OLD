@@ -118,22 +118,32 @@ export default function Settings() {
     function sendSettings(e) {
         e.preventDefault();
         console.log("Sending settings");
-        const data = {
+
+        // Create form data
+        const data = JSON.stringify({
             avatar: e.target.avatar.files[0],
             first: e.target.first.value,
             last: e.target.last.value,
             field: e.target.field.value,
             year: e.target.year.value,
             unis: chooseOther ? e.target.other.value : universitiesSelect.current.getSelectedItems(),
-        };
+        });
+        // new FormData();
+        // data.append("avatar", e.target.avatar.files[0]);
+        // data.append("first", e.target.first.value);
+        // data.append("last", e.target.last.value);
+        // data.append("field", e.target.field.value);
+        // data.append("year", e.target.year.value);
+        // data.append("unis", chooseOther ? e.target.other.value : universitiesSelect.current.getSelectedItems());
+
         console.log(data);
         fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: "Bearer " + localStorage.getItem("access"),
             },
-            body: JSON.stringify(data),
+            body: data,
         })
             .then((res) => res.json())
             .then((data) => {

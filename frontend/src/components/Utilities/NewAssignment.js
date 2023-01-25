@@ -60,7 +60,7 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                 if (Array.isArray(received) && received.length > 0) receivedAssignment = received[0];
                 else receivedAssignment = received;
                 if (selectedCourse.course_name === "all" || selectedCourse.id === receivedAssignment.assignment_course) {
-                    setNewAssignments(received, false, {...allAssignmentStates});
+                    setNewAssignments(received, false, { ...allAssignmentStates });
                 }
             })
             .catch((err) => {
@@ -97,16 +97,17 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
             {/* Assignment submit */}
             <button
                 className={
-                    "bg-[rgb(11_39_50)] bg-opacity-50 text-cyan-100 rounded-lg h-full shadow-[inset_0px_-2px_0px_rgb(0,0,0,0.5)] active:shadow-none active:relative active:top-[2px] " +
+                    "bg-[rgb(11_39_50)] bg-opacity-50 text-cyan-100 h-full shadow-[inset_0px_-2px_0px_rgb(0,0,0,0.5)] active:shadow-none active:relative active:top-[2px] " +
                     (auto
                         ? "after:content-['Auto_Generate'] sm:after:content-['Auto_Gen.']"
                         : "after:content-['Add_Assignment'] sm:after:content-['Add_Asgnmt.']")
                 }
                 onClick={(e) => submitAssignment(e)}
             />
-            <div className="flex flex-row justify-around gap-1 col-start-4">
-                <div
-                    className="flex flex-row items-center w-fit gap-1 before:content-['Close'] sm:before:content-[''] before:text-xs before:hover:text-base before:transition-all before:duration-200"
+            <div className="grid grid-flow-col gap-2 col-start-3 col-span-2">
+                <button
+                    type="button"
+                    className="btn-darker before:content-['Close'] sm:before:content-['']"
                     onClick={() => {
                         closeNewAssignment();
                     }}>
@@ -114,9 +115,10 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                         className="text-2xl text-cyan-300 hover:text-white transition-all duration-200"
                         icon={faTimesCircle}
                     />
-                </div>
-                <div
-                    className="flex flex-row items-center w-fit gap-1 before:content-['Auto'] sm:before:content-[''] before:text-xs before:hover:text-base before:transition-all before:duration-200"
+                </button>
+                <button
+                    type="button"
+                    className="btn-darker before:content-['Auto'] sm:before:content-['']"
                     onClick={() => {
                         setAuto(!auto);
                     }}>
@@ -124,7 +126,7 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
                         className="text-2xl text-cyan-300 hover:text-white transition-all duration-200"
                         icon={auto ? faCircleArrowLeft : faCircleArrowRight}
                     />
-                </div>
+                </button>
             </div>
         </form>
     );

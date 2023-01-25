@@ -57,7 +57,7 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
                         discussionState={discussionState}
                         setDiscussionState={setDiscussionState}
                     />
-                    <div className=" bg-cyan-800 bg-opacity-90 text-cyan-100 rounded-md flex flex-col gap-2 p-2">
+                    <div className=" bg-cyan-800 bg-opacity-90 text-cyan-100 flex flex-col gap-2 p-2">
                         {comments.map((comment) => {
                             const commentProps = { ...comment, deleteComment: () => deleteComment(comment.id) };
                             return <Comment key={comment.id} {...commentProps} />;

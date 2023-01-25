@@ -111,13 +111,13 @@ export default function AssignmentSelection({
                     : twMerge(CSSclasses.assignmentSelect.base, "")
             }>
             <button
-                className="bg-[#032830] col-span-4 sm:col-span-5 h-full p-2 rounded-md flex flex-row gap-1 items-center justify-center"
+                className="btn-darker col-span-4 sm:col-span-5"
                 onClick={markAssignmentsComplete}>
                 <span>Mark as complete</span>
                 <FontAwesomeIcon icon={faCheckCircle} />
             </button>
             <button
-                className="bg-[#032830] col-span-3 sm:col-span-2 h-full p-2 rounded-md flex flex-row gap-1 items-center justify-center"
+                className="btn-darker col-span-3 sm:col-span-2"
                 onClick={deleteAssignments}>
                 <span>Delete</span>
                 <FontAwesomeIcon icon={faTrashAlt} />

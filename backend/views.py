@@ -46,15 +46,17 @@ def userProfile(request, id):
             # Serialize the data
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data, status=200)
-        elif request.method == "PUT":
-            # Get the user
+        elif request.method == "POST":
+            # # Get the user
             user = User.objects.get(id=id)
-            # Get the data from the request
-            data = json.loads(request.body)
-            # Update the user
+            # # # Get the data from the request
+            data = request.POST
+            avatar = request.FILES.get('avatar')
+            # # # Update the user
             user.first_name = data['first'] or user.first_name
             user.last_name = data['last'] or user.last_name
-            # user.avatar = data['avatar'] or user.avatar
+            
+            user.avatar = avatar or user.avatar
             user.field = data['field'] or user.field
             user.year = data['year']
             user.save()
@@ -66,33 +68,27 @@ def userProfile(request, id):
             universities = University.objects.filter(university_user=user)
             for university in universities:
                 university.university_user.remove(user)
-            if not isinstance(data['unis'], list):
+            try:
+                u = json.loads(data["unis"])
+                # Add the user to the existing universities
+                for university in u:
+                    university = University.objects.get(id=university['id'])
+                    university.university_user.add(user)
+            except:
+                u = data["unis"]
                 # Add the new university
-                new_university = University(university_name=data['unis'])
+                new_university = University(university_name=u)
                 new_university.save()
                 # Add the user to the new university
                 new_university.university_user.add(user)
-            else:
-                # Add the user to the existing universities
-                for university in data['unis']:
-                    university = University.objects.get(id=university['id'])
-                    university.university_user.add(user)
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data, status=200)
-            # data = QueryDict(request.body).dict()
-            # print("\t>>> Data: ", data.get('first'))
-            # print("\t>>> Data: ", data.get('last'))
-            # print("\t>>> Data: ", data.get('avatar'))
-            # print("\t>>> Data: ", data.get('field'))
-            # print("\t>>> Data: ", data.get('year'))
-            # return Response({"detail": "Function ended successfully"}, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def university(request):
-    print(f"\t>>> Running function")
     if request.method == "GET":
         try:
             # Get a list of all universities that the user is enrolled in

@@ -180,7 +180,7 @@ export default function Settings() {
                                 className="sm:h-[300px] h-[350px] self-center avatar hover:scale-105"
                                 alt="User avatar"
                             />
-                            <h2>Avatar</h2>
+                            <h2>Display Image</h2>
                             <input
                                 className={twMerge(CSSclasses.search.base, " bg-cyan-700 p-2 rounded-md ")}
                                 type="file"

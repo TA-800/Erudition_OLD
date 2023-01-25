@@ -55,8 +55,11 @@ def userProfile(request, id):
             # # # Update the user
             user.first_name = data['first'] or user.first_name
             user.last_name = data['last'] or user.last_name
-            
-            user.avatar = avatar or user.avatar
+            if avatar:
+                # Before updating the avatar, check if the user has an avatar already, and if so, delete it
+                if user.avatar:
+                    user.avatar.delete()
+                user.avatar = avatar
             user.field = data['field'] or user.field
             user.year = data['year']
             user.save()

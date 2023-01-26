@@ -2,7 +2,16 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useContext } from "react";
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen, faPlusCircle, faSearch, faTrash, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookOpen,
+    faHandPointLeft,
+    faHandPointUp,
+    faNoteSticky,
+    faPlusCircle,
+    faSearch,
+    faTrash,
+    faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 // Context
 import AuthContext from "../../context/AuthContext";
 // Components
@@ -23,19 +32,19 @@ import {
     assignmentSelectionChange,
     clearAssignmentSelection,
 } from "../Utilities/AssignmentFunctions";
+import { useMediaPredicate } from "react-media-hook";
 
 export default function CoursesSection({ courses, setCourses, assignments, setAssignments }) {
     // First load to lock scrolls on overlay
     const [firstload, setFirstload] = useState(true);
-
+    // Media query
+    const isSmall = useMediaPredicate("(max-width: 814px)");
     // University info
     const [universities, setUniversities] = useState([]);
-
     // Content selection
     const contentSelector = useRef(null);
     // Search
     const [search, setSearch] = useState("");
-
     const [selectedCourse, setSelectedCourse] = useState({});
     // Modules
     const [modules, setModules] = useState([]);
@@ -206,8 +215,22 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
     // MODULES' FUNCTIONS
     function FormattedNotes(props) {
-        if (!props.delta) return "Select a course to read module notes";
+        if (!props.delta)
+            return (
+                <div className="flex flex-col mdc:gap-3 justify-center items-center opacity-50 p-10">
+                    <FontAwesomeIcon icon={isSmall ? faHandPointUp : faHandPointLeft} size="9x" />
+                    <p className="text-2xl mdc:text-xl">Select a module to read</p>
+                </div>
+            );
         const delta = JSON.parse(props.delta);
+        console.log(delta);
+        if (delta.ops.length === 1 && delta.ops[0].insert === "\n")
+            return (
+                <div className="flex flex-col justify-center items-center opacity-50 p-10">
+                    <FontAwesomeIcon icon={faNoteSticky} size="9x" />
+                    <p className="text-2xl mdc:text-xl">No notes for this module</p>
+                </div>
+            );
         const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
 
         const html = converter.convert();
@@ -391,6 +414,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                     // Also fetch data for clicked course for selected content
                                     fetchData(course.id, contentSelector.current.value);
                                     setSelectedCourse(course);
+                                    setSelectedModule({});
                                 }}>
                                 {course.course_code}
                                 <div
@@ -457,10 +481,10 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                             <div className="modules flex flex-col bg-zinc-600 p-2">
                                 {searchedModules.map((module, index) => (
                                     <div
-                                        className="flex flex-row gap-x-2 items-center transition-all duration-500 max-h-28 py-2 overflow-hidden"
+                                        className="flex flex-row gap-x-2 items-center max-h-28 border-b-2 border-white border-opacity-10 duration-500 overflow-hidden"
                                         data-mkey={module.id}
                                         key={module.id}>
-                                        <span
+                                        <div
                                             className="module-button"
                                             onClick={(e) => {
                                                 e.currentTarget.parentNode.parentNode.childNodes.forEach((child) => {
@@ -469,8 +493,10 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                                                 e.currentTarget.className = "module-button module-button-active";
                                                 setSelectedModule(module);
                                             }}>
-                                            {index + 1}. {module.module_name}
-                                        </span>
+                                            <div className="flex flex-row gap-2 items-baseline">
+                                                <span className="text-xs text-zinc-400">{index + 1}</span> {module.module_name}
+                                            </div>
+                                        </div>
                                         <p className="ml-auto" onClick={() => deleteModule(module.id)}>
                                             <FontAwesomeIcon
                                                 className="text-xs cursor-pointer w-4 opacity-50 transition-all duration-200 hover:text-sm hover:opacity-100"

@@ -1,5 +1,5 @@
 /* Make Open Sans the main font */
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:all&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:all&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -29,7 +29,7 @@
         @apply bg-zinc-800 border-white border-2 border-opacity-25 text-center p-2;
     }
     .module-button {
-        @apply cursor-pointer transition-all duration-200 hover:tracking-[0.2px];
+        @apply p-2 cursor-pointer transition-all duration-200 hover:tracking-[0.2px];
     }
     .module-button-active {
         @apply font-bold tracking-[0.2px];
@@ -100,7 +100,7 @@
 /* Primary color: TW Zinc */
 
 body {
-    font-family: "Open Sans", sans-serif;
+    font-family: "Source Serif Pro", sans-serif;
     font-size: 16px;
     margin: 0;
     /* Zinc 50 */

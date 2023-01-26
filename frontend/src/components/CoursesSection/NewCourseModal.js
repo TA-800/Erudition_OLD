@@ -108,13 +108,14 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
                     <div>
                         University
                         <select
-                            className="bg-cyan-800 bg-opacity-25 rounded-lg p-2 pl-5 text-cyan-100 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                            className="bg-cyan-800 bg-opacity-25 rounded-lg pl-5 w-full h-12 border-b border-cyan-700 border-opacity-50 focus:outline-none"
+                            // className="dropdown"
                             name="university">
                             <option value="" disabled>
                                 Select university course belongs to
                             </option>
                             {universities.map((uni) => (
-                                <option key={uni.id} value={uni.id}>
+                                <option key={uni.id} value={uni.id} className="bg-cyan-900">
                                     {uni.university_name}
                                 </option>
                             ))}

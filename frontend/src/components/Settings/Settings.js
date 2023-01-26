@@ -205,6 +205,7 @@ export default function Settings() {
                             <input
                                 className="input-text"
                                 type="file"
+                                accept="image/*"
                                 name="avatar"
                                 placeholder="Select your display picture"
                                 id="avatar"

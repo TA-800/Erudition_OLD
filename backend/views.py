@@ -55,10 +55,8 @@ def userProfile(request, id):
             # # # Update the user
             user.first_name = data['first'] or user.first_name
             user.last_name = data['last'] or user.last_name
+            # User avatar is auto-deleted with django-cleanup (except for the default avatar)
             if avatar:
-                # Before updating the avatar, check if the user has an avatar already, and if so, delete it
-                if user.avatar:
-                    user.avatar.delete()
                 user.avatar = avatar
             user.field = data['field'] or user.field
             user.year = data['year']
@@ -86,6 +84,13 @@ def userProfile(request, id):
                 new_university.university_user.add(user)
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data, status=200)
+        elif request.method == "PUT":
+            # Get the user
+            user = User.objects.get(id=id)
+            # # Set the user's avatar to the default avatar
+            user.avatar = "avatars/default/default.png"
+            user.save()
+            return Response({"detail": "Successfully deleted avatar"}, status=200)
     except Exception as e:
         return Response({"detail": f"{e.args[0]}"}, status=400)
 

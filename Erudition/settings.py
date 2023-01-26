@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
+    'django_cleanup.apps.CleanupConfig'
 ]
 
 REST_FRAMEWORK = {

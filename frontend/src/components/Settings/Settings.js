@@ -107,6 +107,26 @@ export default function Settings() {
     }
 
     function sendSettings(e) {
+        // If e is null/undefined, then this function was called from the Remove Display Picture link
+        if (!e) {
+            fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + localStorage.getItem("access"),
+                },
+            })
+                .then((res) => {
+                    if (!res.ok) throw new Error("Error removing display picture");
+                    window.location.reload();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            // End the function
+            return;
+        }
+
         e.preventDefault();
         console.log("Sending settings");
 
@@ -172,8 +192,15 @@ export default function Settings() {
                             <img
                                 src={`http://127.0.0.1:8000${imageURL}`}
                                 className="sm:h-[300px] h-[350px] self-center avatar hover:scale-105"
+                                onClick={() => {
+                                    // Simulate click on file input
+                                    document.getElementById("avatar").click();
+                                }}
                                 alt="User avatar"
                             />
+                            <a className="link w-fit" onClick={() => sendSettings()}>
+                                Remove display image
+                            </a>
                             <h2>Display Image</h2>
                             <input
                                 className="input-text"

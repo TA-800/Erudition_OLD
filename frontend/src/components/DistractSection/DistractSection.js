@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import randomWords from "random-words";
 import Stateless from "../Utilities/Stateless";
+import he from "he";
 
 export default function DistractSection() {
     const [content, setContent] = useState("");
@@ -11,7 +12,7 @@ export default function DistractSection() {
             <div className="lp">
                 <p className="lp__title">Respite</p>
                 <ul className="lp__list">
-                    {["Games", "Trivia", "Of The Day"].map((element) => (
+                    {["Games", "Trivia", "Misc."].map((element) => (
                         <li
                             key={element}
                             className="course-button"
@@ -35,8 +36,8 @@ export default function DistractSection() {
                         <Games />
                     ) : content === "Trivia" ? (
                         <Trivia />
-                    ) : content === "Of The Day" ? (
-                        <OfTheDay />
+                    ) : content === "Misc." ? (
+                        <Misc />
                     ) : (
                         <Stateless contents="Select a section to check out" />
                     )}
@@ -153,11 +154,226 @@ function Games() {
 }
 
 function Trivia() {
-    return <div>DID YOU KNOW THAT??</div>;
+    const [questions, setQuestions] = useState([]);
+    const [reset, setReset] = useState(false);
+
+    useEffect(() => {
+        fetch("https://opentdb.com/api.php?amount=4&difficulty=easy")
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Error, try refreshing");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setQuestions(data.results);
+            })
+            .catch((err) => alert(err));
+    }, [reset]);
+
+    function handleAnswerClick(e, correct) {
+        // Color the button green if correct, red if incorrect, gray to all other buttons
+        const buttons = e.currentTarget.parentElement.children;
+
+        Array.from(buttons).forEach((button) => {
+            if (button.textContent === he.unescape(correct)) {
+                button.classList.add("bg-green-600");
+            } else if (button === e.currentTarget) {
+                button.classList.add("bg-red-600");
+            } else {
+                button.classList.add("bg-gray-600");
+            }
+
+            button.disabled = true;
+        });
+    }
+
+    return (
+        <>
+            <div className="p-1 text-right" onClick={() => setReset(!reset)}>
+                <a className="link">Reset?</a>
+            </div>
+            <div className="flex flex-col gap-2 p-2 bg-zinc-600">
+                {questions.map((question) => {
+                    return (
+                        <div key={question.question}>
+                            <h3>{he.unescape(question.question)}</h3>
+                            <div className="grid grid-flow-col grid-cols-4 gap-1 sm:grid-flow-row sm:grid-cols-none">
+                                {[...question.incorrect_answers, question.correct_answer]
+                                    .map((answer) => ({
+                                        answer,
+                                        sort: Math.random(),
+                                    }))
+                                    .sort((a, b) => a.sort - b.sort)
+                                    .map(({ answer }) => {
+                                        return (
+                                            <button
+                                                key={answer}
+                                                onClick={(e) => handleAnswerClick(e, question.correct_answer)}
+                                                className="btn-dark">
+                                                {he.unescape(answer)}
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
 }
 
-function OfTheDay() {
+function Misc() {
     const [option, setOption] = useState("Word");
+
+    function WordSearch() {
+        const [words, setWords] = useState(
+            randomWords({
+                exactly: 3,
+                maxLength: 10,
+            })
+        );
+        const [reset, setReset] = useState(false);
+        const searchWrapper = useRef(null);
+
+        function getRandomLetter() {
+            return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+        }
+
+        function createWordSearch() {
+            // 10x10 2D array
+            const size = 10;
+            const filler = "_";
+            let grid = Array.from({ length: size }, () => Array.from({ length: size }, () => filler));
+            const directions = ["up", "down", "left", "right", "up-left", "up-right", "down-left", "down-right"];
+
+            const getRandomInt = (min, max) => {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                // Both min and max are inclusive
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            };
+            const placeWord = (grid, word, startX, startY, directionX, directionY) => {
+                for (let i = 0; i < word.length; i++) {
+                    if (
+                        grid[startY + i * directionY][startX + i * directionX] !== word[i] &&
+                        grid[startY + i * directionY][startX + i * directionX] !== filler
+                    ) {
+                        return false;
+                    }
+                }
+
+                for (let i = 0; i < word.length; i++) {
+                    grid[startY + i * directionY][startX + i * directionX] = word[i];
+                }
+
+                return true;
+            };
+            const checkUpAndLeft = (size, word) => {
+                // return random number between len(word)-1 and size-1
+                return getRandomInt(word.length - 1, size - 1);
+            };
+            const checkDownAndRight = (size, word) => {
+                // return random number between 0 and size-len(word)
+                return getRandomInt(0, size - word.length);
+            };
+
+            words.forEach((word) => {
+                while (true) {
+                    let direction = directions[getRandomInt(0, directions.length - 1)];
+                    let startX, startY, success;
+
+                    if (direction == "up") {
+                        startY = checkUpAndLeft(size, word);
+                        startX = getRandomInt(0, size - 1);
+                        success = placeWord(grid, word, startX, startY, 0, -1);
+                    } else if (direction == "left") {
+                        startX = checkUpAndLeft(size, word);
+                        startY = getRandomInt(0, size - 1);
+                        success = placeWord(grid, word, startX, startY, -1, 0);
+                    } else if (direction == "down") {
+                        startY = checkDownAndRight(size, word);
+                        startX = getRandomInt(0, size - 1);
+                        success = placeWord(grid, word, startX, startY, 0, 1);
+                    } else if (direction == "right") {
+                        startX = checkDownAndRight(size, word);
+                        startY = getRandomInt(0, size - 1);
+                        success = placeWord(grid, word, startX, startY, 1, 0);
+                    } else if (direction == "up-left") {
+                        startY = checkUpAndLeft(size, word);
+                        startX = checkUpAndLeft(size, word);
+                        success = placeWord(grid, word, startX, startY, -1, -1);
+                    } else if (direction == "up-right") {
+                        startY = checkUpAndLeft(size, word);
+                        startX = checkDownAndRight(size, word);
+                        success = placeWord(grid, word, startX, startY, 1, -1);
+                    } else if (direction == "down-left") {
+                        startY = checkDownAndRight(size, word);
+                        startX = checkUpAndLeft(size, word);
+                        success = placeWord(grid, word, startX, startY, -1, 1);
+                    } else if (direction == "down-right") {
+                        startY = checkDownAndRight(size, word);
+                        startX = checkDownAndRight(size, word);
+                        success = placeWord(grid, word, startX, startY, 1, 1);
+                    }
+
+                    if (success) break;
+                }
+            });
+
+            const placeGrid = (grid) => {
+                // Place grid in DOM
+                let gridWrapper = searchWrapper.current;
+                // Clear grid
+                gridWrapper.innerHTML = "";
+                grid.forEach((row) => {
+                    row.forEach((letter) => {
+                        const div = document.createElement("div");
+                        div.className = "flex justify-center items-center text-2xl border-2 border-white border-opacity-25";
+                        // div.textContent = letter === filler ? getRandomLetter() : letter;
+                        if (letter === filler) {
+                            div.textContent = getRandomLetter();
+                            div.setAttribute("data-answer", "false");
+                        } else {
+                            div.textContent = letter;
+                            div.classList.add("bg-blue-500");
+                            div.setAttribute("data-answer", "true");
+                        }
+                        gridWrapper.appendChild(div);
+                    });
+                });
+            };
+            placeGrid(grid);
+        }
+
+        useEffect(() => {
+            createWordSearch();
+        }, [reset]);
+
+        return (
+            <>
+                <div className="flex flex-row">
+                    <span>
+                        Locate the following words:{" "}
+                        {words.map((word) => {
+                            return (
+                                <strong className="text-lg" key={word}>
+                                    {word}{" "}
+                                </strong>
+                            );
+                        })}
+                    </span>
+                    <span className="ml-auto">
+                        <a className="link-light" onClick={() => setReset(!reset)}>
+                            Reset?
+                        </a>
+                    </span>
+                </div>
+                <div className="grid grid-cols-10 grid-rows-10 gap-2 select-none" ref={searchWrapper}></div>
+            </>
+        );
+    }
 
     function Quote() {
         const [quote, setQuote] = useState("");
@@ -180,7 +396,7 @@ function OfTheDay() {
         return (
             <div className="flex flex-col">
                 {quote === ""
-                    ? "Just a moment"
+                    ? "Fetching a cool quote..."
                     : quote.split("~").map((text, index) => (
                           <p key={index} className={index === 0 ? "text-2xl font-semibold" : "italic ml-auto"}>
                               {text}
@@ -189,17 +405,37 @@ function OfTheDay() {
             </div>
         );
     }
-    function Word() {
-        return <>Word OF THE DAY</>;
-    }
+
     function Joke() {
-        return <>Joke OF THE DAY</>;
+        const [joke, setJoke] = useState({});
+        const [reset, setReset] = useState(false);
+
+        useEffect(() => {
+            fetch("https://v2.jokeapi.dev/joke/Any")
+                .then((res) => {
+                    if (!res.ok) throw new Error("Error, try refreshing");
+                    return res.json();
+                })
+                .then((data) => {
+                    setJoke(data);
+                });
+        }, [reset]);
+
+        return (
+            <div className="flex flex-col">
+                <p className="text-2xl font-semibold">{joke.setup}</p>
+                <p className="italic text-xl ml-auto">{joke.delivery}</p>
+                <a className="link-light ml-auto" onClick={() => setReset(!reset)}>
+                    Another one?
+                </a>
+            </div>
+        );
     }
 
     return (
         <>
             <div className="flex flex-row justify-around my-2 p-2 gap-1">
-                {["Word", "Quote", "Joke"].map((element) => {
+                {["Word Search", "Quote", "Joke"].map((element) => {
                     return (
                         <button key={element} className="btn-dark w-full" onClick={() => setOption(element)}>
                             {element}
@@ -207,7 +443,9 @@ function OfTheDay() {
                     );
                 })}
             </div>
-            <div className="bg-zinc-600 p-2">{option === "Word" ? <Word /> : option === "Quote" ? <Quote /> : <Joke />}</div>
+            <div className="bg-zinc-600 p-2">
+                {option === "Word Search" ? <WordSearch /> : option === "Quote" ? <Quote /> : <Joke />}
+            </div>
         </>
     );
 }

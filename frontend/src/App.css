@@ -96,6 +96,9 @@
     .link {
         @apply text-zinc-500 cursor-pointer;
     }
+    .link-light {
+        @apply text-zinc-400 cursor-pointer;
+    }
 }
 /* Primary color: TW Zinc */
 
@@ -287,7 +290,7 @@ hr {
 .lp {
     /* Zinc 700 */
     background: #3f3f46;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.1);
     height: fit-content;
     padding-bottom: 1.5rem; /* 24px */
 

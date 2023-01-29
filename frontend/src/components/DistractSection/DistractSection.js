@@ -350,6 +350,7 @@ function Misc() {
             // Drag behavior
             let drag = false;
             let selectedCells = [];
+            let wordsFound = 0;
 
             const handleDragStart = (e) => {
                 drag = true;
@@ -381,6 +382,13 @@ function Misc() {
                     selectedCells.forEach((index) => {
                         searchWrapper.current.children[index].classList.add("bg-green-800");
                     });
+                    wordsFound++;
+                    if (wordsFound === words.length) {
+                        setTimeout(() => {
+                            alert("You found all the words!");
+                            setReset((prev) => !prev);
+                        }, 300);
+                    }
                 }
             };
 

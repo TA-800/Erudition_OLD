@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import randomWords from "random-words";
 import Stateless from "../Utilities/Stateless";
 import he from "he";
+import moreContext from "../../context/moreContext";
 
 export default function DistractSection() {
     const [content, setContent] = useState("");
+    const { quote, setQuote } = useContext(moreContext);
 
     return (
         <article className="distract">
@@ -175,7 +177,9 @@ function Trivia() {
     const [reset, setReset] = useState(false);
 
     useEffect(() => {
-        fetch("https://opentdb.com/api.php?amount=4&difficulty=easy")
+        const abort = new AbortController();
+
+        fetch("https://opentdb.com/api.php?amount=4&difficulty=easy", { signal: abort.signal })
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Error, try refreshing");
@@ -185,7 +189,9 @@ function Trivia() {
             .then((data) => {
                 setQuestions(data.results);
             })
-            .catch((err) => alert(err));
+            .catch((err) => console.log(err));
+
+        return () => abort.abort();
     }, [reset]);
 
     function handleAnswerClick(e, correct) {
@@ -469,7 +475,7 @@ function Misc() {
     }
 
     function Quote() {
-        const [quote, setQuote] = useState([]);
+        const { quote, setQuote } = useContext(moreContext);
 
         useEffect(() => {
             const abort = new AbortController();
@@ -491,9 +497,7 @@ function Misc() {
                 })
                 .then((data) => setQuote([data.contents.quotes[0].quote, data.contents.quotes[0].author]))
                 .catch((err) => {
-                    let error = JSON.parse(err.message);
-                    if (error.code === 429) setQuote(["Quote bank exhausted, please try later.", "Apologies!"]);
-                    else setQuote(["Failed to fetch quote", "Apologies!"]);
+                    console.log(err.message);
                 });
 
             return () => abort.abort(); // Abort fetch on unmount

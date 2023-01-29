@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import WeeklySection from "./WeeklySection/WeeklySection";
 import DistractSection from "./DistractSection/DistractSection";
+import { MoreProvider } from "../context/moreContext";
 
 export default function StudyHub() {
     const { user } = useContext(AuthContext);
@@ -29,7 +30,9 @@ export default function StudyHub() {
 
             <hr />
             <br />
-            <DistractSection />
+            <MoreProvider>
+                <DistractSection />
+            </MoreProvider>
             <br />
         </>
     );

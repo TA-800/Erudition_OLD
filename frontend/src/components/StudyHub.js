@@ -10,7 +10,7 @@ export default function StudyHub() {
     const [assignments, setAssignments] = useState([]);
     return (
         <>
-            <header>Good evening, {user}.</header>
+            <header>Welcome, {user}.</header>
             <p className="info-text">
                 “Becoming Hokage does not mean people will acknowledge you, it is only when you are acknowledged by people that
                 you can become Hokage” - Uchiha Itachi.

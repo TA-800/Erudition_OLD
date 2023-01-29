@@ -48,6 +48,8 @@ export default function DistractSection() {
 }
 
 function Games() {
+    const [game, setGame] = useState("Hangman");
+
     function Hangman() {
         const [word, setWord] = useState(
             randomWords({
@@ -137,18 +139,33 @@ function Games() {
         );
     }
 
+    function Snake() {
+        // Coming soon :)
+        return <Stateless contents="Snake coming soon :)" />;
+    }
+
+    function TicTacToe() {
+        // Coming soon :)
+        return <Stateless contents="Tictactoe coming soon :)" />;
+    }
+
     return (
         <>
             <div className="flex flex-row justify-around my-2 p-2 gap-1">
                 {["Hangman", "TicTacToe", "Snake"].map((game) => {
                     return (
-                        <button key={game} className="btn-dark w-full">
+                        <button
+                            key={game}
+                            className="btn-dark w-full"
+                            onClick={() => {
+                                setGame(game);
+                            }}>
                             {game}
                         </button>
                     );
                 })}
             </div>
-            <Hangman />
+            {game === "Hangman" ? <Hangman /> : game === "TicTacToe" ? <TicTacToe /> : <Snake />}
         </>
     );
 }

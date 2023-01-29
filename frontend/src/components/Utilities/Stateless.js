@@ -1,4 +1,4 @@
-import { faBook, faCalendarWeek, faGamepad, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faCalendarWeek, faGamepad, faPencil, faRodSnake, faTv } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
@@ -13,6 +13,10 @@ export default function Stateless({ contents }) {
                         ? faGamepad
                         : contents.includes("week")
                         ? faCalendarWeek
+                        : contents.includes("Tictactoe")
+                        ? faTv
+                        : contents.includes("Snake")
+                        ? faRodSnake
                         : faBook
                 }
                 size="10x"

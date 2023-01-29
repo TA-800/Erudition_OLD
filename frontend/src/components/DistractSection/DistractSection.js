@@ -225,15 +225,11 @@ function Trivia() {
 }
 
 function Misc() {
-    const [option, setOption] = useState("Word");
+    const [option, setOption] = useState("Quote");
 
     function WordSearch() {
-        const [words, setWords] = useState(
-            randomWords({
-                exactly: 3,
-                maxLength: 10,
-            })
-        );
+        let words = [];
+        const [stateWords, setStateWords] = useState(words);
         const [reset, setReset] = useState(false);
         const searchWrapper = useRef(null);
 
@@ -241,7 +237,7 @@ function Misc() {
             return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
         }
 
-        function createWordSearch() {
+        function createWordSearch(words) {
             // 10x10 2D array
             const size = 10;
             const filler = "_";
@@ -327,18 +323,17 @@ function Misc() {
                 let gridWrapper = searchWrapper.current;
                 // Clear grid
                 gridWrapper.innerHTML = "";
-                grid.forEach((row) => {
-                    row.forEach((letter) => {
+                grid.forEach((row, ri) => {
+                    row.forEach((letter, ci) => {
                         const div = document.createElement("div");
-                        div.className = "flex justify-center items-center text-2xl border-2 border-white border-opacity-25";
-                        // div.textContent = letter === filler ? getRandomLetter() : letter;
+                        div.className =
+                            "letter-cell flex justify-center items-center text-2xl border-2 border-white border-opacity-25";
+                        div.setAttribute("data-letterIndex", ri * size + ci);
                         if (letter === filler) {
                             div.textContent = getRandomLetter();
-                            div.setAttribute("data-answer", "false");
                         } else {
                             div.textContent = letter;
-                            div.classList.add("bg-blue-500");
-                            div.setAttribute("data-answer", "true");
+                            div.classList.add("underline");
                         }
                         gridWrapper.appendChild(div);
                     });
@@ -348,7 +343,56 @@ function Misc() {
         }
 
         useEffect(() => {
-            createWordSearch();
+            words = randomWords({ exactly: 3, maxLength: 10 });
+            setStateWords(words);
+            createWordSearch(words);
+
+            // Drag behavior
+            let drag = false;
+            let selectedCells = [];
+
+            const handleDragStart = (e) => {
+                drag = true;
+                selectedCells = [];
+            };
+
+            const handleDragMove = (e) => {
+                if (drag && e.target.classList.contains("letter-cell")) {
+                    let index = e.target.getAttribute("data-letterIndex");
+                    if (!selectedCells.includes(index)) {
+                        selectedCells.push(index);
+                        e.target.classList.add("bg-blue-500");
+                    }
+                }
+            };
+
+            const handleDragEnd = (e) => {
+                drag = false;
+                let selectedWord = "";
+                selectedCells.forEach((index) => {
+                    selectedWord += searchWrapper.current.children[index].textContent;
+                });
+                // Remove the highlight color
+                searchWrapper.current.querySelectorAll(".bg-blue-500").forEach((el) => {
+                    el.classList.remove("bg-blue-500");
+                });
+
+                if (words.includes(selectedWord) || words.includes(selectedWord.split("").reverse().join(""))) {
+                    selectedCells.forEach((index) => {
+                        searchWrapper.current.children[index].classList.add("bg-green-800");
+                    });
+                }
+            };
+
+            searchWrapper.current.addEventListener("mousedown", handleDragStart);
+            searchWrapper.current.addEventListener("mousemove", handleDragMove);
+            searchWrapper.current.addEventListener("mouseup", handleDragEnd);
+
+            return () => {
+                searchWrapper.current.removeEventListener("mousedown", handleDragStart);
+                searchWrapper.current.removeEventListener("mousemove", handleDragMove);
+                searchWrapper.current.removeEventListener("mouseup", handleDragEnd);
+            };
         }, [reset]);
 
         return (
@@ -356,7 +400,7 @@ function Misc() {
                 <div className="flex flex-row">
                     <span>
                         Locate the following words:{" "}
-                        {words.map((word) => {
+                        {stateWords.map((word) => {
                             return (
                                 <strong className="text-lg" key={word}>
                                     {word}{" "}
@@ -370,7 +414,7 @@ function Misc() {
                         </a>
                     </span>
                 </div>
-                <div className="grid grid-cols-10 grid-rows-10 gap-2 select-none" ref={searchWrapper}></div>
+                <div className="grid grid-cols-10 grid-rows-10 gap-[14px] select-none" ref={searchWrapper}></div>
             </>
         );
     }
@@ -444,7 +488,7 @@ function Misc() {
                 })}
             </div>
             <div className="bg-zinc-600 p-2">
-                {option === "Word Search" ? <WordSearch /> : option === "Quote" ? <Quote /> : <Joke />}
+                {option === "Word Search" ? <WordSearch /> : option === "Joke" ? <Joke /> : <Quote />}
             </div>
         </>
     );

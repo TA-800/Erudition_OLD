@@ -12,7 +12,7 @@ export default function DistractSection() {
             <div className="lp">
                 <p className="lp__title">Respite</p>
                 <ul className="lp__list">
-                    {["Games", "Trivia", "Misc."].map((element) => (
+                    {["Games", "Trivia", "More"].map((element) => (
                         <li
                             key={element}
                             className="course-button"
@@ -36,7 +36,7 @@ export default function DistractSection() {
                         <Games />
                     ) : content === "Trivia" ? (
                         <Trivia />
-                    ) : content === "Misc." ? (
+                    ) : content === "More" ? (
                         <Misc />
                     ) : (
                         <Stateless contents="Select a section to check out" />
@@ -343,6 +343,7 @@ function Misc() {
         }
 
         useEffect(() => {
+            let localRef = searchWrapper.current ? searchWrapper.current : null; // To prevent error on return/cleanup function
             words = randomWords({ exactly: 3, maxLength: 10 });
             setStateWords(words);
             createWordSearch(words);
@@ -392,14 +393,14 @@ function Misc() {
                 }
             };
 
-            searchWrapper.current.addEventListener("mousedown", handleDragStart);
-            searchWrapper.current.addEventListener("mousemove", handleDragMove);
-            searchWrapper.current.addEventListener("mouseup", handleDragEnd);
+            localRef.addEventListener("mousedown", handleDragStart);
+            localRef.addEventListener("mousemove", handleDragMove);
+            localRef.addEventListener("mouseup", handleDragEnd);
 
             return () => {
-                searchWrapper.current.removeEventListener("mousedown", handleDragStart);
-                searchWrapper.current.removeEventListener("mousemove", handleDragMove);
-                searchWrapper.current.removeEventListener("mouseup", handleDragEnd);
+                localRef.removeEventListener("mousedown", handleDragStart);
+                localRef.removeEventListener("mousemove", handleDragMove);
+                localRef.removeEventListener("mouseup", handleDragEnd);
             };
         }, [reset]);
 
@@ -428,28 +429,41 @@ function Misc() {
     }
 
     function Quote() {
-        const [quote, setQuote] = useState("");
+        const [quote, setQuote] = useState([]);
 
         useEffect(() => {
+            const abort = new AbortController();
+
             fetch("https://quotes.rest/qod?language=en", {
                 method: "GET",
                 headers: {
                     Accept: "application/json",
                 },
+                signal: abort.signal,
             })
                 .then((res) => {
-                    if (res.status !== 200) throw new Error("Error, try refreshing");
+                    if (res.status !== 200) {
+                        return res.json().then((json) => {
+                            throw new Error(JSON.stringify(json.error));
+                        });
+                    }
                     return res.json();
                 })
-                .then((data) => setQuote(data.contents.quotes[0].quote + "~" + data.contents.quotes[0].author))
-                .catch((err) => setQuote(err));
+                .then((data) => setQuote([data.contents.quotes[0].quote, data.contents.quotes[0].author]))
+                .catch((err) => {
+                    let error = JSON.parse(err.message);
+                    if (error.code === 429) setQuote(["Quote bank exhausted, please try later.", "Apologies!"]);
+                    else setQuote(["Failed to fetch quote", "Apologies!"]);
+                });
+
+            return () => abort.abort(); // Abort fetch on unmount
         }, []);
 
         return (
             <div className="flex flex-col">
-                {quote === ""
+                {quote.length === 0
                     ? "Fetching a cool quote..."
-                    : quote.split("~").map((text, index) => (
+                    : quote.map((text, index) => (
                           <p key={index} className={index === 0 ? "text-2xl font-semibold" : "italic ml-auto"}>
                               {text}
                           </p>

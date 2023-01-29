@@ -1,12 +1,16 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
+import ErrorFallback from "./components/ErrorFallback/ErrorFallback";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
     return (
         <>
             <Navbar />
-            <Main />
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <Main />
+            </ErrorBoundary>
         </>
     );
 }

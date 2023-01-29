@@ -222,7 +222,7 @@ a {
 /* Main content underneath navigation bar */
 /* Does not include colored background or the pattern */
 main {
-    padding: 6.25rem 8vw; /* 100px */
+    padding: 6.25rem 8vw;
     /* Set height */
     height: 100vh;
     /* Enable scrolling */

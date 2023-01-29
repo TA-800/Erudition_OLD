@@ -3,6 +3,7 @@ import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import StudyHub from "./StudyHub";
 import LoginPage, { Logout } from "./Settings/LoginPage";
+import NotFound from "./NotFound";
 import Discussions from "./Discussions/Discussions";
 
 export default function Main() {
@@ -15,6 +16,8 @@ export default function Main() {
                     <Route path="/studyhub" element={<StudyHub />} />
                     <Route path="/discussions" element={<Discussions />} />
                     <Route path="/settings" element={<Logout />} />
+                    {/* Any other page, show 404 */}
+                    <Route path="*" element={<NotFound />} />
                 </Route>
 
                 {/* Public Routes */}

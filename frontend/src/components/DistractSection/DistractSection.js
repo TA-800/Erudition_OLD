@@ -358,12 +358,25 @@ function Misc() {
                 selectedCells = [];
             };
 
+            // Mouse drag
             const handleDragMove = (e) => {
                 if (drag && e.target.classList.contains("letter-cell")) {
                     let index = e.target.getAttribute("data-letterIndex");
                     if (!selectedCells.includes(index)) {
                         selectedCells.push(index);
                         e.target.classList.add("bg-blue-500");
+                    }
+                }
+            };
+
+            // Touch drag
+            const handleTouchMove = (e) => {
+                let target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                if (drag && target.classList.contains("letter-cell")) {
+                    let index = target.getAttribute("data-letterIndex");
+                    if (!selectedCells.includes(index)) {
+                        selectedCells.push(index);
+                        target.classList.add("bg-blue-500");
                     }
                 }
             };
@@ -397,10 +410,20 @@ function Misc() {
             localRef.addEventListener("mousemove", handleDragMove);
             localRef.addEventListener("mouseup", handleDragEnd);
 
+            // Mobile devices: mouse -> touch
+            localRef.addEventListener("touchstart", handleDragStart);
+            localRef.addEventListener("touchmove", handleTouchMove);
+            localRef.addEventListener("touchend", handleDragEnd);
+
             return () => {
                 localRef.removeEventListener("mousedown", handleDragStart);
                 localRef.removeEventListener("mousemove", handleDragMove);
                 localRef.removeEventListener("mouseup", handleDragEnd);
+
+                // Mobile devices: mouse -> touch
+                localRef.removeEventListener("touchstart", handleDragStart);
+                localRef.removeEventListener("touchmove", handleTouchMove);
+                localRef.removeEventListener("touchend", handleDragEnd);
             };
         }, [reset]);
 
@@ -423,7 +446,7 @@ function Misc() {
                         </a>
                     </span>
                 </div>
-                <div className="grid grid-cols-10 grid-rows-10 gap-[14px] select-none" ref={searchWrapper}></div>
+                <div className="grid grid-cols-10 grid-rows-10 gap-2 sm:gap-1 select-none touch-none" ref={searchWrapper}></div>
             </>
         );
     }

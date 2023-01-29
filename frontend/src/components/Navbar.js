@@ -83,10 +83,16 @@ export default function Navbar() {
                     document.querySelector(".mini-navbar-top").classList.toggle("active");
                     // Add overlay to the body
                     document.querySelector(".overlay").classList.toggle("overlay__active");
-                }}>
+                }}
+                id="mini-navbar-icon">
                 <FontAwesomeIcon icon={faBars} size="2x" />
             </div>
-            <div className="overlay"></div>
+            <div
+                className="overlay"
+                onClick={() => {
+                    // Simulate clicking the navbar icon
+                    document.querySelector("#mini-navbar-icon").click();
+                }}></div>
         </nav>
     );
 }

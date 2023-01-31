@@ -6,7 +6,6 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
     const coursesTagged = useRef(null);
     // For (un)mount animation
     const [mountAnimation, setMountAnimation] = useState(false);
-    // let courseList = courses.map((course) => course.course_code);
     let courseList = discussionState.courses.map((course) => {
         return { name: course.course_code, id: course.id };
     });

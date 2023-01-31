@@ -174,9 +174,11 @@ function Games() {
 
 function Trivia() {
     const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [reset, setReset] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         const abort = new AbortController();
 
         fetch("https://opentdb.com/api.php?amount=4&difficulty=easy", { signal: abort.signal })
@@ -188,6 +190,7 @@ function Trivia() {
             })
             .then((data) => {
                 setQuestions(data.results);
+                setLoading(false);
             })
             .catch((err) => console.log(err));
 
@@ -209,6 +212,19 @@ function Trivia() {
 
             button.disabled = true;
         });
+    }
+
+    function Loading() {
+        return (
+            <div className="flex flex-col items-center justify-center h-full gap-1 pt-3">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-zinc-500"></div>
+                <p className="info-text">Loading some fun questions!</p>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return <Loading />;
     }
 
     return (

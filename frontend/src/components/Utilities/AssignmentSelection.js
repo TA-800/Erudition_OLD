@@ -63,7 +63,6 @@ export default function AssignmentSelection({
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
                 // Update assignments in state by marking them complete
                 setAssignments(
                     assignments.map((assignment) => {

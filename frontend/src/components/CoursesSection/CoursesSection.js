@@ -145,11 +145,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         if (!firstload) document.querySelector("main").classList.toggle("scroll-lock");
     }, [moduleModal, courseModal, readingPanel]);
 
-    // Debug console.log code
-    // Checks when state changes
-    // useEffect(() => {
-    //     console.log("selection: ", assignmentSelection, "selectionBox: ", assignmentSelectionBox);
-    // }, [assignmentSelection, assignmentSelectionBox]);
 
     function fetchData(course_id, contentType) {
         // Unselect all assignments
@@ -223,7 +218,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                 </div>
             );
         const delta = JSON.parse(props.delta);
-        console.log(delta);
         if (delta.ops.length === 1 && delta.ops[0].insert === "\n")
             return (
                 <div className="flex flex-col justify-center items-center opacity-50 p-10">
@@ -246,7 +240,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this module?")) {
             // Delete module
-            console.log("Deleting module with id: " + id);
             fetch(`http://127.0.0.1:8000/backend/modules/${id}`, {
                 method: "DELETE",
                 headers: {
@@ -283,7 +276,6 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this course?")) {
             // Delete course
-            console.log("Deleting course with id: " + id);
             fetch(`http://127.0.0.1:8000/backend/courses/${id}`, {
                 method: "DELETE",
                 headers: {

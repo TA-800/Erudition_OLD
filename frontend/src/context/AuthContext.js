@@ -79,7 +79,6 @@ export function AuthProvider({ children }) {
                 // Store the access and refresh tokens in localStorage
                 localStorage.setItem("access", data.access);
                 localStorage.setItem("refresh", data.refresh);
-                // setUser(jwt_decode(data.access).username);
                 updateUser(data.access);
                 // Navigate to the home page
                 navigate("/studyhub");

@@ -38,9 +38,9 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
 
     function Loading() {
         return (
-            <div className="flex flex-col items-center justify-center h-full">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-900"></div>
-                <div>Loading all those comments!</div>
+            <div className="flex flex-col items-center justify-center h-full gap-1 pt-3">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-zinc-500"></div>
+                <p className="info-text">Loading all comments!</p>
             </div>
         );
     }

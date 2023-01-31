@@ -31,7 +31,6 @@ export function splitDate(date) {
     return [`${date.substring(0, 21).slice(0, 10)}`, `${time} ${hours >= 12 ? "PM" : "AM"}`]; // Thu Jan 05, 1:00 PM
 }
 export function assignmentSelectionChange(e, { assignmentSelection, setAssignmentSelection, setAssignmentSelectionBox }) {
-    console.log(e);
     const assignmentID = e.target.parentNode.parentNode.getAttribute("data-akey");
     // If checked, add to assignmentSelection
     if (e.target.checked) {

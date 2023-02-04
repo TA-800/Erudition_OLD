@@ -27,10 +27,9 @@ from datetime import timedelta
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    # allow all hosts
     '127.0.0.1',
     'erudition.up.railway.app'
 ]

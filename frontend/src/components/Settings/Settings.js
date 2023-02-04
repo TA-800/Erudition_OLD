@@ -3,7 +3,6 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import AuthContext from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
     const { userID, imageURL } = useContext(AuthContext);
@@ -19,7 +18,6 @@ export default function Settings() {
     const [chooseOther, setChooseOther] = useState(false);
     const [loading, setLoading] = useState(true);
     const universitiesSelect = useRef();
-    const navigate = useNavigate();
 
     // Fetch all initial data
     useEffect(() => {
@@ -152,8 +150,7 @@ export default function Settings() {
             .then((d) => {
                 // console.log(d);
                 // Reload page to update user data
-                // window.location.reload();
-                navigate(0);
+                window.location.reload();
             })
             .catch((err) => console.log(err));
     }

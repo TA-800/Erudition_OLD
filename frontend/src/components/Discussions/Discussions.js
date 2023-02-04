@@ -67,7 +67,7 @@ export default function Discussions() {
                     return { ...state, selectedDiscussion: null, completeThread: false };
                 }
                 // Otherwise, we want to set the selected discussion and show the full thread
-                return { ...state, selectedDiscussion: action.payload, completeThread: true };
+                return { ...state, selectedDiscussion: action.payload, completeThread: true, createThread: false };
             }
             if (action.type === "setSearch") {
                 return { ...state, search: action.payload };
@@ -189,10 +189,7 @@ export default function Discussions() {
                     Discussions
                 </div>
             </header>
-            <p
-                className="info-text">
-                Discuss, debate, and develop with your peers.
-            </p>
+            <p className="info-text">Discuss, debate, and develop with your peers.</p>
             <hr />
             <br />
             {/* Threads container */}

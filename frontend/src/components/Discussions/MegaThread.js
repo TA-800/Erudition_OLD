@@ -16,7 +16,7 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
     }, []);
 
     function deleteComment(id) {
-        fetch(`http://127.0.0.1:8000/backend/comments/${id}`, {
+        fetch(`https://erudition.up.railway.app/backend/comments/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: "Bearer " + localStorage.getItem("access"),
@@ -107,7 +107,7 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
     }
 
     function submitComment() {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${discussionState.selectedDiscussion}`, {
+        fetch(`https://erudition.up.railway.app/backend/discussions/${discussionState.selectedDiscussion}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -158,7 +158,7 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
 
 // Fetch discussion comments data of clicked discussion
 function retrieveThread(id, setLocalSelectedDiscussion, setLoading, setComments) {
-    fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+    fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

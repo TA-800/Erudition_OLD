@@ -19,7 +19,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
     function saveCourse(newCourse) {
         console.log(newCourse);
         // Send to backend
-        fetch("http://127.0.0.1:8000/backend/courses/0", {
+        fetch("https://erudition.up.railway.app/backend/courses/0", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

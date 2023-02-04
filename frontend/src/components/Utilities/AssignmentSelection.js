@@ -15,7 +15,7 @@ export default function AssignmentSelection({
 
     function deleteAssignments() {
         // Delete assignments
-        fetch(`http://127.0.0.1:8000/backend/assignments/0`, {
+        fetch(`https://erudition.up.railway.app/backend/assignments/0`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export default function AssignmentSelection({
     }
     function markAssignmentsComplete() {
         // Delete assignments
-        fetch(`http://127.0.0.1:8000/backend/assignments/0`, {
+        fetch(`https://erudition.up.railway.app/backend/assignments/0`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

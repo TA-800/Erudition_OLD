@@ -95,7 +95,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
     // COURSE FETCH
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/backend/courses/0", {
+        fetch("https://erudition.up.railway.app/backend/courses/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
             });
 
         // Fetch university info
-        fetch("http://127.0.0.1:8000/backend/university/", {
+        fetch("https://erudition.up.railway.app/backend/university/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -154,7 +154,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
 
         // Fetch content from backend depending on the content selected (contentRef)
         // and add it to the rp__content element
-        fetch(`http://127.0.0.1:8000/backend/${contentType}/${contentType === "assignments" ? 0 : course_id}`, {
+        fetch(`https://erudition.up.railway.app/backend/${contentType}/${contentType === "assignments" ? 0 : course_id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -240,7 +240,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this module?")) {
             // Delete module
-            fetch(`http://127.0.0.1:8000/backend/modules/${id}`, {
+            fetch(`https://erudition.up.railway.app/backend/modules/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -276,7 +276,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
         // Display confirmation dialog
         if (window.confirm("Are you sure you want to delete this course?")) {
             // Delete course
-            fetch(`http://127.0.0.1:8000/backend/courses/${id}`, {
+            fetch(`https://erudition.up.railway.app/backend/courses/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

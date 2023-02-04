@@ -24,7 +24,7 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
         e.preventDefault();
         console.table(coursesTagged.current.getSelectedItems());
 
-        fetch(`http://127.0.0.1:8000/backend/discussions/${e.target.university.value}`, {
+        fetch(`https://erudition.up.railway.app/backend/discussions/${e.target.university.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

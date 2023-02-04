@@ -9,7 +9,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     const [likes, setLikes] = useState(discussion.all_users_liked.length);
 
     function deleteDiscussion(id) {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+        fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     }
 
     function likeDiscussion(id) {
-        fetch(`http://127.0.0.1:8000/backend/discussions/${id}`, {
+        fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

@@ -19,7 +19,7 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
         const newModuleContentsDelta = JSON.stringify(quillRef.current.getContents());
         const newModuleContentsText = quillRef.current.getText();
         // Send to backend
-        fetch(`http://127.0.0.1:8000/backend/modules/${course_id}`, {
+        fetch(`https://erudition.up.railway.app/backend/modules/${course_id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

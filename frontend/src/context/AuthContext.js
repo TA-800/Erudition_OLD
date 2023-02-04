@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
     const navigate = useNavigate();
 
     function getUserImage() {
-        fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
             e.preventDefault();
         }
 
-        fetch("http://127.0.0.1:8000/backend/login/", {
+        fetch("https://erudition.up.railway.app/backend/login/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export function AuthProvider({ children }) {
         const username = e.target.username.value;
         const password = e.target.password.value;
 
-        fetch("http://127.0.0.1:8000/backend/register/", {
+        fetch("https://erudition.up.railway.app/backend/register/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -130,7 +130,7 @@ export function AuthProvider({ children }) {
     }
 
     function updateToken() {
-        fetch("http://127.0.0.1:8000/backend/refresh/", {
+        fetch("https://erudition.up.railway.app/backend/refresh/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

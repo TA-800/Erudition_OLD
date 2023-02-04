@@ -29,7 +29,7 @@ export default function Settings() {
     }, [loading]);
 
     function fetchUserUniversities() {
-        fetch("http://127.0.0.1:8000/backend/university/", {
+        fetch("https://erudition.up.railway.app/backend/university/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function Settings() {
     }
 
     function fetchAllUniversities() {
-        fetch("http://127.0.0.1:8000/backend/alluniversities/", {
+        fetch("https://erudition.up.railway.app/backend/alluniversities/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export default function Settings() {
     }
 
     function fetchUserProfile() {
-        fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export default function Settings() {
     function sendSettings(e) {
         // If e is null/undefined, then this function was called from the Remove Display Picture link
         if (!e) {
-            fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+            fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function Settings() {
         data.append("year", e.target.year.value);
         data.append("unis", chooseOther ? e.target.other.value : JSON.stringify(universitiesSelect.current.getSelectedItems()));
 
-        fetch(`http://127.0.0.1:8000/backend/userProfile/${userID}`, {
+        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
             method: "POST",
             headers: {
                 Authorization: "Bearer " + localStorage.getItem("access"),

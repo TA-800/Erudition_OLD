@@ -102,7 +102,7 @@ export default function Discussions() {
 
     // Fetch all discussions
     function fetchDiscussionData() {
-        fetch("http://127.0.0.1:8000/backend/discussions/0", {
+        fetch("https://erudition.up.railway.app/backend/discussions/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export default function Discussions() {
             .catch((err) => console.log(err));
     }
     function fetchCourses() {
-        fetch("http://127.0.0.1:8000/backend/courses/0", {
+        fetch("https://erudition.up.railway.app/backend/courses/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function Discussions() {
     }
     function fetchUniversities() {
         // Fetch university info
-        fetch("http://127.0.0.1:8000/backend/university/", {
+        fetch("https://erudition.up.railway.app/backend/university/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

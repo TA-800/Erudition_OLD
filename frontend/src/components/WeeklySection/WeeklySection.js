@@ -53,7 +53,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
 
     // Fetch this week assignments from server
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/backend/assignments/0", {
+        fetch("https://erudition.up.railway.app/backend/assignments/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

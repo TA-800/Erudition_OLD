@@ -37,7 +37,7 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
             auto_freq: auto ? form.freq.value : 0,
         };
 
-        fetch(`http://127.0.0.1:8000/backend/assignments/${form.course.value}`, {
+        fetch(`https://erudition.up.railway.app/backend/assignments/${form.course.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

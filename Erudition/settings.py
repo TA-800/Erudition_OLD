@@ -32,7 +32,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     # allow all hosts
     '127.0.0.1',
-    'erudition-production.up.railway.app'
+    'erudition.up.railway.app'
 ]
 
 

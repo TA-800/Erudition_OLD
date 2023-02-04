@@ -3,6 +3,7 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import AuthContext from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
     const { userID, imageURL } = useContext(AuthContext);
@@ -107,6 +108,8 @@ export default function Settings() {
     }
 
     function sendSettings(e) {
+        const navigate = useNavigate();
+
         // If e is null/undefined, then this function was called from the Remove Display Picture link
         if (!e) {
             fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
@@ -118,7 +121,8 @@ export default function Settings() {
             })
                 .then((res) => {
                     if (!res.ok) throw new Error("Error removing display picture");
-                    window.location.reload();
+                    // window.location.reload();
+                    navigate(0);
                 })
                 .catch((err) => {
                     console.log(err);

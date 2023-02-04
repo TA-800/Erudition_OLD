@@ -19,6 +19,7 @@ export default function Settings() {
     const [chooseOther, setChooseOther] = useState(false);
     const [loading, setLoading] = useState(true);
     const universitiesSelect = useRef();
+    const navigate = useNavigate();
 
     // Fetch all initial data
     useEffect(() => {
@@ -108,8 +109,6 @@ export default function Settings() {
     }
 
     function sendSettings(e) {
-        const navigate = useNavigate();
-
         // If e is null/undefined, then this function was called from the Remove Display Picture link
         if (!e) {
             fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
@@ -121,8 +120,7 @@ export default function Settings() {
             })
                 .then((res) => {
                     if (!res.ok) throw new Error("Error removing display picture");
-                    // window.location.reload();
-                    navigate(0);
+                    window.location.reload();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -154,7 +152,8 @@ export default function Settings() {
             .then((d) => {
                 // console.log(d);
                 // Reload page to update user data
-                window.location.reload();
+                // window.location.reload();
+                navigate(0);
             })
             .catch((err) => console.log(err));
     }

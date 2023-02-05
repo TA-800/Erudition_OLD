@@ -141,7 +141,8 @@ def courseList(request, course_id):
     # GET COURSES
     if request.method == 'GET':
         courses = Course.objects.filter(course_user=
-            User.objects.get(username=request.user)
+            # Get the user's id
+            User.objects.get(username=request.user).id
         )
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
@@ -152,7 +153,7 @@ def courseList(request, course_id):
             if request.data["course_code"] == "":
                 raise Exception("Course code cannot be empty")
             course = Course(
-                course_user=User.objects.get(username=request.user),
+                course_user=User.objects.get(username=request.user).id,
                 course_code=request.data["course_code"],
                 course_name=request.data["course_name"],
                 course_description=request.data["course_description"],

@@ -318,35 +318,35 @@ function Misc() {
                     let direction = directions[getRandomInt(0, directions.length - 1)];
                     let startX, startY, success;
 
-                    if (direction == "up") {
+                    if (direction === "up") {
                         startY = checkUpAndLeft(size, word);
                         startX = getRandomInt(0, size - 1);
                         success = placeWord(grid, word, startX, startY, 0, -1);
-                    } else if (direction == "left") {
+                    } else if (direction === "left") {
                         startX = checkUpAndLeft(size, word);
                         startY = getRandomInt(0, size - 1);
                         success = placeWord(grid, word, startX, startY, -1, 0);
-                    } else if (direction == "down") {
+                    } else if (direction === "down") {
                         startY = checkDownAndRight(size, word);
                         startX = getRandomInt(0, size - 1);
                         success = placeWord(grid, word, startX, startY, 0, 1);
-                    } else if (direction == "right") {
+                    } else if (direction === "right") {
                         startX = checkDownAndRight(size, word);
                         startY = getRandomInt(0, size - 1);
                         success = placeWord(grid, word, startX, startY, 1, 0);
-                    } else if (direction == "up-left") {
+                    } else if (direction === "up-left") {
                         startY = checkUpAndLeft(size, word);
                         startX = checkUpAndLeft(size, word);
                         success = placeWord(grid, word, startX, startY, -1, -1);
-                    } else if (direction == "up-right") {
+                    } else if (direction === "up-right") {
                         startY = checkUpAndLeft(size, word);
                         startX = checkDownAndRight(size, word);
                         success = placeWord(grid, word, startX, startY, 1, -1);
-                    } else if (direction == "down-left") {
+                    } else if (direction === "down-left") {
                         startY = checkDownAndRight(size, word);
                         startX = checkUpAndLeft(size, word);
                         success = placeWord(grid, word, startX, startY, -1, 1);
-                    } else if (direction == "down-right") {
+                    } else if (direction === "down-right") {
                         startY = checkDownAndRight(size, word);
                         startX = checkDownAndRight(size, word);
                         success = placeWord(grid, word, startX, startY, 1, 1);

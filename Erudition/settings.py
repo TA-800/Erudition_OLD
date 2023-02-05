@@ -196,19 +196,3 @@ CORS_ALLOWED_ORIGINS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-# INSTALLED_APPS = [
-#     'django.contrib.staticfiles',
-#     'whitenoise.runserver_nostatic',    
-# ]
-
-# MIDDLEWARE = [
-#     "django.middleware.security.SecurityMiddleware",
-#     "whitenoise.middleware.WhiteNoiseMiddleware",
-# ]
-
-# STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# python manage.py collectstatic --noinput

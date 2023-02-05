@@ -152,6 +152,7 @@ def courseList(request, course_id):
             if request.data["course_code"] == "":
                 raise Exception("Course code cannot be empty")
             course = Course(
+                course_user=User.objects.get(username=request.user),
                 course_code=request.data["course_code"],
                 course_name=request.data["course_name"],
                 course_description=request.data["course_description"],
@@ -160,7 +161,6 @@ def courseList(request, course_id):
                 course_instructor_office_hours=request.data["course_instructor_office_hours"],
             )
             course.save()
-            course.course_user.add(User.objects.get(username=request.user))
             serializer = CourseSerializer(course, many=False)
             return Response(serializer.data, status=201)
         except Exception as e:

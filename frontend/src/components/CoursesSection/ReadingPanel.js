@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { faCheck, faClose, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { url } from "../Main";
 
 export default function ReadingPanel({
     selectedModule,
@@ -57,7 +58,7 @@ export default function ReadingPanel({
                         const text = quillRef.current.getText();
 
                         // Send to backend
-                        fetch(`https://erudition.up.railway.app/backend/modules/${selectedModule.id}`, {
+                        fetch(url + `modules/${selectedModule.id}`, {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json",

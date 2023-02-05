@@ -13,6 +13,8 @@ import {
     assignmentSelectionChange,
     clearAssignmentSelection,
 } from "../Utilities/AssignmentFunctions";
+// Import url from Main.js
+import { url } from "../Main";
 
 export default function WeeklySection({ courses, assignments, setAssignments }) {
     const [selectedWeek, setSelectedWeek] = useState(null);
@@ -53,7 +55,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
 
     // Fetch this week assignments from server
     useEffect(() => {
-        fetch("https://erudition.up.railway.app/backend/assignments/0", {
+        fetch(url + "assignments/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

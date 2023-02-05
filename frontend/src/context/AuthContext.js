@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import { url } from "../components/Main";
 
 const AuthContext = createContext();
 export default AuthContext;
@@ -18,7 +19,7 @@ export function AuthProvider({ children }) {
     const navigate = useNavigate();
 
     function getUserImage() {
-        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
+        fetch(url + `userProfile/${userID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -48,6 +49,8 @@ export function AuthProvider({ children }) {
     }
 
     function login(e, u, p) {
+        console.log("login called with url: " + url + "login/");
+
         if (e === null) {
             e = {
                 target: { username: { value: u }, password: { value: p } },
@@ -56,7 +59,7 @@ export function AuthProvider({ children }) {
             e.preventDefault();
         }
 
-        fetch("https://erudition.up.railway.app/backend/login/", {
+        fetch(url + "login/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -104,7 +107,7 @@ export function AuthProvider({ children }) {
         const username = e.target.username.value;
         const password = e.target.password.value;
 
-        fetch("https://erudition.up.railway.app/backend/register/", {
+        fetch(url + "register/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -130,7 +133,7 @@ export function AuthProvider({ children }) {
     }
 
     function updateToken() {
-        fetch("https://erudition.up.railway.app/backend/refresh/", {
+        fetch(url + "refresh/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

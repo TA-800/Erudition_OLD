@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { url } from "../Main";
 
 export default function AssignmentSelection({
     assignments,
@@ -15,7 +16,7 @@ export default function AssignmentSelection({
 
     function deleteAssignments() {
         // Delete assignments
-        fetch(`https://erudition.up.railway.app/backend/assignments/0`, {
+        fetch(url + `assignments/0`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -44,7 +45,7 @@ export default function AssignmentSelection({
     }
     function markAssignmentsComplete() {
         // Delete assignments
-        fetch(`https://erudition.up.railway.app/backend/assignments/0`, {
+        fetch(url + `assignments/0`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Texteditor from "./Texteditor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
+import { url } from "../Main";
 
 export default function NewModuleModal({ setModuleModal, course_id, setNewModules }) {
     const quillRef = useRef();
@@ -19,7 +20,7 @@ export default function NewModuleModal({ setModuleModal, course_id, setNewModule
         const newModuleContentsDelta = JSON.stringify(quillRef.current.getContents());
         const newModuleContentsText = quillRef.current.getText();
         // Send to backend
-        fetch(`https://erudition.up.railway.app/backend/modules/${course_id}`, {
+        fetch(url + `modules/${course_id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import MiniThread from "./MiniThread";
 import AuthContext from "../../context/AuthContext";
+import { url } from "../Main";
 
 export default function MegaThread({ discussionState, setDiscussionState }) {
     const [comments, setComments] = useState([]);
@@ -16,7 +17,7 @@ export default function MegaThread({ discussionState, setDiscussionState }) {
     }, []);
 
     function deleteComment(id) {
-        fetch(`https://erudition.up.railway.app/backend/comments/${id}`, {
+        fetch(url + `comments/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: "Bearer " + localStorage.getItem("access"),
@@ -107,7 +108,7 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
     }
 
     function submitComment() {
-        fetch(`https://erudition.up.railway.app/backend/discussions/${discussionState.selectedDiscussion}`, {
+        fetch(url + `discussions/${discussionState.selectedDiscussion}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -158,7 +159,7 @@ function NewComment({ discussionState, comments, setDiscussionState, setComments
 
 // Fetch discussion comments data of clicked discussion
 function retrieveThread(id, setLocalSelectedDiscussion, setLoading, setComments) {
-    fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
+    fetch(url + `discussions/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

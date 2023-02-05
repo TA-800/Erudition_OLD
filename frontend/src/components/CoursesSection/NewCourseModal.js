@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { url } from "../Main";
 
 export default function NewCourseModal({ setCourseModal, setCourses, universities }) {
     const overlayRef = useRef();
@@ -19,7 +20,7 @@ export default function NewCourseModal({ setCourseModal, setCourses, universitie
     function saveCourse(newCourse) {
         console.log(newCourse);
         // Send to backend
-        fetch("https://erudition.up.railway.app/backend/courses/0", {
+        fetch(url + "courses/0", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

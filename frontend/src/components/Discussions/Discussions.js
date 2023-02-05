@@ -5,6 +5,7 @@ import MegaThread from "./MegaThread";
 import MiniThread from "./MiniThread";
 import CreateNewThread from "./CreateNewThread";
 import AuthContext from "../../context/AuthContext";
+import { url } from "../Main";
 
 export default function Discussions() {
     const { logout } = useContext(AuthContext);
@@ -102,7 +103,7 @@ export default function Discussions() {
 
     // Fetch all discussions
     function fetchDiscussionData() {
-        fetch("https://erudition.up.railway.app/backend/discussions/0", {
+        fetch(url + "discussions/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -123,7 +124,7 @@ export default function Discussions() {
             .catch((err) => console.log(err));
     }
     function fetchCourses() {
-        fetch("https://erudition.up.railway.app/backend/courses/0", {
+        fetch(url + "courses/0", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -151,7 +152,7 @@ export default function Discussions() {
     }
     function fetchUniversities() {
         // Fetch university info
-        fetch("https://erudition.up.railway.app/backend/university/", {
+        fetch(url + "university/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

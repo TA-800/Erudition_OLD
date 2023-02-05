@@ -27,12 +27,16 @@ class Course(models.Model):
     # A course can only belong to one university. Courses with same name can exist in different universities.
     course_university = models.ForeignKey(University, default=1, null=False, on_delete=models.CASCADE, related_name="courses")
     course_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_courses")
-    course_code = models.CharField(max_length=15, unique=True) # COMP101
+    course_code = models.CharField(max_length=15) # COMP101
     course_name = models.CharField(max_length=64, blank=False) # Data Structures in Python
     course_description = models.TextField(blank=True)
     course_instructor = models.CharField(max_length=64, blank=True) # "Dr. John Smith"
     course_instructor_contact = models.CharField(max_length=100, blank=True) # "johnsmith@gmail.com"
     course_instructor_office_hours = models.CharField(max_length=100, blank=True) # "Monday 10:00-11:00"
+
+    # Course university + course code must be unique together.
+    class Meta:
+        unique_together = ('course_university', 'course_code')
 
     def __str__(self):
         return f"{self.course_code}: {self.course_name}"

@@ -3,6 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowLeft, faCircleArrowRight, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import MyDatePicker from "../Utilities/MyDatePicker";
+import { url } from "../Main";
 
 export default function NewAssignment({ setCreateAssignment, courses, selectedCourse, setNewAssignments, allAssignmentStates }) {
     const [auto, setAuto] = useState(false);
@@ -37,7 +38,7 @@ export default function NewAssignment({ setCreateAssignment, courses, selectedCo
             auto_freq: auto ? form.freq.value : 0,
         };
 
-        fetch(`https://erudition.up.railway.app/backend/assignments/${form.course.value}`, {
+        fetch(url + `assignments/${form.course.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

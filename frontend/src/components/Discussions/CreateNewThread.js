@@ -1,5 +1,6 @@
 import Multiselect from "multiselect-react-dropdown";
 import React, { useEffect, useRef, useState } from "react";
+import { url } from "../Main";
 
 export default function CreateNewThread({ discussionState, setDiscussionState }) {
     const newThreadRef = useRef();
@@ -24,7 +25,7 @@ export default function CreateNewThread({ discussionState, setDiscussionState })
         e.preventDefault();
         console.table(coursesTagged.current.getSelectedItems());
 
-        fetch(`https://erudition.up.railway.app/backend/discussions/${e.target.university.value}`, {
+        fetch(url + `discussions/${e.target.university.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

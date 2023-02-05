@@ -2,6 +2,7 @@ import { faCommentAlt, faThumbsUp, faTrashAlt } from "@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useState } from "react";
 import AuthContext from "../../context/AuthContext";
+import { url } from "../Main";
 
 export default function MiniThread({ hoverable, hideOverflow, discussion, discussionState, setDiscussionState }) {
     const { user, userID } = useContext(AuthContext);
@@ -9,7 +10,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     const [likes, setLikes] = useState(discussion.all_users_liked.length);
 
     function deleteDiscussion(id) {
-        fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
+        fetch(url + `discussions/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -31,7 +32,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     }
 
     function likeDiscussion(id) {
-        fetch(`https://erudition.up.railway.app/backend/discussions/${id}`, {
+        fetch(url + `discussions/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

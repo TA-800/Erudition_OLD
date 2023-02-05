@@ -3,6 +3,7 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import AuthContext from "../../context/AuthContext";
+import { url } from "../Main";
 
 export default function Settings() {
     const { userID, imageURL } = useContext(AuthContext);
@@ -29,7 +30,7 @@ export default function Settings() {
     }, [loading]);
 
     function fetchUserUniversities() {
-        fetch("https://erudition.up.railway.app/backend/university/", {
+        fetch(url + "university/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +54,7 @@ export default function Settings() {
     }
 
     function fetchAllUniversities() {
-        fetch("https://erudition.up.railway.app/backend/alluniversities/", {
+        fetch(url + "alluniversities/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -80,7 +81,7 @@ export default function Settings() {
     }
 
     function fetchUserProfile() {
-        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
+        fetch(url + `userProfile/${userID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -109,7 +110,7 @@ export default function Settings() {
     function sendSettings(e) {
         // If e is null/undefined, then this function was called from the Remove Display Picture link
         if (!e) {
-            fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
+            fetch(url + `userProfile/${userID}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -139,7 +140,7 @@ export default function Settings() {
         data.append("year", e.target.year.value);
         data.append("unis", chooseOther ? e.target.other.value : JSON.stringify(universitiesSelect.current.getSelectedItems()));
 
-        fetch(`https://erudition.up.railway.app/backend/userProfile/${userID}`, {
+        fetch(url + `userProfile/${userID}`, {
             method: "POST",
             headers: {
                 Authorization: "Bearer " + localStorage.getItem("access"),

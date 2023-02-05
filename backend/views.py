@@ -140,12 +140,12 @@ def courseList(request, course_id):
 
     # GET COURSES
     if request.method == 'GET':
-        courses = Course.objects.filter(course_user=
-            # Get the user's id
-            User.objects.get(username=request.user).id
-        )
-        serializer = CourseSerializer(courses, many=True)
-        return Response(serializer.data)
+        try:
+            courses = Course.objects.filter(course_user=User.objects.get(username=request.user))
+            serializer = CourseSerializer(courses, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({"detail": f"{e.args[0]}"}, status=400)
     # CREATE COURSE
     elif request.method == 'POST':
         try:
@@ -153,7 +153,8 @@ def courseList(request, course_id):
             if request.data["course_code"] == "":
                 raise Exception("Course code cannot be empty")
             course = Course(
-                course_user=User.objects.get(username=request.user).id,
+                course_user=User.objects.get(username=request.user),
+                course_university=University.objects.get(id=request.data["course_university"]),
                 course_code=request.data["course_code"],
                 course_name=request.data["course_name"],
                 course_description=request.data["course_description"],
@@ -169,12 +170,9 @@ def courseList(request, course_id):
     # DELETE COURSE
     elif request.method == "DELETE":
         try:
-            # Get id of course to delete, then remove the user from the course's many to many field
+            # Get id of course to delete, then delete the course
             course = Course.objects.get(id=course_id)
-            course.course_user.remove(User.objects.get(username=request.user))
-            # If the user is the last user in the course, delete the course
-            if course.course_user.count() == 0:
-                course.delete()
+            course.delete()
             return Response({"detail": "Course deleted"}, status=200)
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)

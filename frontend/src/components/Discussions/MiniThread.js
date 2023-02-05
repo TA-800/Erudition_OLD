@@ -58,7 +58,7 @@ export default function MiniThread({ hoverable, hideOverflow, discussion, discus
     return (
         <div
             className={
-                "bg-zinc-700 p-2 my-2 border-0 border-white border-opacity-25 flex flex-col gap-3 relative transition-all top-0 shadow-none hover:border-2 " +
+                "bg-zinc-700 p-2 pl-4 sm:pl-2 my-2 border-0 border-white border-opacity-25 flex flex-col gap-3 relative transition-all top-0 shadow-none hover:border-2 " +
                 (hoverable ? "hover:-top-1 hover:shadow-lg" : "")
             }
             onClick={() => {

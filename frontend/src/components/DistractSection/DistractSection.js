@@ -6,7 +6,6 @@ import moreContext from "../../context/moreContext";
 
 export default function DistractSection() {
     const [content, setContent] = useState("");
-    const { quote, setQuote } = useContext(moreContext);
 
     return (
         <article className="distract">

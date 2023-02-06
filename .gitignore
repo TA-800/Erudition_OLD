@@ -1,3 +1,6 @@
 .env
 db.sqlite3
 bugreport.txt
+
+# Ignore staticfiles directory in base directory
+/staticfiles

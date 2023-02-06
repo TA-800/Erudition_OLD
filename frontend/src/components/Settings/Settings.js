@@ -191,7 +191,7 @@ export default function Settings() {
                     <form onSubmit={(e) => sendSettings(e)}>
                         <div className="flex flex-col gap-2 mb-3">
                             <img
-                                src={`http://127.0.0.1:8000${imageURL}`}
+                                src={`${imageURL}`}
                                 className="sm:h-[300px] h-[350px] self-center avatar hover:scale-105"
                                 onClick={() => {
                                     // Simulate click on file input

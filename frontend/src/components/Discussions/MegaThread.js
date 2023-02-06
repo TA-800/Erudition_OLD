@@ -84,7 +84,8 @@ function Comment({ comment_author, commentor_name, commentor_avatar, time_elapse
             <span className="flex flex-row gap-2">
                 <div className="flex flex-row gap-2 items-center">
                     {/* Image */}
-                    <img src={`http://127.0.0.1:8000${commentor_avatar}`} className="h-[50px] avatar" alt="User avatar" />
+                    {/* <img src={`http://127.0.0.1:8000${commentor_avatar}`} className="h-[50px] avatar" alt="User avatar" /> */}
+                    <img src={`${commentor_avatar}`} className="h-[50px] avatar" alt="User avatar" />
                     {/* User name */}
                     <strong>{commentor_name}</strong>
                     {/* Time */}

@@ -93,13 +93,13 @@ export default function Settings() {
                 return res.json();
             })
             .then((data) => {
-                setUserState({
-                    ...userState,
+                setUserState((prev) => ({
+                    ...prev,
                     first: data.first_name,
                     last: data.last_name,
                     field: data.field,
                     year: data.year,
-                });
+                }));
                 setLoading(false);
             })
             .catch((err) => {
@@ -129,7 +129,12 @@ export default function Settings() {
         }
 
         e.preventDefault();
-        console.log("Sending settings");
+        // console.log("Sending settings");
+        // Get saveprofile-btn element and modify its text to show that the settings are being saved
+        let savebtn = document.getElementById("saveprofile-btn");
+        savebtn.textContent = "Saving...";
+        savebtn.className += " disabled";
+        savebtn.disabled = true;
 
         // Create form data
         const data = new FormData();
@@ -305,7 +310,9 @@ export default function Settings() {
                                     max={10}
                                 />
                             </div>
-                            <button className="btn-light ml-auto">Save Profile</button>
+                            <button className="btn-light ml-auto" id="saveprofile-btn">
+                                Save Profile
+                            </button>
                         </div>
                     </form>
                 </>

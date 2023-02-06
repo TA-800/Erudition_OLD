@@ -229,7 +229,9 @@ function Trivia() {
     return (
         <>
             <div className="p-1 text-right" onClick={() => setReset(!reset)}>
-                <a className="link">Reset?</a>
+                <span onKeyDown={handleKeyDown} tabIndex={0} className="link">
+                    Reset?
+                </span>
             </div>
             <div className="flex flex-col gap-2 p-2 bg-zinc-600">
                 {questions.map((question) => {
@@ -479,9 +481,9 @@ function Misc() {
                         })}
                     </span>
                     <span className="ml-auto">
-                        <a className="link-light" onClick={() => setReset(!reset)}>
+                        <span onKeyDown={handleKeyDown} tabIndex={0} className="link-light" onClick={() => setReset(!reset)}>
                             Reset?
-                        </a>
+                        </span>
                     </span>
                 </div>
                 <div className="grid grid-cols-10 grid-rows-10 gap-2 sm:gap-1 select-none touch-none" ref={searchWrapper}></div>
@@ -550,9 +552,9 @@ function Misc() {
             <div className="flex flex-col">
                 <p className="text-2xl font-semibold">{joke.setup}</p>
                 <p className="italic text-xl ml-auto">{joke.delivery}</p>
-                <a className="link-light ml-auto" onClick={() => setReset(!reset)}>
+                <span onKeyDown={handleKeyDown} tabIndex={0} className="link-light ml-auto" onClick={() => setReset(!reset)}>
                     Another one?
-                </a>
+                </span>
             </div>
         );
     }
@@ -573,4 +575,11 @@ function Misc() {
             </div>
         </>
     );
+}
+
+function handleKeyDown(e) {
+    // If key was enter or spacebar, simulate click on that element
+    if (e.key === "Enter" || e.key === " ") {
+        e.target.click();
+    }
 }

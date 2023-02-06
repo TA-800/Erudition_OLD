@@ -18,18 +18,18 @@ export default function LoginPage() {
             <br />
             <Register />
             <br />
-            <a className="link" onClick={() => setRegister(!register)}>
+            <span onKeyDown={handleKeyDown} tabIndex={0} className="link" onClick={() => setRegister(!register)}>
                 Already have an account? Click here to login.
-            </a>
+            </span>
         </>
     ) : (
         <>
             <br />
             <Login />
             <br />
-            <a className="link" onClick={() => setRegister(!register)}>
+            <span onKeyDown={handleKeyDown} tabIndex={0} className="link" onClick={() => setRegister(!register)}>
                 Don't have an account? Click here to register.
-            </a>
+            </span>
         </>
     );
 }
@@ -92,4 +92,11 @@ function Register() {
             </form>
         </>
     );
+}
+
+function handleKeyDown(e) {
+    // If key was enter or spacebar, simulate click on that element
+    if (e.key === "Enter" || e.key === " ") {
+        e.target.click();
+    }
 }

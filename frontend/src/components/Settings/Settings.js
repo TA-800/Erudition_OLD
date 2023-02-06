@@ -169,6 +169,13 @@ export default function Settings() {
         document.getElementById("year").value = userState.year;
     }
 
+    function handleKeyDown(e) {
+        // If key was enter or spacebar, simulate click on that element
+        if (e.key === "Enter" || e.key === " ") {
+            e.target.click();
+        }
+    }
+
     function Loading() {
         return (
             <div className="flex flex-col items-center justify-center h-full">
@@ -204,9 +211,9 @@ export default function Settings() {
                                 }}
                                 alt="User avatar"
                             />
-                            <a className="link w-fit" onClick={() => sendSettings()}>
+                            <span className="link w-fit" onClick={() => sendSettings()} tabIndex={0} onKeyDown={handleKeyDown}>
                                 Remove display image
-                            </a>
+                            </span>
                             <h2>Display Image</h2>
                             <input
                                 className="input-text"
@@ -271,9 +278,13 @@ export default function Settings() {
                                 />
                             )}
 
-                            <a onClick={() => setChooseOther(!chooseOther)} className="link ml-auto">
+                            <span
+                                onClick={() => setChooseOther(!chooseOther)}
+                                className="link ml-auto"
+                                tabIndex={0}
+                                onKeyDown={handleKeyDown}>
                                 {!chooseOther ? "Select a different university" : "Select university from list"}
-                            </a>
+                            </span>
                         </div>
                         {userState.unis.length === 0 && <p>Enroll in a university now to get started</p>}
                         {userState.unis.length > 0 && (

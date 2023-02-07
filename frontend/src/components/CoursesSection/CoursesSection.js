@@ -204,6 +204,8 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                 setNewAssignments(data, true, { ...allAssignmentStates });
                 break;
             case "contact":
+                // Save the contact to state
+                setContact(data);
                 break;
         }
     }
@@ -571,7 +573,35 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         )}
 
                         {/* Contact */}
-                        <div className="contact-wrapper hidden">{contact}</div>
+                        <div className="contact-wrapper hidden">
+                            {/* Course name: code + name */}
+                            <div className="grid grid-flow-row grid-cols-3 items-center gap-1 p-2 pl-4 bg-zinc-600">
+                                <div className="col-span-3">
+                                    <p className="text-lg font-bold">
+                                        {`${contact.course_code}: ${contact.course_name}` || (
+                                            <i className="opacity-50">No information found</i>
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="col-span-3">
+                                    <p className="opacity-75">
+                                        {`${contact.course_description}` || <i className="opacity-50">No information found</i>}
+                                    </p>
+                                </div>
+                                <p className="text-zinc-400">Instructor</p>
+                                <p className="text-lg col-span-2">
+                                    {contact.course_instructor || <i className="opacity-50">No information found</i>}
+                                </p>
+                                <p className="text-zinc-400">Contact</p>
+                                <p className="text-lg col-span-2">
+                                    {contact.course_instructor_contact || <i className="opacity-50">No information found</i>}
+                                </p>
+                                <p className="text-zinc-400">Office hrs.</p>
+                                <p className="text-lg col-span-2">
+                                    {contact.course_instructor_office_hours || <i className="opacity-50">No information found</i>}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </article>

@@ -309,6 +309,19 @@ def assignmentList(request, course_id):
         except Exception as e:
             return Response({"detail": f"{e.args[0]}"}, status=400)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def contactList(request, course_id):
+    # GET CONTACTS
+    try:
+        if request.method == "GET":
+            # Get course_code, course_name, course_instructor, course_instructor_contact, course_instructor_office_hours
+            course = Course.objects.get(id=course_id)
+            serializer = CourseSerializer(course, many=False)
+            return Response(serializer.data, status=200)
+    except Exception as e:
+        return Response({"detail": f"{e.args[0]}"}, status=400)
+
 # DISCUSSIONS
 
 @api_view(["GET", "POST", "PUT", "PATCH", "DELETE"])

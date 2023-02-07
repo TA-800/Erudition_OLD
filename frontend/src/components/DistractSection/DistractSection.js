@@ -433,7 +433,6 @@ function Misc() {
                 searchWrapper.current.querySelectorAll(".bg-blue-500").forEach((el) => {
                     el.classList.remove("bg-blue-500");
                 });
-
                 // Check the pattern of the indices in the selectedCells array
                 // If it's a straight line, then each cell should have a difference of 1
                 // Example: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -443,10 +442,21 @@ function Misc() {
                 // Example 1: [0, 11, 22, 33, 44, 55, 66, 77, 88, 99]
                 // Example 2: [9, 18, 27, 36, 45, 54, 63, 72, 81, 90]
                 // If the pattern is not one of these, then the user has selected a random pattern of cells, and we should return
+                let diffSet = new Set();
                 for (let i = 0; i < selectedCells.length - 1; i++) {
                     // absolute diff
                     let diff = Math.abs(selectedCells[i] - selectedCells[i + 1]);
-                    if (diff !== 1 && diff !== 10 && diff !== 11 && diff !== 9) return;
+                    diffSet.add(diff);
+                    // Add diff to a set
+                    // If the set has more than 2 elements, then the user has selected a random pattern of cells
+                    if (diffSet.size > 2) return;
+                    // Last check: the selected letter must also have isAnAnswer = true
+                    if (searchWrapper.current.children[selectedCells[i]].getAttribute("data-isAnAnswer") === "false") return;
+                    // Check the last cell on the last iteration
+                    if (i === selectedCells.length - 2) {
+                        if (searchWrapper.current.children[selectedCells[i + 1]].getAttribute("data-isAnAnswer") === "false")
+                            return;
+                    }
                 }
 
                 if (words.includes(selectedWord) || words.includes(selectedWord.split("").reverse().join(""))) {

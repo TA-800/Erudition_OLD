@@ -6,8 +6,8 @@ import LoginPage, { Logout } from "./Settings/LoginPage";
 import NotFound from "./NotFound";
 import Discussions from "./Discussions/Discussions";
 
-// export const url = "https://erudition.up.railway.app/backend/";
-export const url = "http://127.0.0.1:8000/backend/";
+export const url = "https://erudition.up.railway.app/backend/";
+// export const url = "http://127.0.0.1:8000/backend/";
 
 export default function Main() {
     return (

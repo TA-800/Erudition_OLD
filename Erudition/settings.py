@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # "whitenoise.runserver_nostatic", # This will allow WhiteNoise to serve static files even in development
     'django.contrib.staticfiles',
-
+    
     'backend',
     'rest_framework',
     'corsheaders',

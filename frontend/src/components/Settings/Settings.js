@@ -47,7 +47,6 @@ export default function Settings() {
                 return res.json();
             })
             .then((data) => {
-                // setUni(data);
                 setUserState((prev) => ({ ...prev, unis: data }));
             })
             .catch((errMessage) => alert(errMessage));
@@ -169,6 +168,25 @@ export default function Settings() {
         document.getElementById("year").value = userState.year;
     }
 
+    // Validate image size and type
+    function validateImage(e) {
+        let size = e.target.files[0].size / 1024 / 1024; // To MB
+        let type = e.target.files[0].type;
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (size > 5) {
+            alert("Image size must be less than 5MB");
+            // Reset input value
+            e.target.value = null;
+            return;
+        }
+        if (!allowedTypes.includes(type)) {
+            alert("Image type must be jpg, jpeg, or png");
+            // Reset input value
+            e.target.value = null;
+            return;
+        }
+    }
+
     function handleKeyDown(e) {
         // If key was enter or spacebar, simulate click on that element
         if (e.key === "Enter" || e.key === " ") {
@@ -219,6 +237,7 @@ export default function Settings() {
                                 className="input-text"
                                 type="file"
                                 accept="image/*"
+                                onChange={(e) => validateImage(e)}
                                 name="avatar"
                                 placeholder="Select your display picture"
                                 id="avatar"

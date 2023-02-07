@@ -12,6 +12,7 @@ export default function Discussions() {
 
     const initialDiscussionState = () => {
         return {
+            loading: true,
             universities: [],
             courses: [],
             discussions: [],
@@ -33,7 +34,7 @@ export default function Discussions() {
             }
             // For fetching all discussions (first time page load)
             if (action.type === "setDiscussions") {
-                return { ...state, discussions: action.payload };
+                return { ...state, discussions: action.payload, loading: false };
             }
             // For updating a discussion (like/unlike)
             if (action.type === "updateDiscussion") {
@@ -83,6 +84,7 @@ export default function Discussions() {
         },
         // Initial state
         {
+            loading: true,
             universities: [],
             courses: [],
             discussions: [],
@@ -172,6 +174,14 @@ export default function Discussions() {
             )
             .catch((err) => console.log(err));
     }
+    function Loading() {
+        return (
+            <div className="flex flex-col items-center justify-center h-full gap-1 pt-3">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-zinc-500"></div>
+                <p className="info-text">Loading all discussion threads!</p>
+            </div>
+        );
+    }
 
     useEffect(() => {
         // Fetch all discussions for the user
@@ -204,30 +214,34 @@ export default function Discussions() {
                 <CreateNewThread discussionState={discussionState} setDiscussionState={setDiscussionState} />
             )}
 
-            <div>
-                {/* Show all threads/discussions if no thread has been clicked on */}
-                {!discussionState.completeThread &&
-                    searchedDiscussions
-                        .sort((a, b) => {
-                            return new Date(b.discussion_date) - new Date(a.discussion_date);
-                        })
-                        .map((discussion) => {
-                            return (
-                                <MiniThread
-                                    key={discussion.id}
-                                    hoverable={true}
-                                    hideOverflow={true}
-                                    discussion={discussion}
-                                    discussionState={discussionState}
-                                    setDiscussionState={setDiscussionState}
-                                />
-                            );
-                        })}
-                {/* Show a complete thread/discussion hath it been clicked on */}
-                {discussionState.completeThread && (
-                    <MegaThread discussionState={discussionState} setDiscussionState={setDiscussionState} />
-                )}
-            </div>
+            {discussionState.loading ? (
+                <Loading />
+            ) : (
+                <div>
+                    {/* Show all threads/discussions if no thread has been clicked on */}
+                    {!discussionState.completeThread &&
+                        searchedDiscussions
+                            .sort((a, b) => {
+                                return new Date(b.discussion_date) - new Date(a.discussion_date);
+                            })
+                            .map((discussion) => {
+                                return (
+                                    <MiniThread
+                                        key={discussion.id}
+                                        hoverable={true}
+                                        hideOverflow={true}
+                                        discussion={discussion}
+                                        discussionState={discussionState}
+                                        setDiscussionState={setDiscussionState}
+                                    />
+                                );
+                            })}
+                    {/* Show a complete thread/discussion hath it been clicked on */}
+                    {discussionState.completeThread && (
+                        <MegaThread discussionState={discussionState} setDiscussionState={setDiscussionState} />
+                    )}
+                </div>
+            )}
         </>
     );
 }

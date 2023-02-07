@@ -445,7 +445,7 @@ export default function CoursesSection({ courses, setCourses, assignments, setAs
                         </div>
                         {/* Add button */}
                         <button
-                            className={createAssignment ? "add disabled" : "add"}
+                            className={createAssignment || Object.keys(selectedCourse).length === 0 ? "add disabled" : "add"}
                             onClick={() => {
                                 if (contentSelector.current.value === "modules") setModuleModal(true);
                                 else if (contentSelector.current.value === "assignments") setCreateAssignment(true);

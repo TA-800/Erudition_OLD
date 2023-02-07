@@ -144,7 +144,7 @@ export default function WeeklySection({ courses, assignments, setAssignments }) 
                     </div>
                     {/* Add button */}
                     <button
-                        className={createAssignment ? "add disabled" : "add"}
+                        className={createAssignment || selectedWeek === null ? "add disabled" : "add"}
                         onClick={() => setCreateAssignment(true)}
                         disabled={selectedWeek === null}>
                         <FontAwesomeIcon icon={faPlusCircle} />

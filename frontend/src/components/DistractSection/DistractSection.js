@@ -228,8 +228,8 @@ function Trivia() {
 
     return (
         <>
-            <div className="p-1 text-right" onClick={() => setReset(!reset)}>
-                <span onKeyDown={handleKeyDown} tabIndex={0} className="link">
+            <div className="p-1 text-right">
+                <span onKeyDown={handleKeyDown} onClick={() => setReset(!reset)} tabIndex={0} className="link">
                     Reset?
                 </span>
             </div>

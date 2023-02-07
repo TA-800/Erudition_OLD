@@ -19,11 +19,19 @@ export default function Navbar() {
         }
     }, [isSmall]);
 
+    function handleKeyDown(e) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.target.click();
+        }
+    }
+
     return (
         <nav>
             <ul className="navbar">
                 <li>ERUDITION</li>
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/studyhub" ? "active" : ""}
                     onClick={() => {
                         navigate("/studyhub");
@@ -31,6 +39,8 @@ export default function Navbar() {
                     StudyHub
                 </li>
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/discussions" ? "active" : ""}
                     onClick={() => {
                         navigate("/discussions");
@@ -38,6 +48,8 @@ export default function Navbar() {
                     Discussions
                 </li>
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/settings" ? "active" : ""}
                     onClick={() => {
                         navigate("/settings");
@@ -49,6 +61,8 @@ export default function Navbar() {
             <div className="mini-navbar-top hidden"></div>
             <ul className="mini-navbar">
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/studyhub" ? "active" : ""}
                     onClick={() => {
                         navigate("/studyhub");
@@ -56,6 +70,8 @@ export default function Navbar() {
                     StudyHub
                 </li>
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/discussions" ? "active" : ""}
                     onClick={() => {
                         navigate("/discussions");
@@ -63,6 +79,8 @@ export default function Navbar() {
                     Discussions
                 </li>
                 <li
+                    tabIndex={0}
+                    onKeyDown={handleKeyDown}
                     className={location.pathname === "/settings" ? "active" : ""}
                     onClick={() => {
                         navigate("/settings");

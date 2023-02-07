@@ -98,7 +98,7 @@ export function AuthProvider({ children }) {
         // Set the user to null
         updateUser(null);
         // Navigate to the login page
-        navigate("/login");
+        navigate("/landing");
     }
 
     function register(e) {

@@ -2,6 +2,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import StudyHub from "./StudyHub";
+import Landing from "./Landing";
 import LoginPage, { Logout } from "./Settings/LoginPage";
 import NotFound from "./NotFound";
 import Discussions from "./Discussions/Discussions";
@@ -25,6 +26,7 @@ export default function Main() {
 
                 {/* Public Routes */}
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/landing" element={<Landing />} />
             </Routes>
         </main>
     );
@@ -33,5 +35,5 @@ export default function Main() {
 function ProtectedRoutes() {
     const { user } = useContext(AuthContext);
 
-    return user !== null ? <Outlet /> : <Navigate to="/login" />;
+    return user !== null ? <Outlet /> : <Navigate to="/landing" />;
 }

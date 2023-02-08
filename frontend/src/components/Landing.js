@@ -20,7 +20,7 @@ export default function Landing() {
                     title="Looking for an easy, hassle-free way to organize notes and tasks?"
                     information="Well, you've come to the right place! Erudition is a platform for students where they can put together all
                     important study material and information in one neatly-organized place. It is a place where students can
-                    discuss their doubts and help each other out. Also a place to relax!"
+                    discuss their doubts and help each other out. Also a place to play some mini-games and relax!"
                     isTitle
                 />
             </div>
@@ -61,8 +61,10 @@ function Division({ title, information, isTitle, isLogin, icon }) {
                     : "h-96 items-center border-2 border-zinc-500 border-opacity-50 hover:bg-zinc-500 hover:bg-opacity-5")
             }>
             {/* If orientation is right, make the title right-ended. If left, do nothing (or stick to defaults) */}
-            <p className={isTitle ? "text-7xl mdc:text-5xl font-black" : "text-5xl mdc:text-3xl font-bold"}>{title}</p>
-            <p className="info-text max-w-none">{information}</p>
+            <p className={isTitle ? "text-7xl mdc:text-5xl font-black mt-4" : "text-5xl mdc:text-3xl font-bold text-center"}>
+                {title}
+            </p>
+            <p className={"info-text max-w-none" + (!isTitle ? " text-center" : "")}>{information}</p>
             {isLogin && (
                 <button className="btn-light z-10" onClick={() => navigate("/login")}>
                     Click here to sign up.

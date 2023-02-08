@@ -6,9 +6,7 @@ As a college student, it is easy to suffer from information overload when taking
 
 ## Website Overview
 
-<p align="center">
-    <img src="website.png">
-</p>
+![image](https://user-images.githubusercontent.com/31612100/217661068-fd56e612-4006-421c-8a9b-2facd766a69a.png)
 
 ## Features
 

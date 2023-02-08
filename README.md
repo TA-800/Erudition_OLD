@@ -30,7 +30,7 @@ As a college student, it is easy to suffer from information overload when taking
     <a href="https://railway.app/" target="_blank" rel="noreferrer"> <img src="https://railway.app/brand/logo-light.png" alt="Railway" width="40" height="40"/> </a>
 </p>
 
-The following technologies were used to build Erudition:
+Erudition is built on the following tech stack:
 
 - [React](https://reactjs.org/) (Frontend)
 - [Django](https://www.djangoproject.com/) (Backend)
@@ -40,4 +40,4 @@ The following technologies were used to build Erudition:
 - [AWS S3](https://aws.amazon.com/s3/) (File Storage)
 - [Railway](https://railway.app/) (Deployment)
 
-The website is designed to be mobile-friendly and can be run on any device with a web browser.
+The website is designed to be mobile-friendly and can be run on almost any device with a web browser.

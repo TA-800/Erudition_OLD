@@ -13,10 +13,17 @@ As a college student, it is easy to suffer from information overload when taking
 - **Course Management** - Create, edit, and view material for your courses with custom formatting and image embedding.
 
 - **Schedule Management** - View and manage your timeline for the semester to ensure that you are always on time to complete your coursework.
+![assignments](https://user-images.githubusercontent.com/31612100/217936967-7baffdc5-73c2-4c4d-adb1-3bbf84c01fa0.png)
 
 - **Discussion Board** - Communicate with other users taking the same courses to share notes and ask questions.
+![discussions](https://user-images.githubusercontent.com/31612100/217937445-f6d15a9a-6708-45ee-89fe-4cfe1d0cedc1.png)
+![discussions2](https://user-images.githubusercontent.com/31612100/217939376-80f461d9-1a8a-4dcb-a11c-ffd847b64d22.png)
 
 - **Relax Yourself** - All work and no play can severely harm your efficiency. Erudition allows you to engage with interactive media to take some much needed time off.
+![relax](https://user-images.githubusercontent.com/31612100/217937762-feba94e0-f3db-4138-bfd9-46a887e1ba85.png)
+
+- **Personalize your profile** - Add personal information so other people can know who you are, and connect with you!
+![settings](https://user-images.githubusercontent.com/31612100/217937987-57042957-58a6-4c13-a8a8-b7a1dc161a7e.png)
 
 ## Technical Details
 
@@ -41,3 +48,10 @@ Erudition is built on the following tech stack:
 - [Railway](https://railway.app/) (Deployment)
 
 The website is designed to be mobile-friendly and can be run on almost any device with a web browser.
+
+## Roadmap
+- [x] Landing page
+- [ ] Click on user profiles and see all information
+- [ ] Hangman, Snake games and more in the "Distract" section
+- [x] Auto generate a number of assignments (daily, weekly, monthly)
+... more features to come in the future

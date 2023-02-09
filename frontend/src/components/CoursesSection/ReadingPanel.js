@@ -94,7 +94,7 @@ export default function ReadingPanel({
             </div>
 
             {/* Read button */}
-            <button className="read-button read-button-active" onClick={closeModal}>
+            <button className="read-button-active" onClick={closeModal}>
                 <FontAwesomeIcon icon={faClose} />
             </button>
         </>

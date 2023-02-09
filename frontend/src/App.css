@@ -38,11 +38,11 @@
         @apply btn-dark after:content-['Add'] sm:after:content-[];
     }
     .read-button {
-        /* @apply absolute bottom-2 right-5 bg-[#032830] rounded-md w-20 h-9 flex flex-row justify-center items-center gap-1 after:content-['Read'] mdc:after:content-[]; */
         @apply absolute bottom-2 right-5 btn-dark border-0 border-white border-opacity-25 active:absolute active:top-auto after:content-['Read'] sm:after:content-[];
     }
     .read-button-active {
-        @apply fixed after:content-['Close'] sm:after:content-[] border-2 z-50;
+        /* btn dark components in here as well */
+        @apply fixed bottom-2 right-5 border-white border-opacity-25 after:content-['Close'] sm:after:content-[] border-2 z-50 bg-zinc-800 p-2 flex flex-row justify-center items-center gap-1 shadow-md;
     }
     .edit {
         /* @apply fixed top-2 right-5 bg-[#032830] text-cyan-100 rounded-md w-20 h-9 z-50 border-2 border-white border-opacity-25 flex flex-row justify-center items-center gap-1 after:content-['Edit'] sm:after:content-[]; */

@@ -36,7 +36,9 @@ export default function StudyHub() {
                 setUserUniversities(data);
                 setLoading(false);
             })
-            .catch((errMessage) => alert(errMessage));
+            .catch((errMessage) => {
+                console.log(errMessage);
+            });
     }
 
     function Loading() {
@@ -51,7 +53,7 @@ export default function StudyHub() {
     useEffect(() => {
         // Fetch user universities/colleges
         fetchUserUniversities();
-    }, []);
+    }, [user]);
 
     return (
         <>

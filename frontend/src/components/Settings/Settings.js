@@ -302,7 +302,7 @@ export default function Settings() {
                                 className="link ml-auto"
                                 tabIndex={0}
                                 onKeyDown={handleKeyDown}>
-                                {!chooseOther ? "Select a different university" : "Select university from list"}
+                                {!chooseOther ? "Select a different institution" : "Select institution from list"}
                             </span>
                         </div>
                         {userState.unis.length === 0 && <p>Enroll in a university now to get started</p>}

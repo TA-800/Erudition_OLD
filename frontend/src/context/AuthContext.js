@@ -49,8 +49,6 @@ export function AuthProvider({ children }) {
     }
 
     function login(e, u, p) {
-        console.log("login called with url: " + url + "login/");
-
         if (e === null) {
             e = {
                 target: { username: { value: u }, password: { value: p } },
@@ -88,6 +86,8 @@ export function AuthProvider({ children }) {
             })
             .catch((errMessage) => {
                 alert(errMessage);
+                // If location is not login, navigate to login
+                if (window.location.pathname !== "/login") navigate("/login");
             });
     }
 
@@ -156,7 +156,6 @@ export function AuthProvider({ children }) {
                 localStorage.setItem("access", data.access);
                 localStorage.setItem("refresh", data.refresh);
                 updateUser(data.access);
-                console.log("Token updated");
             })
             .catch((errMessage) => {
                 console.log(errMessage);

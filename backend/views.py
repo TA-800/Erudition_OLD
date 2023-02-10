@@ -379,6 +379,11 @@ def discussions(request, id):
         # CREATE DISCUSSION
         elif request.method == "POST":
             data = json.loads(request.body)
+            # If discussion title or desc is empty, return error
+            if data["title"] == "":
+                return Response({"detail": "Discussion title cannot be empty"}, status=400)
+            if data["desc"] == "":
+                return Response({"detail": "Discussion description cannot be empty"}, status=400)
             # In this case, the id is the university id to which the discussion belongs
             discussion = Discussion(
                 discussion_university=University.objects.get(id=id),

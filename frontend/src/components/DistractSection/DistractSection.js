@@ -563,25 +563,47 @@ function Misc() {
     function Joke() {
         const [joke, setJoke] = useState({});
         const [reset, setReset] = useState(false);
+        const [allowOffensive, setAllowOffensive] = useState(false);
 
         useEffect(() => {
-            fetch("https://v2.jokeapi.dev/joke/Any")
+            let url = "https://v2.jokeapi.dev/joke/Any";
+            if (!allowOffensive) url += "?blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
+            console.log(url);
+
+            fetch(url)
                 .then((res) => {
                     if (!res.ok) throw new Error("Error, try refreshing");
                     return res.json();
                 })
                 .then((data) => {
+                    console.log("Received data:");
+                    console.log(data);
                     setJoke(data);
+                })
+                .catch((err) => {
+                    console.log(err);
                 });
         }, [reset]);
 
         return (
-            <div className="flex flex-col">
-                <p className="text-2xl font-semibold">{joke.setup}</p>
+            <div className="flex flex-col gap-2">
+                <p className="text-2xl font-semibold">{joke.type === "twopart" ? joke.setup : joke.joke}</p>
                 <p className="italic text-xl ml-auto">{joke.delivery}</p>
-                <span onKeyDown={handleKeyDown} tabIndex={0} className="link-light ml-auto" onClick={() => setReset(!reset)}>
-                    Another one?
-                </span>
+                <div className="flex flex-row">
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="offensive"
+                            name="offensive"
+                            checked={allowOffensive}
+                            onChange={() => setAllowOffensive(!allowOffensive)}
+                        />
+                        <span> Allow dark jokes</span>
+                    </div>
+                    <span onKeyDown={handleKeyDown} tabIndex={0} className="link-light ml-auto" onClick={() => setReset(!reset)}>
+                        Another one?
+                    </span>
+                </div>
             </div>
         );
     }

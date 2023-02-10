@@ -1,6 +1,6 @@
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import Settings from "./Settings";
@@ -9,9 +9,11 @@ export default function LoginPage() {
     // Redirect to studyhub if user is logged in
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    if (user !== null) navigate("/studyhub");
-
     const [register, setRegister] = useState(false);
+
+    useEffect(() => {
+        if (user !== null) navigate("/studyhub");
+    });
 
     return register ? (
         <>

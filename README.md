@@ -47,7 +47,7 @@ Erudition is built on the following tech stack:
 - [AWS S3](https://aws.amazon.com/s3/) (File Storage)
 - [Railway](https://railway.app/) (Deployment)
 
-The website is designed to be mobile-friendly and can be run on almost any device with a web browser.
+The website is designed to be mobile-friendly (responsive) and can be run on almost any device with a web browser.
 
 ## Roadmap
 - [x] Landing page

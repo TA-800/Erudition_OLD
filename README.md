@@ -54,4 +54,5 @@ The website is designed to be mobile-friendly and can be run on almost any devic
 - [ ] Click on user profiles and see all information
 - [ ] Hangman, Snake games and more in the "Distract" section
 - [x] Auto generate a number of assignments (daily, weekly, monthly)
+
 ... more features to come in the future

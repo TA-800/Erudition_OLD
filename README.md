@@ -50,6 +50,7 @@ Erudition is built on the following tech stack:
 The website is designed to be mobile-friendly (responsive) and can be run on almost any device with a web browser.
 
 ## Roadmap
+
 - [x] Landing page
 - [ ] Click on user profiles and see all information
 - [ ] Hangman, Snake games and more in the "Distract" section
